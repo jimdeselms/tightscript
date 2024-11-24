@@ -1,10 +1,12 @@
 import { Program, Node, parse, ExpressionStatement, UnaryExpression, ConditionalExpression, BinaryExpression } from 'acorn'
 import * as escodegen from 'escodegen'
+import { createReplacer, PLACEHOLDER_ID } from './replacePlaceholder'
 
 export function compile(code: string): string {
     const ast = parse(code, {  ecmaVersion: 2020})
     const undefinedSafe = updateAst(ast)
     const generated = escodegen.generate(undefinedSafe)
+    console.log(generated)
     return generated    
 }
 
@@ -49,18 +51,12 @@ function updateAst(ast: Node): Node {
     }
 }
 
+const EQUAL_TO_UNDEFINED = createReplacer(`(${PLACEHOLDER_ID} === undefined)`)
+
 function checkForUndefined(baseExpr: Node, ifSafe: Node): Node {
     return {
         type: 'ConditionalExpression',
-        test: {
-            type: 'BinaryExpression',
-            operator: '===',
-            left: baseExpr,
-            right: {
-                type: 'Identifier',
-                name: 'undefined'
-            }
-        },
+        test: EQUAL_TO_UNDEFINED(baseExpr),
         consequent: {
             type: 'Identifier',
             name: 'undefined'

@@ -26,10 +26,13 @@ describe('eval', () => {
         ["undefined + 5", undefined],
         ["5 + undefined", undefined],
         ["undefined + 5", undefined],
+        ["undefined + undefined", undefined],
         ["2 + 5", 7],
     ])('will check for undefined in binary expressions', (code, expected) => {
         const compiled = evaluate(code)
 
         expect(compiled).toEqual(expected)
     })
+
+    it.todo("if both expressions are same, only check for undefined once")
 })
