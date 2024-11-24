@@ -10,14 +10,26 @@ describe('eval', () => {
     })
 
     it.each([
-        ["!undefined", "undefinend"],
-        ["!true", "false"],
-        ["!false", "true"],
-        ["-undefined", "undefined"],
-        ["-5", "5"],
-    ])('will check for undefined in unary expressions', (code, result) => {
-        const compiled = evaluate("!undefined")
+        ["!undefined", undefined],
+        ["!true", false],
+        ["!false", true],
+        ["-undefined", undefined],
+        ["- (5)", -5],
+    ])('will check for undefined in unary expressions', (code, expected) => {
+        const compiled = evaluate(code)
 
-        expect(compiled).toBeUndefined()
+        expect(compiled).toEqual(expected)
+    })
+
+    it.each([
+        ["5 + 5", 10],
+        ["undefined + 5", undefined],
+        ["5 + undefined", undefined],
+        ["undefined + 5", undefined],
+        ["2 + 5", 7],
+    ])('will check for undefined in binary expressions', (code, expected) => {
+        const compiled = evaluate(code)
+
+        expect(compiled).toEqual(expected)
     })
 })

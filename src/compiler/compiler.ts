@@ -1,4 +1,4 @@
-import { Program, Node, parse, ExpressionStatement, UnaryExpression, ConditionalExpression } from 'acorn'
+import { Program, Node, parse, ExpressionStatement, UnaryExpression, ConditionalExpression, BinaryExpression } from 'acorn'
 import * as escodegen from 'escodegen'
 
 export function compile(code: string): string {
@@ -33,6 +33,15 @@ function updateAst(ast: Node): Node {
                 argument: base
             } as UnaryExpression
             return checkForUndefined(base, safe)
+        case 'BinaryExpression':
+            const left = updateAst((ast as BinaryExpression).left)
+            const right = updateAst((ast as BinaryExpression).right)
+            const safeBinary = {
+                ...ast,
+                left,
+                right,
+            } as BinaryExpression
+            return checkForUndefined(left, checkForUndefined(right, safeBinary))
         case 'Identifier':
         case 'Literal':
             return ast
