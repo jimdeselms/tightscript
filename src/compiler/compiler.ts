@@ -1,4 +1,4 @@
-import { Program, Node, parse, ExpressionStatement, UnaryExpression, ConditionalExpression, BinaryExpression, CallExpression } from 'acorn'
+import { Program, Node, parse, ArrayExpression, ExpressionStatement, UnaryExpression, ConditionalExpression, BinaryExpression, CallExpression } from 'acorn'
 import * as escodegen from 'escodegen'
 import { createReplacer, PLACEHOLDER1, PLACEHOLDER2 } from './replacePlaceholder'
 
@@ -34,7 +34,7 @@ function updateAst(ast: Node): Node {
                 ...ast,
                 argument: base
             } as UnaryExpression
-            return CHECK_FOR_UNDDEFINED(base, safe)
+            return CHECK_FOR_UNDEFINED(base, safe)
         case 'BinaryExpression':
             const left = updateAst((ast as BinaryExpression).left)
             const right = updateAst((ast as BinaryExpression).right)
@@ -43,19 +43,24 @@ function updateAst(ast: Node): Node {
                 left,
                 right,
             } as BinaryExpression
-            return CHECK_FOR_UNDDEFINED(left, CHECK_FOR_UNDDEFINED(right, safeBinary))
+            return CHECK_FOR_UNDEFINED(left, CHECK_FOR_UNDEFINED(right, safeBinary))
         case "CallExpression":
             const callee = updateAst((ast as CallExpression).callee)
             const safeCall = {
                 ...ast,
                 callee
             } as CallExpression
-            return CHECK_FOR_UNDDEFINED(callee, safeCall)
-        case 'Identifier':
+            return CHECK_FOR_UNDEFINED(callee, safeCall)
+        case "ArrayExpression":
+            const elements = (ast as ArrayExpression).elements.map(e => updateAst(e as Node))
+            const arr = { ...ast, elements } as ArrayExpression
+            return ANY_ARE_UNDEFINED(arr)
+            case 'Identifier':
         case 'Literal':
             return ast
         default: throw `TBD - unknown type ${ast.type}`
     }
 }
 
-const CHECK_FOR_UNDDEFINED: (baseExpr: Node, ifSafe: Node) => Node = createReplacer(`(${PLACEHOLDER1} === undefined ? undefined : ${PLACEHOLDER2})`)
+const CHECK_FOR_UNDEFINED: (baseExpr: Node, ifSafe: Node) => Node = createReplacer(`(${PLACEHOLDER1} === undefined ? undefined : ${PLACEHOLDER2})`)
+const ANY_ARE_UNDEFINED: (arrayExpr: ArrayExpression) => Node = createReplacer(`(${PLACEHOLDER1}.some(e => e === undefined) ? undefined : ${PLACEHOLDER1})`)

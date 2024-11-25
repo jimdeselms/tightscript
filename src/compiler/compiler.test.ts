@@ -45,5 +45,16 @@ describe('eval', () => {
         expect(compiled).toEqual(expected)
     })
 
+    it.each([
+        ["[]", []],
+        ["[undefined]", undefined],
+        ["[1]", [1]],
+        ["[1, undefined]", undefined],
+    ])('will evaluate to undefined if array contains undefined', (code, expected) => {
+        const compiled = evaluate(code)
+
+        expect(compiled).toEqual(expected)
+    })
+
     it.todo("if both expressions are same, only check for undefined once")
 })
