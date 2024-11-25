@@ -1,6 +1,6 @@
-import { Program, Node, parse, ExpressionStatement, UnaryExpression, ConditionalExpression, BinaryExpression } from 'acorn'
+import { Program, Node, parse, ExpressionStatement, UnaryExpression, ConditionalExpression, BinaryExpression, CallExpression } from 'acorn'
 import * as escodegen from 'escodegen'
-import { createReplacer, PLACEHOLDER_ID } from './replacePlaceholder'
+import { createReplacer, PLACEHOLDER1, PLACEHOLDER2 } from './replacePlaceholder'
 
 export function compile(code: string): string {
     const ast = parse(code, {  ecmaVersion: 2020})
@@ -34,7 +34,7 @@ function updateAst(ast: Node): Node {
                 ...ast,
                 argument: base
             } as UnaryExpression
-            return checkForUndefined(base, safe)
+            return CHECK_FOR_UNDDEFINED(base, safe)
         case 'BinaryExpression':
             const left = updateAst((ast as BinaryExpression).left)
             const right = updateAst((ast as BinaryExpression).right)
@@ -43,7 +43,14 @@ function updateAst(ast: Node): Node {
                 left,
                 right,
             } as BinaryExpression
-            return checkForUndefined(left, checkForUndefined(right, safeBinary))
+            return CHECK_FOR_UNDDEFINED(left, CHECK_FOR_UNDDEFINED(right, safeBinary))
+        case "CallExpression":
+            const callee = updateAst((ast as CallExpression).callee)
+            const safeCall = {
+                ...ast,
+                callee
+            } as CallExpression
+            return CHECK_FOR_UNDDEFINED(callee, safeCall)
         case 'Identifier':
         case 'Literal':
             return ast
@@ -51,16 +58,4 @@ function updateAst(ast: Node): Node {
     }
 }
 
-const EQUAL_TO_UNDEFINED = createReplacer(`(${PLACEHOLDER_ID} === undefined)`)
-
-function checkForUndefined(baseExpr: Node, ifSafe: Node): Node {
-    return {
-        type: 'ConditionalExpression',
-        test: EQUAL_TO_UNDEFINED(baseExpr),
-        consequent: {
-            type: 'Identifier',
-            name: 'undefined'
-        },
-        alternate: ifSafe
-    } as ConditionalExpression
-}
+const CHECK_FOR_UNDDEFINED: (baseExpr: Node, ifSafe: Node) => Node = createReplacer(`(${PLACEHOLDER1} === undefined ? undefined : ${PLACEHOLDER2})`)
