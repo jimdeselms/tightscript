@@ -1,9 +1,11 @@
 import { Program, Node, parse, ArrayExpression, ExpressionStatement, UnaryExpression, ConditionalExpression, BinaryExpression, CallExpression, ObjectExpression, Property } from 'acorn'
 import * as escodegen from 'escodegen'
 import { createReplacer, PLACEHOLDER1, PLACEHOLDER2 } from './replacePlaceholder'
+import { addSha } from './addSha'
 
 export function compile(code: string): string {
     const ast = parse(code, {  ecmaVersion: 2020})
+    addSha(ast)
     const undefinedSafe = updateAst(ast)
     const generated = escodegen.generate(undefinedSafe)
     console.log(generated)
