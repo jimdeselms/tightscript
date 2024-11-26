@@ -56,5 +56,16 @@ describe('eval', () => {
         expect(compiled).toEqual(expected)
     })
 
+    it.each([
+        ["({})", {}],
+        ["({a: 1})", { a: 1 }],
+        ["({a: undefined})", undefined],
+        ["({a: 1, b: undefined})", undefined],
+    ])('will evaluate to undefined if object contains undefined', (code, expected) => {
+        const compiled = evaluate(code)
+
+        expect(compiled).toEqual(expected)
+    })
+
     it.todo("if both expressions are same, only check for undefined once")
 })

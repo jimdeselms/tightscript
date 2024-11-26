@@ -1,5 +1,6 @@
 import { ExpressionStatement, Identifier, Node, Program } from 'acorn'
 import { parse } from 'acorn'
+import { visitor } from './visitor'
 
 const PLACEHOLDER_BASE = "$PlAce$HolDeR$"
 export const PLACEHOLDER1 = PLACEHOLDER_BASE + "1"
