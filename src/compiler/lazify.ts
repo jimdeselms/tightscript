@@ -2,9 +2,11 @@ import { BinaryExpression, Expression, Node } from 'acorn'
 import { createReplacer, PLACEHOLDER1 } from './replacePlaceholder'
 import { createVisitor, VisitorHandler } from './visitor'
 import { getVariableName } from './getVariableName'
+import { toSha } from './toSha'
 
 export type LazifyCtx = {
     variables: Expression[],
+    shas: Map<string, number>
 }
 
 type LazifyHandler = VisitorHandler<Expression, [LazifyCtx]>
@@ -33,8 +35,18 @@ function handleBinary(x: Expression, ctx: LazifyCtx): Expression {
 }
 
 function toVariable(expr: Expression, ctx: LazifyCtx): Expression {
-    const nextVar = getVariableName(ctx.variables.length)
-    ctx.variables.push(expr)
+    const sha = toSha(expr)
+    const existingIndex = ctx.shas.get(sha)
+    let varIndex
+    if (existingIndex === undefined) {
+        varIndex = ctx.variables.length
+        ctx.shas.set(sha, varIndex)
+        ctx.variables.push(expr)
+    } else {
+        varIndex = existingIndex
+    }
+
+    const nextVar = getVariableName(varIndex)
 
     return {
         type: 'Identifier',

@@ -16,6 +16,7 @@ export function compile(code: string): string {
 
     const ctx = {
         variables: [],
+        shas: new Map<string, number>()
     }
 
     const lazified = lazify(ast as any as Expression, ctx)

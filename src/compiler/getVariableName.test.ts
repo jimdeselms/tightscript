@@ -5,8 +5,8 @@ describe('getVariableName', () => {
     it.each([
         [0, 'A'],
         [1, 'B'],
-        [23423, 'yAH'],
-        [2938492384293482, 'PQto_xvEO'],
+        [23423, 'y3G'],
+        [2938492384293482, 'PPp$XjzmM'],
     ])('getVariableName %#%', (index, expected) => {
         expect(getVariableName(index)).toBe(expected);
     });
