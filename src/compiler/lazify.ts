@@ -2,12 +2,14 @@ import { BinaryExpression, Expression, Node } from 'acorn'
 import { createReplacer, PLACEHOLDER1 } from './replacePlaceholder'
 import { createVisitor, VisitorHandler } from './visitor'
 
-export type LazifyCtx = {}
+export type LazifyCtx = {
+    variables: Expression[],
+}
 
 type LazifyHandler = VisitorHandler<Expression, [LazifyCtx]>
 
 export const lazify = createVisitor<Expression, [LazifyCtx]>({
-    Literal: (x: Node) => LAZIFY(x),
+    Literal: (x: Node, ctx: LazifyCtx) => toVariable(LAZIFY(x), ctx),
     BinaryExpression: handleBinary as LazifyHandler,
     LogicalExpression: handleBinary as LazifyHandler,
     Program: null,
@@ -26,7 +28,19 @@ function handleBinary(x: Expression, ctx: LazifyCtx): Expression {
         right: UNWRAPPED(right)
     }
 
-    return LAZIFY(result)
+    return toVariable(LAZIFY(result), ctx)
+}
+
+function toVariable(expr: Expression, ctx: LazifyCtx): Expression {
+    const nextVar = `$${ctx.variables.length}`
+    ctx.variables.push(expr)
+
+    return {
+        type: 'Identifier',
+        name: nextVar,
+        start: expr.start,
+        end: expr.end,
+    }
 }
 
 const LAZIFY = createReplacer<Expression>(`LAZY(() => ${PLACEHOLDER1})`)
