@@ -9,7 +9,9 @@ export const PLACEHOLDER4 = PLACEHOLDER_BASE + "4"
 
 export function createReplacer(code: string): (...replaceWith: Node[]) => Node {
     const program = (parse(code, { ecmaVersion: 2020 }) as Program)
-    const ast = (program.body[0] as ExpressionStatement).expression
+
+    // If there are multiple statements, take the last one.
+    const ast = (program.body.at(-1) as ExpressionStatement).expression
 
     return (...replaceWith: Node[]) => replacePlaceholder(ast, ...replaceWith)
 }
@@ -23,7 +25,8 @@ export function replacePlaceholder(node: Node, ...replaceWith: Node[]): Node {
         const id = (node as Identifier).name
         const lastDollar = id.lastIndexOf('$')
         const placeholderNumber = parseInt(id.slice(lastDollar + 1))
-        return replaceWith[placeholderNumber-1]
+        const value = replaceWith[placeholderNumber-1]
+        return toNode(value)
     }
 
     return Object.fromEntries(Object.entries(node).map(([key, value]) => {
@@ -33,4 +36,21 @@ export function replacePlaceholder(node: Node, ...replaceWith: Node[]): Node {
             return [key, replacePlaceholder(value, ...replaceWith)] 
         }
     }))
+}
+
+function isNode(x: any): x is Node {
+    return x != null && typeof x === 'object' && 'type' in x
+}
+
+function toNode(x: any): Node {
+    if (isNode(x)) {
+        return x
+    }
+
+    return {
+        type: 'Literal',
+        value: x,
+        start: 0,
+        end: 0,
+    } as Node
 }
