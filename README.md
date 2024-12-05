@@ -54,3 +54,9 @@ There are a few pieces to this.
 1) The Compiler takes the input code and generates the output code.
     * The compiler takes the code and transforms it into an expression that can be evaluated with `eval`. Later we can make it fancier.
     * Since it's not just a function per se, it will wrap it into an IFFE so that we can define variables and builtin functions and suchlike.
+
+## Everything is a variable
+
+I want everything to be a variable.
+
+This means that when we build the AST, we have to inject a bunch of variable declarations.

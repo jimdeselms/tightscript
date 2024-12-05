@@ -4,7 +4,7 @@ import { isNode } from "./isNode"
 export type VisitorHandler<TNode extends Node=Node, TArgs extends any[]=[]> = (node: TNode, ...args: TArgs) => TNode
 
 export function createVisitor<TNode extends Node=Node, TArgs extends any[]=[]>(
-    handlers: Record<string, VisitorHandler | null>
+    handlers: Record<string, VisitorHandler<TNode, TArgs> | null>
 ): VisitorHandler<TNode, TArgs> {
     const visitor = (node: TNode, ...args: TArgs) => {
         if (!isNode(node)) {
@@ -17,13 +17,13 @@ export function createVisitor<TNode extends Node=Node, TArgs extends any[]=[]>(
             const handler = handlers[node.type]
             if (handler != null) {
                 // If it has a handler call it,
-                return handler(node)
+                return handler(node, ...args)
             } else if (handler === undefined) {
                 // If it has a handler, but it's null, we'll use the default handler below
                 // Otherwise, we'll use the specific default handler for this visitor
                 const dflt = handlers.default
                 if (dflt) {
-                    return dflt(node)
+                    return dflt(node, ...args)
                 }
             }
         }
