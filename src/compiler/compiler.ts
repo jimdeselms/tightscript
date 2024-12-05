@@ -3,6 +3,7 @@ import * as escodegen from 'escodegen'
 import { createReplacer, PLACEHOLDER1 } from './replacePlaceholder'
 import { BUILTINS } from './BUILTINS'
 import { lazify, LazifyCtx } from './lazify'
+import { getVariableName } from './getVariableName'
 
 const WRAP_WITH_FUNCTION_WITH_BUILTINS = createReplacer(
     `(() => {
@@ -44,7 +45,7 @@ export function compile(code: string): string {
 
 function getVariableDeclarators(ctx: LazifyCtx): VariableDeclarator[] {
     return ctx.variables.map((expr, i) => {
-        const variableName = `$${i}`
+        const variableName = getVariableName(i)
         return {
             type: 'VariableDeclarator',
             id: { type: 'Identifier', name: variableName },
