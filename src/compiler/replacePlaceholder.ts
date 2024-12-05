@@ -8,13 +8,13 @@ export const PLACEHOLDER2 = PLACEHOLDER_BASE + "2"
 export const PLACEHOLDER3 = PLACEHOLDER_BASE + "3"
 export const PLACEHOLDER4 = PLACEHOLDER_BASE + "4"
 
-export function createReplacer(code: string): (...replaceWith: Node[]) => Node {
+export function createReplacer<T extends Node=Node>(code: string): (...replaceWith: Node[]) => T {
     const program = (parse(code, { ecmaVersion: 2020 }) as Program)
 
     // If there are multiple statements, take the last one.
     const ast = (program.body.at(-1) as ExpressionStatement).expression
 
-    return (...replaceWith: Node[]) => replacePlaceholder(ast, ...replaceWith)
+    return (...replaceWith: Node[]) => replacePlaceholder(ast, ...replaceWith) as T
 }
 
 export function replacePlaceholder(node: Node, ...replaceWith: Node[]): Node {
