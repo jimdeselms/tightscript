@@ -1,5 +1,6 @@
 import { ExpressionStatement, Identifier, Node, Program } from 'acorn'
 import { parse } from 'acorn'
+import { isNode } from './isNode'
 
 const PLACEHOLDER_BASE = "$PlAce$HolDeR$"
 export const PLACEHOLDER1 = PLACEHOLDER_BASE + "1"
@@ -36,10 +37,6 @@ export function replacePlaceholder(node: Node, ...replaceWith: Node[]): Node {
             return [key, replacePlaceholder(value, ...replaceWith)] 
         }
     }))
-}
-
-function isNode(x: any): x is Node {
-    return x != null && typeof x === 'object' && 'type' in x
 }
 
 function toNode(x: any): Node {

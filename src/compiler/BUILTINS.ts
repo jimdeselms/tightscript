@@ -3,6 +3,8 @@
 export const BUILTINS = `
 function LAZY(fn) {
     let loaded, value;
-    return loaded ? value : (loaded=true,value=fn(),value)
+    return () => {
+        return loaded ? value : (loaded=true,value=fn(),value)
+    }
 }
 `
