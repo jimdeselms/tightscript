@@ -6,7 +6,7 @@ import { lazify, LazifyCtx } from './lazify'
 import { getVariableName } from './getVariableName'
 
 const WRAP_WITH_FUNCTION_WITH_BUILTINS = createReplacer(
-    `($$ => {
+    `(() => {
         ${BUILTINS}
         return ${PLACEHOLDER1}
     })()`)

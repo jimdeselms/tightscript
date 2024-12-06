@@ -354,10 +354,29 @@ const ARG00 = (args) => args[0][0]
 const ARG01 = (args) => args[0][1]
 const ARRAY = (args) => [ E1(args), E2(args), E3(args) ]
 const ADD = (args) => {
-    
+
 }
 const FIRST = (args) => {
     return (list) => {
         return list(args)()[0](args)
     }
 }
+
+
+function LAZY(expr) => {
+    let prev,value
+
+    return (args) => {
+        if (prev!==args) {
+            prev = args
+            value = expr(args)
+        }
+        return value
+    }
+}
+
+## Lazy functions
+
+Now, an expression takes arguments and returns a void function that returns a value.
+
+A function is no different.

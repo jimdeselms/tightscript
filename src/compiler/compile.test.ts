@@ -13,7 +13,8 @@ describe('compile', () => {
 
         const fn = eval(compiled)
 
-        const result = fn()
+        const lazy = fn([])
+        const result = lazy()
 
         expect(result).toEqual(expected)
     })
@@ -27,9 +28,11 @@ describe('compile', () => {
 
         const fn = eval(compiled)
 
-        let result = fn(argument)
+        const lazy = fn([])
+        const resultFn = lazy()
 
-        result = result(argument)
+        const resultLazy = resultFn(() => () => argument)
+        const result = resultLazy()
 
         expect(result).toEqual(expected)
     })

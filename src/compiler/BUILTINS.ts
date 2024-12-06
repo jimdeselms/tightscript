@@ -1,11 +1,16 @@
 // This string contains the built in functions that we will provide
 
 export const BUILTINS = `
-let $ = [()=>$$]
-function $L(fn) {
-    let loaded, value;
-    return () => {
-        return loaded ? value : (loaded=true,value=fn(),value)
+let $ = []
+function $L(expr) {
+    let prev, value;
+
+    return (args) => {
+        if (prev !== args) {
+            prev = args
+            value = expr(args)
+        }
+        return value
     }
 }
 `
