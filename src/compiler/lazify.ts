@@ -1,4 +1,4 @@
-import { BinaryExpression, Expression, Node } from 'acorn'
+import { ArrowFunctionExpression, BinaryExpression, Expression, Node } from 'acorn'
 import { createReplacer, PLACEHOLDER1 } from './replacePlaceholder'
 import { createVisitor, VisitorHandler } from './visitor'
 import { getVariableName } from './getVariableName'
@@ -17,10 +17,27 @@ export const lazify = createVisitor<Expression, [LazifyCtx]>({
     LogicalExpression: handleBinary as LazifyHandler,
     Program: null,
     ExpressionStatement: null,
-    ArrowFunctionExpression: null,
-    Identifier: null,
+    ArrowFunctionExpression: handleArrowFunction,
+    Identifier: (n: Node) => NTH(0 as any),
     default: (n: Node) => { throw "TBD: " + n.type }
 })
+
+function handleArrowFunction(x: Expression, ctx: LazifyCtx): Expression {
+    // For now assume that it's an expression;
+    // TODO - handle BlockStatement.
+    const arrow = x as ArrowFunctionExpression
+    const expr = lazify(arrow.body as Expression, ctx)
+    return toVariable(ARROW_FUNCTION(expr), ctx)
+}
+
+const ARROW_FUNCTION = createReplacer<Expression>(`($$ => {
+    $.unshift($$)
+    const $R = ${PLACEHOLDER1}
+    $.shift()
+    return $R
+})`)
+
+const NTH = createReplacer<Expression>(`$[${PLACEHOLDER1}]`)
 
 function handleBinary(x: Expression, ctx: LazifyCtx): Expression {
     const binary = x as BinaryExpression
@@ -59,6 +76,6 @@ function toVariable(expr: Expression, ctx: LazifyCtx): Expression {
 }
 
 // $L = the lazy function
-const LAZIFY = createReplacer<Expression>(`$L(() => ${PLACEHOLDER1})`)
-const UNWRAPPED = createReplacer<Expression>(`((${PLACEHOLDER1})())`)
+const LAZIFY = createReplacer<Expression>(`$L($ => ${PLACEHOLDER1})`)
+const UNWRAPPED = createReplacer<Expression>(`((${PLACEHOLDER1})($))`)
 

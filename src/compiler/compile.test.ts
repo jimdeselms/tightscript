@@ -19,15 +19,17 @@ describe('compile', () => {
     })
 
     it.each([
-        ['(x) => x', "hello", "hello"],
+        ['(x) => 100', null, 100],
+        ['(x) => x', 5, 5],
+        ['(x) => x+1', 5, 6],
     ])('can compile function expressions %#%', (code, argument, expected) => {
         const compiled = compile(code)
 
         const fn = eval(compiled)
 
-        const resultFn = fn()
+        let result = fn(argument)
 
-        const result = resultFn(argument)
+        result = result(argument)
 
         expect(result).toEqual(expected)
     })
