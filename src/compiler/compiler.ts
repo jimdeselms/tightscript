@@ -34,8 +34,10 @@ export function compile(code: string): string {
         kind: "const"
     }
 
-    const fnBody = (asFunction as any).callee.body
-    fnBody.body.unshift(declaration)
+    if (declarators.length > 0) {
+        const fnBody = (asFunction as any).callee.body
+        fnBody.body.unshift(declaration)
+    }
 
     const compiled = escodegen.generate(asFunction)
 

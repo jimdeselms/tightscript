@@ -17,6 +17,8 @@ export const lazify = createVisitor<Expression, [LazifyCtx]>({
     LogicalExpression: handleBinary as LazifyHandler,
     Program: null,
     ExpressionStatement: null,
+    ArrowFunctionExpression: null,
+    Identifier: null,
     default: (n: Node) => { throw "TBD: " + n.type }
 })
 
