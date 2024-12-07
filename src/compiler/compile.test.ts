@@ -12,8 +12,7 @@ describe('compile', () => {
         const compiled = compile(code)
 
         const fn = eval(compiled)
-
-        const lazy = fn()
+        const lazy = fn(null)
         const result = lazy()
 
         expect(result).toEqual(expected)
@@ -28,6 +27,7 @@ describe('compile', () => {
         const compiled = compile(code)
 
         const fn = eval(compiled)
+
         const lazy = fn(arg)
         const result = lazy()
 
@@ -40,15 +40,14 @@ describe('compile', () => {
         ['(x) => x', 5, 5],
         ['(x) => x+1', 5, 6],
         ['x => x*x', 10, 100],
-    ])('can compile function expressions %#%', (code, argument, expected) => {
+    ])('can compile function expressions %#%', (code, arg, expected) => {
         const compiled = compile(code)
 
         const fn = eval(compiled)
 
-        const lazy = fn(argument)
+        const lazy = fn(arg)
         const resultFn = lazy()
-
-        const resultLazy = resultFn(() => () => argument)
+        const resultLazy = resultFn(() => () => arg)
         const result = resultLazy()
 
         expect(result).toEqual(expected)
