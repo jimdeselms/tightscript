@@ -1,4 +1,4 @@
-import { ExpressionStatement, Identifier, Node, Program } from 'acorn'
+import { Expression, ExpressionStatement, Identifier, Node, Program } from 'acorn'
 import { parse } from 'acorn'
 import { isNode } from './isNode'
 
@@ -17,6 +17,15 @@ export function createReplacer<T extends Node=Node>(code: string): Replacer<T> {
     const ast = (program.body.at(-1) as ExpressionStatement).expression
 
     return (...replaceWith: Node[]) => replacePlaceholder(ast, ...replaceWith) as T
+}
+
+export function compileString(code: string): Expression {
+    const program = (parse(code, { ecmaVersion: 2020 }) as Program)
+
+    // If there are multiple statements, take the last one.
+    const ast = (program.body.at(-1) as ExpressionStatement).expression
+
+    return ast as Expression
 }
 
 export function replacePlaceholder(node: Node, ...replaceWith: Node[]): Node {

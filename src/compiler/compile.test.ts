@@ -40,14 +40,31 @@ describe('compile', () => {
         ['(x) => x', 5, 5],
         ['(x) => x+1', 5, 6],
         ['x => x*x', 10, 100],
-    ])('can compile function expressions %#%', (code, arg, expected) => {
+    ])('can compile function expressions with one argument %#%', (code, arg, expected) => {
         const compiled = compile(code)
 
         const fn = eval(compiled)
 
         const lazy = fn(arg)
         const resultFn = lazy()
-        const resultLazy = resultFn(() => () => arg)
+        const resultLazy = resultFn()
+        const result = resultLazy()
+
+        expect(result).toEqual(expected)
+    })
+
+    it.each([
+        ['(x, y) => 100', null, null, 100],
+        ['(x, y) => x + y', 5, 6, 11],
+        ['(a, b) => a * b', 5, 6, 30],
+    ])('can compile function expressions with two arguments %#%', (code, arg1, arg2, expected) => {
+        const compiled = compile(code)
+
+        const fn = eval(compiled)
+
+        const lazy = fn(arg1, arg2)
+        const resultFn = lazy()
+        const resultLazy = resultFn()
         const result = resultLazy()
 
         expect(result).toEqual(expected)

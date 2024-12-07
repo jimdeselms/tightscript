@@ -1,12 +1,13 @@
-import { ArrowFunctionExpression, BinaryExpression, Expression, Node } from 'acorn'
-import { createReplacer, PLACEHOLDER1, PLACEHOLDER2, Replacer } from './replacePlaceholder'
+import { ArrowFunctionExpression, BinaryExpression, Expression, Identifier, Node } from 'acorn'
+import { compileString, createReplacer, PLACEHOLDER1, PLACEHOLDER2, Replacer } from './replacePlaceholder'
 import { createVisitor, VisitorHandler } from './visitor'
 import { getVariableName } from './getVariableName'
 import { toSha } from './toSha'
 
 export type LazifyCtx = {
     variables: Expression[],
-    shas: Map<string, number>
+    shas: Map<string, number>,
+    params: string[][]
 }
 
 type LazifyHandler = VisitorHandler<Expression, [LazifyCtx]>
@@ -18,15 +19,29 @@ export const lazify = createVisitor<Expression, [LazifyCtx]>({
     Program: null,
     ExpressionStatement: null,
     ArrowFunctionExpression: handleArrowFunction,
-    Identifier: (n: Node) => ARG1(),
+    Identifier: handleIdentifier,
     default: (n: Node) => { throw "TBD: " + n.type }
 })
+
+function handleIdentifier(x: Expression, ctx: LazifyCtx): Expression {
+    const id = x as Identifier
+
+    const argIndex = ctx.params[0].indexOf(id.name)
+
+    const argExpr = compileString(`($L($ => () => $[0][${argIndex}]($)()))`)
+
+    return argExpr
+}
 
 function handleArrowFunction(x: Expression, ctx: LazifyCtx): Expression {
     // For now assume that it's an expression;
     // TODO - handle BlockStatement.
     const arrow = x as ArrowFunctionExpression
+
+    const args = arrow.params.map(p => (p as Identifier).name)
+    ctx.params.unshift(args)
     const expr = lazify(arrow.body as Expression, ctx)
+    ctx.params.shift()
     return toVariable(ARROW_FUNCTION(expr), ctx)
 }
 
@@ -42,10 +57,6 @@ const ARROW_FUNCTION = createReplacer<Expression>(`
             return $R
         }
     })`)
-
-
-const ARG1 = createReplacer<Expression>(`($L($ => () => $[0][0]($)()))`)
-//const NTH = createReplacer<Expression>(`$L($ => ($[${PLACEHOLDER1}][0])`)
 
 function handleBinary(x: Expression, ctx: LazifyCtx): Expression {
     const binary = x as BinaryExpression
