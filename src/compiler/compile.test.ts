@@ -13,22 +13,39 @@ describe('compile', () => {
 
         const fn = eval(compiled)
 
-        const lazy = fn([])
+        const lazy = fn()
         const result = lazy()
 
         expect(result).toEqual(expected)
     })
 
     it.each([
+        ['$', 1, 1],
+        ['$', 5, 5],
+        ['$ + 2', 5, 7],
+        ['$ * $ * $', 3, 27],
+    ])('it can reference the $ argument', (code, arg, expected) => {
+        const compiled = compile(code)
+
+        const fn = eval(compiled)
+        const lazy = fn(arg)
+        const result = lazy()
+
+        expect(result).toEqual(expected)
+
+    })
+
+    it.each([
         ['(x) => 100', null, 100],
         ['(x) => x', 5, 5],
         ['(x) => x+1', 5, 6],
+        ['x => x*x', 10, 100],
     ])('can compile function expressions %#%', (code, argument, expected) => {
         const compiled = compile(code)
 
         const fn = eval(compiled)
 
-        const lazy = fn([])
+        const lazy = fn(argument)
         const resultFn = lazy()
 
         const resultLazy = resultFn(() => () => argument)

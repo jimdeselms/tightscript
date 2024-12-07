@@ -8,7 +8,10 @@ import { getVariableName } from './getVariableName'
 const WRAP_WITH_FUNCTION_WITH_BUILTINS = createReplacer(
     `(() => {
         ${BUILTINS}
-        return ${PLACEHOLDER1}
+        return (...$A) => {
+            $A = [$A.map($ => (()=>()=>$))]
+            return (${PLACEHOLDER1})($A)
+        }
     })()`)
 
 export function compile(code: string): string {
@@ -39,7 +42,7 @@ export function compile(code: string): string {
         fnBody.body.unshift(declaration)
     }
 
-    const compiled = escodegen.generate(asFunction)
+    const compiled = escodegen.generate(asFunction, { format: { semicolons: false } })
 
     console.log(compiled)
 

@@ -1,7 +1,7 @@
 // This string contains the built in functions that we will provide
 
 export const BUILTINS = `
-let $ = []
+debugger;
 function $L(expr) {
     let prev, value;
 

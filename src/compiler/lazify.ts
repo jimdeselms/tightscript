@@ -18,7 +18,7 @@ export const lazify = createVisitor<Expression, [LazifyCtx]>({
     Program: null,
     ExpressionStatement: null,
     ArrowFunctionExpression: handleArrowFunction,
-    Identifier: (n: Node) => NTH(0 as any),
+    Identifier: (n: Node) => ARG1(),
     default: (n: Node) => { throw "TBD: " + n.type }
 })
 
@@ -44,7 +44,8 @@ const ARROW_FUNCTION = createReplacer<Expression>(`
     })`)
 
 
-const NTH = createReplacer<Expression>(`($[${PLACEHOLDER1}][0])`)
+const ARG1 = createReplacer<Expression>(`($L($ => () => $[0][0]($)()))`)
+//const NTH = createReplacer<Expression>(`$L($ => ($[${PLACEHOLDER1}][0])`)
 
 function handleBinary(x: Expression, ctx: LazifyCtx): Expression {
     const binary = x as BinaryExpression
