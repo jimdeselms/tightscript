@@ -1,8 +1,8 @@
 import { ArrowFunctionExpression, BinaryExpression, Expression, Identifier, Node } from 'acorn'
-import { compileString, createReplacer, PLACEHOLDER1, PLACEHOLDER2, Replacer } from './replacePlaceholder'
-import { createVisitor, VisitorHandler } from './visitor'
-import { getVariableName } from './getVariableName'
-import { toSha } from './toSha'
+import { compileString, createReplacer, PLACEHOLDER1, PLACEHOLDER2, Replacer } from '../replacePlaceholder'
+import { createVisitor, VisitorHandler } from '../visitor'
+import { getVariableName } from '../getVariableName'
+import { toSha } from '../toSha'
 
 export type LazifyCtx = {
     variables: Expression[],

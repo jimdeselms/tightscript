@@ -1,9 +1,9 @@
 import { Expression, parse, VariableDeclaration, VariableDeclarator } from 'acorn'
 import * as escodegen from 'escodegen'
-import { createReplacer, PLACEHOLDER1 } from './replacePlaceholder'
+import { createReplacer, PLACEHOLDER1 } from '../replacePlaceholder'
 import { BUILTINS } from './BUILTINS'
 import { lazify, LazifyCtx } from './lazify'
-import { getVariableName } from './getVariableName'
+import { getVariableName } from '../getVariableName'
 
 const WRAP_WITH_FUNCTION_WITH_BUILTINS = createReplacer(
     `(() => {
