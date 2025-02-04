@@ -1,7 +1,7 @@
 import { MappingScheme, SymbolicExpression } from './expression';
 
 // We can evaluate symbolic expressions
-export function evaluateSExpression(expr: SymbolicExpression, scheme: MappingScheme<SymbolicExpression, SymbolicExpression>): SymbolicExpression {
+export function evaluateSExpression(expr: SymbolicExpression, scheme: MappingScheme): SymbolicExpression {
     if (typeof expr === 'string') {
         return expr
     } else if (typeof expr === 'number') {
@@ -9,7 +9,7 @@ export function evaluateSExpression(expr: SymbolicExpression, scheme: MappingSch
     } else if (typeof expr === 'boolean') {
         return expr
     } else if (expr === null) {
-        return expr
+        return expr as null
     } else if (Array.isArray(expr)) {
         const [first, ...rest] = expr
         const handlerName = first as string
@@ -20,7 +20,8 @@ export function evaluateSExpression(expr: SymbolicExpression, scheme: MappingSch
 
         // We've found the handler, call it.
         return mapper(...rest)
+    } else {
+        throw "Illegal expression type"
     }
 }
 
-// And we can 

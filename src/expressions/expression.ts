@@ -27,7 +27,16 @@ import crypto from 'crypto'
 // list, which can nest. A symbolic expression type may also include an arbitrary type T.
 // For example, you could have a symbolic expression class where you might store Javascript functions
 // rather than (fn '(+ $ 2))`.
-export type SymbolicExpression<T=any> = ScalarValue | T | SymbolicExpression<T>[]
+export type SymbolicExpression = ScalarValue | NonScalarValue
+export type NonScalarValue = SymbolicExpression[]
+
+export function isNonScalarValue(x: any): x is NonScalarValue {
+    return Array.isArray(x)
+}
+
+export function isScalarValue(x: any): x is ScalarValue {
+    return !Array.isArray(x)
+}
 
 // A symbolic expression is basically a lisp expression `(this (is a symbolic) expression)`; it's either a scalar value,
 // or it's a nested list of symbolic expressions.
@@ -35,18 +44,16 @@ export type ScalarValue = string | number | boolean | null
 
 // A mapper is a function that maps one symboilc expression into another
 // A mapper may be given additional context.
-export type Mapper<TFrom, TTo> = (expr: SymbolicExpression<TFrom>) => SymbolicExpression<TTo>
+export type Mapper = (expr: SymbolicExpression) => SymbolicExpression
 
-export type FunctionMapper<TFrom, TTo> = (...args: SymbolicExpression<TFrom>[]) => SymbolicExpression<TTo>
+export type FunctionMapper = (...args: any[]) => SymbolicExpression
 
 // A mapping scheme is a set of named mappers which works as a mapping function.
-export type MappingScheme<TFrom, TTo> = Record<string, FunctionMapper<TFrom, TTo>>
+export type MappingScheme = Record<string, FunctionMapper>
 
-export type ExpressionHub<T> = {
-    symbolic: SymbolicExpression<T>
+export type ExpressionHub = {
+    symbolic: SymbolicExpression
 
-    // The expression hub has the symbolic expression, but it's also a holding area
-    // for other information; other cached representations of the expression, or
-    // perhaps a cached cost or sha
+    // The symbolic expression must be strictly typed, but we can also have a bag of other values.
     [key: string]: any
 }

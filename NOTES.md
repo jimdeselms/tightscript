@@ -27,3 +27,6 @@ Basically a mapping function is just a function.
     * The compiler should be able to identify duplicate predicates and remove them.
 * Generally, when possible, you should be using bundled mapping functions, meaning that those functions all have their own consistency
 
+
+
+# The cleare

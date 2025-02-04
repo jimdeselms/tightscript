@@ -35,3 +35,5 @@ Bifoql works in "expressions". Bifoql's internal virtual machine is good at work
 
 Bifoql DOES NOT HAVE ERRORS. If anything does go wrong, it brings the whole system down, so you better make sure that nothing goes wrong.
 
+
+
