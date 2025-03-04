@@ -1,59 +1,37 @@
-// A function that modifies state and then returns the next function to call with the modified state, until there are no more changes to make.
-export type ExprFn<TState> = (state: TState) => ExprFn<TState> | null
+import { ExprFn } from '.'
 
 export type Token = string | number
 export type Expression = Token | Expression[]
 
-export type EvalState = {
-    inputExpression: Expression | null
-    inProgress: Expression[]
-    outputPrimitives: Token[]
+export type EvaluationState = {
+    primitives: Token[]
+    stack: Token[]
 }
 
-export function INITIAL_STATE(inputExpression: Expression | null): EvalState {
+export function INITIAL_STATE(...primitives: Token[]): EvaluationState {
     return {
-        inputExpression,
-        inProgress: [],
-        outputPrimitives: []
+        primitives,
+        stack: []
     }
 }
 
-export function evaluate(state: EvalState): ExprFn<EvalState> | null {
-
-    if (state.inProgress.length > 0) {
-        const top = state.inProgress[state.inProgress.length - 1]
-        if (typeof top === 'number' || typeof top === 'string') {
-            state.inProgress.pop()
-            state.outputPrimitives.push(top)
-            return evaluate
-        } else if (Array.isArray(top)) {
-            const last = top.pop()
-            if (top.length === 0) {
-                state.inProgress.pop()
-            }
-            state.inProgress.push(last!)
-            return evaluate
-        }
-    }
-
-    if (state.inputExpression === null) {
+export function evaluate(state: EvaluationState): ExprFn<EvaluationState> | null {
+    if (state.primitives.length === 0) {
         return null
     }
 
-    if (typeof state.inputExpression === 'number' || typeof state.inputExpression === 'string') {
-        const token = state.inputExpression
-        state.inputExpression = null
-        state.inProgress.push(token)
-        
+    const top = state.primitives.shift()
+    if (typeof top === 'number') {
+        state.stack.push(top)
         return evaluate
-    }
-
-    if (Array.isArray(state.inputExpression)) {
-        const last = state.inputExpression.pop()
-        if (state.inputExpression.length === 0) {
-            state.inputExpression = null
+    } else if (typeof top === 'string') {
+        const primitive = PRIMITIVES[top]
+        if (!primitive) {
+            throw "Unknown primitive " + top
         }
-        state.inProgress.push(last!)
+
+        primitive(state)
+        
         return evaluate
     }
 
@@ -67,3 +45,11 @@ export function evaluate(state: EvalState): ExprFn<EvalState> | null {
  * 
  * If there is an "inProgress" list, then we'll take the last thing in the last list
  */
+
+const PRIMITIVES: Record<string, (state: EvaluationState) => void> = {
+    add: (state) => {
+        const a = state.stack.pop() as number
+        const b = state.stack.pop() as number
+        state.stack.push(a + b)
+    }
+}
