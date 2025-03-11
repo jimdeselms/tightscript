@@ -41,4 +41,15 @@ describe('compileSExpression', () => {
         const result = simplify(['add', ['arg'], ['add', 100, 200]])
         expect(result).toEqual(['add', ['arg'], 300])
     })
+
+    it('can do a conditional', () => {
+        expect(simplify(['conditional', true, 100, 200])).toBe(100)
+        expect(simplify(['conditional', false, 100, 200])).toBe(200)
+
+        expect(simplify(['conditional', true, 100, undefined])).toBe(100)
+        expect(simplify(['conditional', false, undefined, 200])).toBe(200)
+
+        expect(simplify(['conditional', true, 100, ['error', 'foo']])).toBe(100)
+        expect(simplify(['conditional', false, ['error', 'foo'], 200])).toBe(200)
+    })
 })

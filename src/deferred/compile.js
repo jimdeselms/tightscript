@@ -5,7 +5,7 @@ export function simplify(expr) {
 
     const simplifiedElements = expr.map(e => simplify(e))
 
-    const [ primitive, ...args ] = simplifiedElements
+    const primitive = simplifiedElements[0]
 
     const handler = HANDLERS[primitive]
     if (!handler) {
@@ -24,26 +24,46 @@ export function simplify(expr) {
 
 const HANDLERS = {
     negate: numericUnary((num) => -num),
-    
+
     not: booleanUnary((val) => !val),
 
-    add: binary((lhs, rhs) => lhs + rhs),
+    add: binary(null, (lhs, rhs) => lhs + rhs),
 
     // These expressions can't be simplified further
     error: (expr) => expr,
     arg: (expr) => expr,
+
+    conditional: (expr) => {
+        const [_, condition, thenExpr, elseExpr] = expr
+        if (isSimple(condition)) {
+            if (isBoolean(condition)) {
+                return condition ? thenExpr : elseExpr
+            } else {
+                return error('condition not a boolean')
+            }
+        }
+
+        return expr
+    }
 }
 
 function numericUnary(fn) {
-    return unary(x => typeof x === 'number', 'not a number', fn)
+    return unary(null, x => typeof x === 'number', 'not a number', fn)
 }
 
 function booleanUnary(fn) {
-    return unary(x => typeof x === 'boolean', 'not a boolean', fn)
+    return unary(null, x => typeof x === 'boolean', 'not a boolean', fn)
 }
 
-function unary(checkValid, errorIfNotValid, ifValid) {
+function unary(preCheck, checkValid, errorIfNotValid, ifValid) {
+    preCheck ??= () => undefined;
+
     return (expr) => {
+        const preChecked = preCheck(expr)
+        if (preChecked !== undefined) {
+            return preChecked
+        }
+
         const num = expr[1]
         if (isUndefinedOrError(num)) {
             return num
@@ -61,8 +81,15 @@ function unary(checkValid, errorIfNotValid, ifValid) {
     }
 }
 
-function binary(ifValid) {
+function binary(preCheck, ifValid) {
+    preCheck ??= () => undefined;
+    
     return (expr) => {
+        const preChecked = preCheck(expr)
+        if (preChecked !== undefined) {
+            return preChecked
+        }
+        
         const lhs = expr[1]
         const rhs = expr[2]
         if (isUndefinedOrError(lhs)) {
@@ -114,6 +141,10 @@ function isSimple(expr) {
 
 function isNumber(expr) {
     return isSimple(expr) && typeof expr === 'number'
+}
+
+function isBoolean(expr) {
+    return isSimple(expr) && typeof expr === 'boolean'
 }
 
 function error(payload) {
