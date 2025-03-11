@@ -52,4 +52,10 @@ describe('compileSExpression', () => {
         expect(simplify(['conditional', true, 100, ['error', 'foo']])).toBe(100)
         expect(simplify(['conditional', false, ['error', 'foo'], 200])).toBe(200)
     })
+
+    it('returns an error or undefined if the condition is not boolean', () => {
+        expect(simplify(['conditional', 50, 0, 0])).toEqual(['error', 'condition not a boolean'])
+        expect(simplify(['conditional', undefined, 0, 0])).toEqual(undefined)
+        expect(simplify(['conditional', ['error', 'my error'], 0, 0])).toEqual(['error', 'my error'])
+    })
 })

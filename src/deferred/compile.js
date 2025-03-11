@@ -35,6 +35,11 @@ const HANDLERS = {
 
     conditional: (expr) => {
         const [_, condition, thenExpr, elseExpr] = expr
+
+        if (isUndefinedOrError(condition)) {
+            return condition
+        }
+        
         if (isSimple(condition)) {
             if (isBoolean(condition)) {
                 return condition ? thenExpr : elseExpr
@@ -83,7 +88,7 @@ function unary(preCheck, checkValid, errorIfNotValid, ifValid) {
 
 function binary(preCheck, ifValid) {
     preCheck ??= () => undefined;
-    
+
     return (expr) => {
         const preChecked = preCheck(expr)
         if (preChecked !== undefined) {
