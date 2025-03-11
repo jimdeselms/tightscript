@@ -23,27 +23,26 @@ export function simplify(expr) {
 }
 
 const HANDLERS = {
-    negate: unary((num) => -num),
+    negate: numericUnary((num) => -num),
+    
+    not: booleanUnary((val) => !val),
 
     add: binary((lhs, rhs) => lhs + rhs),
-    // add: (expr) => {
-    //     const lhs = expr[1]
-    //     const rhs = expr[2]
 
-    //     if (isSimple(lhs) && isSimple(rhs)) {
-    //         return lhs + rhs
-    //     } else {
-    //         return expr
-    //     }
-    // },
-
-    // Expressions can't be simplified further.
+    // These expressions can't be simplified further
     error: (expr) => expr,
-
     arg: (expr) => expr,
 }
 
-function unary(ifValid) {
+function numericUnary(fn) {
+    return unary(x => typeof x === 'number', 'not a number', fn)
+}
+
+function booleanUnary(fn) {
+    return unary(x => typeof x === 'boolean', 'not a boolean', fn)
+}
+
+function unary(checkValid, errorIfNotValid, ifValid) {
     return (expr) => {
         const num = expr[1]
         if (isUndefinedOrError(num)) {
@@ -54,8 +53,8 @@ function unary(ifValid) {
             return expr
         }
 
-        if (!isNumber(num)) {
-            return error('not a number')
+        if (!checkValid(num)) {
+            return error(errorIfNotValid)
         }
 
         return ifValid(num)

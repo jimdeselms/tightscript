@@ -12,6 +12,11 @@ describe('compileSExpression', () => {
         expect(result).toBe(-5)
     })
 
+    it('binary unary expression', () => {
+        const result = simplify(['not', true])
+        expect(result).toBe(false)
+    })
+
     it('nested unary expression', () => {
         const result = simplify(['negate', ['negate', 5]])
         expect(result).toBe(5)
