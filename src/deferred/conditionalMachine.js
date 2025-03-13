@@ -6,15 +6,30 @@ import { createSymbolMachine } from './symbolMachine'
 // machine to look at the conditionals on the top of the stack and figure out how to handle it.
 //
 // 
-export function symbolicExpander(onOutputSymbol) {
+export function conditionalMachine(outputHandler) {
+
+    const [send, state] = createSymbolMachine(outputHandler)
+
+    let skipNext = false
 
     function enqueue(sym) {
-        if (Array.isArray(sym)) {
+        if (skipNext) {
+            skipNext = false
+            return
+        }
+
+        if (sym === 'iftrue') {
+            const top = state.stack.pop()
+            skipNext = !top
+        } else if (sym === 'iffalse') {
+            const top = state.stack.pop()
+            skipNext = !!top
+        } else if (Array.isArray(sym)) {
             for (const s of sym) {
                 enqueue(s)
             }
         } else {
-            onOutputSymbol(sym)
+            send(sym)
         }
     }
 
