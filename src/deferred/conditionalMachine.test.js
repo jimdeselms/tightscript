@@ -39,7 +39,7 @@ describe('compileSExpression', () => {
 
         const machine = conditionalMachine(tok => output.push(tok))
 
-        machine(true, 'iftrue', 1, 'out', 'halt')
+        machine(true, 'iftrue', [1], 'out', 'halt')
 
         expect(output).toEqual([1])
     })
@@ -49,7 +49,7 @@ describe('compileSExpression', () => {
 
         const machine = conditionalMachine(tok => output.push(tok))
 
-        machine(2, false, 'iftrue', 1, 'out', 'halt')
+        machine(2, false, 'iftrue', [1], 'out', 'halt')
 
         expect(output).toEqual([2])
     })
@@ -67,7 +67,7 @@ describe('compileSExpression', () => {
     it('iftrue with complex value when false', () => {
         const output = []
 
-        const machine = conditionalToSymbolic(tok => output.push(tok))
+        const machine = conditionalMachine(tok => output.push(tok))
 
         machine(false, 'iftrue', [-5, 0, 'lt'], 'out', 'halt')
 
@@ -79,7 +79,7 @@ describe('compileSExpression', () => {
 
         const machine = conditionalMachine(tok => output.push(tok))
 
-        machine(false, 'iffalse', 1, 'out', 'halt')
+        machine(false, 'iffalse', [1], 'out', 'halt')
 
         expect(output).toEqual([1])
     })
@@ -99,7 +99,7 @@ describe('compileSExpression', () => {
 
         const machine = conditionalMachine(tok => output.push(tok))
 
-        machine(true, 'iftrue', [false, 'iffalse', 123], 'out', 'halt')
+        machine(true, 'iftrue', [false, 'iffalse', [123]], 'out', 'halt')
 
         expect(output).toEqual([123])
     })
@@ -112,5 +112,45 @@ describe('compileSExpression', () => {
         machine(false, 'iffalse', [false, 'iffalse', [10]], 'out', 'halt')
 
         expect(output).toEqual([10])
+    })
+
+    it('ifelse 1', () => {
+        const output = []
+
+        const machine = conditionalMachine(tok => output.push(tok))
+
+        machine(true, 'ifelse', [1], [2], 'out', 'halt')
+
+        expect(output).toEqual([1])
+    })
+
+    it('ifelse 2', () => {
+        const output = []
+
+        const machine = conditionalMachine(tok => output.push(tok))
+
+        machine(false, 'ifelse', [1], [2], 'out', 'halt')
+
+        expect(output).toEqual([2])
+    })
+
+    it('ifelse 3', () => {
+        const output = []
+
+        const machine = conditionalMachine(tok => output.push(tok))
+
+        machine(true, 'ifelse', [1, 'neg'], [2, 'neg'], 'out', 'halt')
+
+        expect(output).toEqual([-1])
+    })
+
+    it('ifelse 4', () => {
+        const output = []
+
+        const machine = conditionalMachine(tok => output.push(tok))
+
+        machine(false, 'ifelse', [1, 'neg'], [[true, 'iftrue', 2], 'neg'], 'out', 'halt')
+
+        expect(output).toEqual([-2])
     })
 })

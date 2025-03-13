@@ -11,10 +11,14 @@ export function conditionalMachine(outputHandler) {
     const [send, state] = createSymbolMachine(outputHandler)
 
     let skipNext = false
+    let skipSecond = false
 
     function enqueue(sym) {
         if (skipNext) {
             skipNext = false
+            if (!Array.isArray(sym)) {
+                throw "Expected array"
+            }
             return
         }
 
@@ -24,9 +28,21 @@ export function conditionalMachine(outputHandler) {
         } else if (sym === 'iffalse') {
             const top = state.stack.pop()
             skipNext = !!top
+        } else if (sym === 'ifelse') {
+            const top = state.stack.pop()
+            if (top) {
+                skipSecond = true
+                return
+            } else {
+                skipNext = true
+            }
         } else if (Array.isArray(sym)) {
             for (const s of sym) {
                 enqueue(s)
+            }
+            if (skipSecond) {
+                skipSecond = false
+                skipNext = true
             }
         } else {
             send(sym)

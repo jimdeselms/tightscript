@@ -33,5 +33,13 @@ const handlers = {
         const b = state.stack.pop()
 
         state.stack.push(b < a)
+    },
+
+    neg: (state) => {
+        state.stack.push(-state.stack.pop())
+    },
+
+    not: (state) => {
+        state.stack.push(!state.stack.pop())
     }
 }
