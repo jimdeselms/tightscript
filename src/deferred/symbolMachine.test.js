@@ -5,21 +5,21 @@ describe('compileSExpression', () => {
     it('constant expression', () => {
         const output = []
 
-        const machine = createSymbolMachine(tok => output.push(tok))
+        const [send, state] = createSymbolMachine(tok => output.push(tok))
 
-        machine.send(5, 'out', 'halt')
+        send(5, 'out', 'halt')
 
-        expect(machine.state.halt).toBe(true)
+        expect(state.publicState.halt).toBe(true)
         expect(output).toEqual([5])
     })
 
     it('externally-handled conditions', () => {
         const output = []
 
-        const machine = createSymbolMachine(tok => output.push(tok))
+        const [send, state] = createSymbolMachine(tok => output.push(tok))
 
-        machine.send(-5, 0, 'lt')
+        send(-5, 0, 'lt')
 
-        expect(machine.topOfStack).toBe(true)
+        expect(state.stack[state.stack.length-1]).toBe(true)
     })
 })
