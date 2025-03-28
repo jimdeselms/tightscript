@@ -1,3 +1,5 @@
+import { lexer } from './lexer'
+
 /** 
  * A compiler is a machine that takes a stream of tokens and turns it a "program" that has these capabilities.
  * 
