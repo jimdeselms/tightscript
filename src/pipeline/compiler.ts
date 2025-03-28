@@ -1,4 +1,5 @@
 import { lexer } from './lexer'
+import { chainPipelines } from './pipelines'
 
 /** 
  * A compiler is a machine that takes a stream of tokens and turns it a "program" that has these capabilities.
@@ -24,5 +25,16 @@ import { lexer } from './lexer'
  * 
  * Let's start with that and see where it leads.
  * 
- * First, there is a lexer.
+ * First, there is a lexer which reads in strings and converts them into symbols
+ * 
+ * And there is a parser which reads in symbols and and converts them into S-expressions
 */
+export const compiler = chainPipelines(lexer)
+
+export type CompilerState = LexerState & ParserState
+export type LexerState = {}
+    
+
+export type ParserState = {
+    parenLevel: number
+}

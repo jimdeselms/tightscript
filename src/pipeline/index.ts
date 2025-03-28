@@ -13,11 +13,14 @@
  * At each stage of the pipeline, we are building a machine that reads an input stream, updates state,
  * and writes output to an output function.
  * 
+ * The initial state is optional, which means that if the pipeline requires state, its creation function must create a default state.
+ * 
+ * Also, the pipeline MUST make a COPY of the initial state so that it doesn't modify a thing that might be shared.
+ * 
  * In this implementation, I want to say that the internal state is copied, so it is mutated internally, but should be invisible
  * to the scope that created the pipeline.
  */
-
-export type Pipeline<TIn, TOut, TState> = (onOut: (out: TOut) => void, initialState: TState) => {
+export type Pipeline<TIn, TOut, TState> = (onOut: (out: TOut) => void, initialState?: TState) => {
     send(input: TIn): void
 }
 
