@@ -1,4 +1,4 @@
-import { Expr, SExpression } from "./expr"
+import { SExpression } from "./expr"
 import { getShaFromString } from "./toSha"
 
 export class Registry {

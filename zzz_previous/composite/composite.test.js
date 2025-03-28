@@ -30,7 +30,7 @@ describe('Composite Operations', () => {
         const stack = [5];
 
         // We can defer building the stack function
-        const fn = buildStackFunction(defer(() => Ops.NEGATE))
+        const fn = buildStackFunction([() => Ops.NEGATE])
         fn(stack)
         expect(stack.pop()).toBe(-5);
     })

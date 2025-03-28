@@ -1,3 +1,5 @@
+import { PRIMITIVES } from './primitives'
+
 export function buildStackFunction(expression) {
     return (stack) => {
         return evaluateWithStack(expression, stack)
@@ -6,12 +8,13 @@ export function buildStackFunction(expression) {
 
 function evaluateWithStack(expression, stack) {
     for (const primitive of expression) {
-        if (typeof primitive === 'function') {
-            primitive(stack)
-        } else if (typeof primitive === 'object' && primitive.deferred) {
+        if (typeof primitive === 'string') {
+            const prim = PRIMITIVES[primitive]
+            prim(stack)
+        } else if (typeof primitive === 'function') {
             // If it's a deferred function, we need to call it to get the actual operation
             // This allows us to have big complex experssions that are built while they're being evaluated.
-            const actualOps = primitive.deferred()
+            const actualOps = primitive()
             evaluateWithStack(actualOps, stack)
 
             // A deferral must also be the last thing in the list.
