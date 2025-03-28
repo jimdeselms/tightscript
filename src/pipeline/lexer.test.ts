@@ -1,14 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { createLexerPipeline } from './lexer'
+import { lexer } from './lexer'
 
-describe('createLexerPipeline', () => {
+describe('lexer', () => {
     it('should tokenize input string into an array of tokens', () => {
-        const lexer = createLexerPipeline();
         const tokens: string[] = [];
         
         const pipelineInstance = lexer((token) => {
             tokens.push(token);
-        }, {});
+        });
 
         pipelineInstance.send('hello world this is a test');
 
@@ -16,12 +15,11 @@ describe('createLexerPipeline', () => {
     });
 
     it('should handle empty input gracefully', () => {
-        const lexer = createLexerPipeline();
         const tokens: string[] = [];
         
         const pipelineInstance = lexer((token) => {
             tokens.push(token);
-        }, {});
+        });
 
         pipelineInstance.send('');
 
@@ -29,12 +27,11 @@ describe('createLexerPipeline', () => {
     });
 
     it('should handle multiple spaces between words', () => {
-        const lexer = createLexerPipeline();
         const tokens: string[] = [];
         
         const pipelineInstance = lexer((token) => {
             tokens.push(token);
-        }, {});
+        });
 
         pipelineInstance.send('hello    world   this   is   a   test');
 
@@ -42,7 +39,6 @@ describe('createLexerPipeline', () => {
     });
 
     it('treats open and close parens as separate tokens', () => {
-        const lexer = createLexerPipeline();
         const tokens: string[] = [];
         
         const pipelineInstance = lexer((token) => {

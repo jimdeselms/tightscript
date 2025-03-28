@@ -1,5 +1,7 @@
-import { lexer } from './lexer'
-import { chainPipelines } from './pipelines'
+import { SExpression } from './index.js'
+import { lexer } from './lexer.js'
+import { parser } from './parser.js'
+import { chainPipelines } from './pipelines.js'
 
 /** 
  * A compiler is a machine that takes a stream of tokens and turns it a "program" that has these capabilities.
@@ -29,12 +31,5 @@ import { chainPipelines } from './pipelines'
  * 
  * And there is a parser which reads in symbols and and converts them into S-expressions
 */
-export const compiler = chainPipelines(lexer)
-
-export type CompilerState = LexerState & ParserState
-export type LexerState = {}
-    
-
-export type ParserState = {
-    parenLevel: number
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const compiler = chainPipelines<string, SExpression, any>(lexer, parser)

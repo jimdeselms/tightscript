@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { createParserPipeline } from './parser'
+import { parser } from './parser'
+import { SExpression } from '.';
 
 describe('createParserPipeline', () => {
     it('can parse a single string token', () => {
-        const parser = createParserPipeline();
-        const asts: unknown[] = [];
+        const asts: SExpression[] = [];
         
         const pipelineInstance = parser((ast) => {
             asts.push(ast);
@@ -16,8 +16,7 @@ describe('createParserPipeline', () => {
     })
 
     it('can parse a single number token', () => {
-        const parser = createParserPipeline();
-        const asts: unknown[] = [];
+        const asts: SExpression[] = [];
         
         const pipelineInstance = parser((ast) => {
             asts.push(ast);
@@ -29,28 +28,54 @@ describe('createParserPipeline', () => {
     })
 
     it('can parse a boolean token', () => {
-        const parser = createParserPipeline();
-        const asts: unknown[] = [];
+        const asts: SExpression[] = [];
         
         const pipelineInstance = parser((ast) => {
             asts.push(ast);
         });
 
-        pipelineInstance.send('true');
+        pipelineInstance.send("false");
 
-        expect(asts).toEqual([true]);
+        expect(asts).toEqual([false]);
     })
 
     it('can parse a simple quoted string', () => {
-        const parser = createParserPipeline();
-        const asts: unknown[] = [];
+        const asts: SExpression[] = [];
         
         const pipelineInstance = parser((ast) => {
             asts.push(ast);
         });
 
-        pipelineInstance.send('"true"');
+        pipelineInstance.send('hello');
 
-        expect(asts).toEqual(['true']);
+        expect(asts).toEqual(["hello"]);
+    })
+
+    it('can parse an empty list', () => {
+        const asts: SExpression[] = [];
+        
+        const pipelineInstance = parser((ast) => {
+            asts.push(ast);
+        });
+
+        pipelineInstance.send('(')
+        pipelineInstance.send(')')
+
+        expect(asts).toEqual([[]]);
+    })
+
+    it('can parse a list with two elements in it', () => {
+        const asts: SExpression[] = [];
+        
+        const pipelineInstance = parser((ast) => {
+            asts.push(ast);
+        });
+
+        pipelineInstance.send('(')
+        pipelineInstance.send('10')
+        pipelineInstance.send('20')
+        pipelineInstance.send(')')
+
+        expect(asts).toEqual([[10, 20]]);
     })
 })
