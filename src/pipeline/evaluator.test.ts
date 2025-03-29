@@ -11,6 +11,7 @@ describe('evaluator', () => {
         })
 
         pipelineInstance.send(123)
+        pipelineInstance.send('out')
 
         expect(tokens).toEqual([123])
     })
@@ -22,8 +23,23 @@ describe('evaluator', () => {
             tokens.push(token)  
         })
 
-        pipelineInstance.send("Hello")
+        pipelineInstance.send('"Hello"')
+        pipelineInstance.send('out')
 
         expect(tokens).toEqual(["Hello"])
+    })
+
+    it('can evaluate a simple expression', () => {
+        const tokens: Token[] = []
+
+        const pipelineInstance = evaluator((token) => {
+            tokens.push(token)  
+        })
+
+        pipelineInstance.send(5)
+        pipelineInstance.send('negate')
+        pipelineInstance.send('out')
+
+        expect(tokens).toEqual([-5])
     })
 })
