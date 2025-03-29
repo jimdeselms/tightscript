@@ -12,12 +12,16 @@ export const evaluator: Pipeline<Token, Token, EvaluatorState> = (onOut: (value:
     return {
         send: (token: Token) => {
             if (isLiteral(token)) {
-                onOut(token)
+                if (typeof token === 'string' && token[0] === '"') {
+                    onOut(token.slice(1, -1))
+                } else {
+                    onOut(token)
+                }
             }
         }
     };
 }
 
 function isLiteral(token: Token): boolean {
-    return typeof token === 'number'
+    return typeof token !== 'string' || token[0] !== '"'
 }
