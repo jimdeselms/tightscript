@@ -1,6 +1,8 @@
-import { SExpression } from './index.js'
+import { SExpression, Token } from './index.js'
 import { lexer } from './lexer.js'
 import { parser } from './parser.js'
+import { serializer } from './serializer.js'
+
 import { chainPipelines } from './pipelines.js'
 
 /** 
@@ -30,6 +32,8 @@ import { chainPipelines } from './pipelines.js'
  * First, there is a lexer which reads in strings and converts them into symbols
  * 
  * And there is a parser which reads in symbols and and converts them into S-expressions
+ * 
+ * And then, we'll need a thing that takes S-expressions and converts them into a stream of symbols that can be applied to a stack.
 */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const compiler = chainPipelines<string, SExpression, any>(lexer, parser)
+export const compiler = chainPipelines<string, Token, any>(lexer, parser, serializer)

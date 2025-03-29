@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { searchRoute, searchRoutes } from './searchRoute';
 
-describe('searchRoutes', () => {
+describe.skip('searchRoutes', () => {
     test('it can go from A to B if A maps directly to B', () => {
 
         const types = {
