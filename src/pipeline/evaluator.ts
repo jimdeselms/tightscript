@@ -10,8 +10,14 @@ export const INITIAL_STATE: EvaluatorState = {
 
 export const evaluator: Pipeline<Token, Token, EvaluatorState> = (onOut: (value: Token) => void) => {
     return {
-        send: (token: SExpression) => {
-            (token, onOut)
+        send: (token: Token) => {
+            if (isLiteral(token)) {
+                onOut(token)
+            }
         }
     };
+}
+
+function isLiteral(token: Token): boolean {
+    return typeof token === 'number'
 }

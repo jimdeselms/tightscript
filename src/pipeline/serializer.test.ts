@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { serializer } from './serializer'
-import { SExpression } from '.';
+import { SExpression, Token } from '.';
 
 describe('serializer', () => {
     it('can emit a number', () => {
@@ -40,5 +40,17 @@ describe('serializer', () => {
         pipelineInstance.send(['add', ['mul', 2, ['negate', 3]], 5]);
         
         expect(results).toEqual([5, 3, 'negate', 2, 'mul', 'add']);
+    })
+
+    it('an array of strings will wrap the arguments in quotes', () => {
+        const results: Token[] = []
+
+        const pipelineInstance = serializer((out) => {
+            results.push(out)
+        })
+
+        pipelineInstance.send(['concat', 'hello', 'world'])
+
+        expect(results).toEqual(['"world"', '"hello"', 'concat'])
     })
 })

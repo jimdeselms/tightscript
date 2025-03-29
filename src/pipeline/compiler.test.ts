@@ -27,7 +27,7 @@ describe('compiler', () => {
 
         pipelineInstance.send('(hello world)')
 
-        expect(asts).toEqual(["world", "hello"])
+        expect(asts).toEqual(['"world"', "hello"])
     })
 
     it('can parse a nested S-expression', () => {
