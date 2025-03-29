@@ -35,7 +35,19 @@ const PRIMITIVES: Record<string, (state: EvaluatorState, onOut: (value: Token) =
     negate: (state) => {
         const value = state.stack.pop() as number
         state.stack.push(-value)
-    }, 
+    },
+
+    add: (state) => {
+        const lhs = state.stack.pop() as number
+        const rhs = state.stack.pop() as number
+        state.stack.push(lhs + rhs)
+    },
+
+    sub: (state) => {
+        const lhs = state.stack.pop() as number
+        const rhs = state.stack.pop() as number
+        state.stack.push(lhs - rhs)
+    },
 
     out: (state, onOut) => {
         const value = state.stack.pop()

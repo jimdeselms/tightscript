@@ -42,4 +42,34 @@ describe('evaluator', () => {
 
         expect(tokens).toEqual([-5])
     })
+
+    it('subtracting numbers', () => {
+        const tokens: Token[] = []
+
+        const pipelineInstance = evaluator((token) => {
+            tokens.push(token)  
+        })
+
+        pipelineInstance.send(2)
+        pipelineInstance.send(5)
+        pipelineInstance.send('sub')
+        pipelineInstance.send('out')
+
+        expect(tokens).toEqual([3])
+    })
+
+    it('adding numbers', () => {
+        const tokens: Token[] = []
+
+        const pipelineInstance = evaluator((token) => {
+            tokens.push(token)  
+        })
+
+        pipelineInstance.send(2)
+        pipelineInstance.send(5)
+        pipelineInstance.send('add')
+        pipelineInstance.send('out')
+
+        expect(tokens).toEqual([7])
+    })
 })
