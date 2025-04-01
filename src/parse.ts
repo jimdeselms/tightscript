@@ -40,7 +40,7 @@ export function parseSExpression(toks: any[], placeholders: any[]): any {
         toks.shift()
 
         if (tok in CONSTANTS) {
-            return tok
+            return CONSTANTS[tok]
         }
 
         if (tok.startsWith('PH')) {
@@ -89,6 +89,7 @@ function tokens(input: string): any {
             case 'string':
                 if (char === '"') {
                     result.push(curr)
+                    curr = ""
                     state = 'start'
                 } else {
                     curr += char
