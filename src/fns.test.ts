@@ -16,9 +16,19 @@ describe('run', () => {
         { lhs: 1, rhs: undefined, expected: undefined},
         { lhs: '1', rhs: 2, expected: expr`(error "lhs not a number")`},
         { lhs: 1, rhs: '2', expected: expr`(error "rhs not a number")`},
+        { lhs: 0, rhs: 5, expected: 5 },
+        { lhs: 5, rhs: 0, expected: 5 }
     ])('can add two numbers #%#', ({ lhs, rhs, expected }) => {
         const result = evaluate(expr`(add ${lhs} ${rhs})`)
+        expect(result).toEqual(expected)
+    })
 
+    it.each([
+        { value: 1, expected: true },
+        { value: "1", expected: false },
+        { value: undefined, expected: undefined },
+    ])('can check if an expression is a number #%#', ({ value, expected }) => {
+        const result = evaluate(expr`(isNumber ${value})`)
         expect(result).toEqual(expected)
     })
 
@@ -26,6 +36,16 @@ describe('run', () => {
         const result = evaluate(expr`(error "this is an error")`)
 
         expect(result).toEqual(['error', 'this is an error'])
+    })
+
+    it.each([
+        { e: '(error "this is an error")', expected: true },
+        { e: '5', expected: false },
+        { e: 'undefined', expected: undefined },
+    ])('can check if a thing is an error #%#', ({ e, expected }) => {
+        const result = evaluate(expr`(isError ${parse(e)})`)
+
+        expect(result).toEqual(expected)
     })
 
     it('can handle a conditional expression', () => {

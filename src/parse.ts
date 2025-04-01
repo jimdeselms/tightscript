@@ -1,8 +1,10 @@
+const PLACEHOLDER = "**PLACEHOLDER**"
+
 export function expr(arr: TemplateStringsArray, ...values: any[]) {
     let text: string = arr[0] as unknown as string
     
     for (let i = 1; i < arr.length; i++) {
-        text += "PH" + (i-1)
+        text += PLACEHOLDER + (i-1)
         text += arr[i]
     }
 
@@ -10,7 +12,8 @@ export function expr(arr: TemplateStringsArray, ...values: any[]) {
 }
 
 export function parse(expr: string, placeholders: any[]=[]): any {
-    const tok = tokens(expr)
+    // Add a new line so that the last word is terminated
+    const tok = tokens(expr + '\n')
     
     return parseSExpression(tok, placeholders)
 }
@@ -43,8 +46,8 @@ export function parseSExpression(toks: any[], placeholders: any[]): any {
             return CONSTANTS[tok]
         }
 
-        if (tok.startsWith('PH')) {
-            const val = parseInt(tok.substring(2))
+        if (tok.startsWith(PLACEHOLDER)) {
+            const val = parseInt(tok.substring(PLACEHOLDER.length))
             return placeholders[val]
         }
 

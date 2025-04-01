@@ -14,21 +14,19 @@ const add = (lhs: any, rhs: any) => evaluate(expr`(cond (isUndefined ${lhs})
         undefined
         (cond (isNumber ${lhs})
             (cond (isNumber ${rhs})
-                ${justadd(lhs, rhs)}
+                ${lhs + rhs}
                 (error "rhs not a number"))
             (error "lhs not a number"))))
 `)    
-
-function justadd(x: any, y: any) {
-    return x + y
-}
 
 export const DISPATCH: Record<string, (...args: SExpression[]) => SExpression> = {
     negate,
     add,
     lt: (lhs: any, rhs: any) => lhs < rhs,
     isUndefined: (lhs: any) => lhs === undefined,
-    isNumber: (lhs: any) => typeof lhs === 'number',
+    isNumber: (lhs: any) => lhs === undefined ? undefined : typeof lhs === 'number',
+    isError: (val: any) => val === undefined ? undefined : Array.isArray(val) && val[0] === 'error',
+    isZero: (lhs: any) => lhs === 0,
 
     error: (arg) => expr`(error ${arg})`,
 
