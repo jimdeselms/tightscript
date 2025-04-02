@@ -22,12 +22,16 @@ describe('runMachine', () => {
         expect(result).toEqual(["hello"])
     })
 
-    it('can negate a number', () => {
-        const result = evaluate(parse("42 negate"))
-        expect(result).toEqual([-42])
+    it.each([
+        [ '42', -42 ],
+        [ 'undefined', undefined ]
+    ])('can negate a number #%#', (input, expected) => {
+        const result = evaluate(parse(`${input} negate`))
+        expect(result).toEqual([expected])
     })
 
     it('can branch', () => {
+        // This (x, y) syntax means that if the thing on the top of the stack is true, then it'll return the first expression otherwise the second.
         const result = evaluate(parse("true (10, 20)"))
         expect(result).toEqual([10])
     })

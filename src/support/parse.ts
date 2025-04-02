@@ -21,7 +21,7 @@ function parseExpr(tokens: string[]): InputSymbol[] {
         } else {
             const asnum = Number(curr)
             if (isNaN(asnum)) {
-                const value = CONSTANTS[curr] ?? curr
+                const value = curr in CONSTANTS ? CONSTANTS[curr] : curr
                 result.push(value)
             } else {
                 result.push(asnum)

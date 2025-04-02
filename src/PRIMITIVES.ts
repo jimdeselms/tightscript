@@ -13,6 +13,10 @@ export const PRIMITIVES: Record<string, PrimitiveFn> = {
         state.stack.push(typeof state.stack.pop() === 'number')
     },
 
+    isUndefined: (state) => {
+        state.stack.push(typeof state.stack.pop() === 'undefined')
+    },
+
     dup: (state) => {
         state.stack.push(state.stack[state.stack.length - 1])
     },
