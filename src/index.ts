@@ -1,6 +1,6 @@
 export type ScalarInputSymbol = string | number | boolean | null | undefined | symbol | bigint | StringLiteral
 export type InputSymbol = ScalarInputSymbol | Branch
-export type Branch = [ ScalarInputSymbol[], InputSymbol[] ]
+export type Branch = [ InputSymbol[], InputSymbol[] ]
 export type OutputSymbol = InputSymbol
 export type StringLiteral = `"${string}"`
 export type OutputCallback = (x: OutputSymbol) => void

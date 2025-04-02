@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { runMachine } from './runMachine'
 import { evaluate } from './__FIXTURES__/evaluate'
-import { expr } from './parse'
+import { parse } from './support/parse'
 
 describe('runMachine', () => {
     it('can put a number on the stack', () => {
@@ -13,27 +13,27 @@ describe('runMachine', () => {
     })
 
     it('can emit a numeric symbol', () => {
-        const result = evaluate(expr`123`)
+        const result = evaluate(parse("123"))
         expect(result).toEqual([123])
     })
 
     it('can emit a string symbol', () => {
-        const result = evaluate('"hello"')
+        const result = evaluate(parse('"hello"'))
         expect(result).toEqual(["hello"])
     })
 
     it('can negate a number', () => {
-        const result = evaluate(42, 'negate')
+        const result = evaluate(parse("42 negate"))
         expect(result).toEqual([-42])
     })
 
     it('can branch', () => {
-        const result = evaluate(true, [[10], [20]])
+        const result = evaluate(parse("true (10, 20)"))
         expect(result).toEqual([10])
     })
 
     it('can check if a thing is a number', () => {
-        const result = evaluate(true, 'isNumber')
+        const result = evaluate(parse("true isNumber"))
         expect(result).toEqual([false])
     })
 })

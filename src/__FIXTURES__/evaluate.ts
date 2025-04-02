@@ -1,7 +1,7 @@
 import { InputSymbol, OutputSymbol } from "..";
 import { runMachine } from "../runMachine";
 
-export function evaluate(...input: InputSymbol[]): OutputSymbol[] {
+export function evaluate(input: InputSymbol[]): OutputSymbol[] {
     const state = { stack: [] }
     const result: OutputSymbol[] = []
 

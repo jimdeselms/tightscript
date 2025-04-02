@@ -1,5 +1,6 @@
 import { InputSymbol } from ".";
+import { parse } from "./support/parse";
 
 export const BUILTINS: Record<string, InputSymbol[]> = {
-    negate: ['dup', 'isNumber', [['negateNumber'], ['error']]]
+    negate: parse("dup isNumber (negateNumber, error")
 }

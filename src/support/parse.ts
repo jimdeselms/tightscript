@@ -1,59 +1,40 @@
-const PLACEHOLDER = "**PLACEHOLDER**"
+import { InputSymbol } from ".."
 
-export function expr(arr: TemplateStringsArray, ...values: any[]) {
-    let text: string = arr[0] as unknown as string
-    
-    for (let i = 1; i < arr.length; i++) {
-        text += PLACEHOLDER + (i-1)
-        text += arr[i]
-    }
+export function parse(expr: string): InputSymbol[] {
 
-    return parse(text, values)
+    expr += '\n'
+
+    const toks = tokens(expr)
+
+    return parseExpr(toks)
 }
 
-export function parse(expr: string, placeholders: any[]=[]): any {
-    // Add a new line so that the last word is terminated
-    const tok = tokens(expr + '\n')
-    
-    return parseSExpression(tok, placeholders)
+function parseExpr(tokens: string[]): InputSymbol[] {
+    const result: InputSymbol[] = []
+
+    while (true) {
+        const curr = tokens.shift()
+        if (curr === '(') {
+            result.push([ parseExpr(tokens), parseExpr(tokens) ])
+        } else if (curr === ')' || curr === ',' || curr === undefined) {
+            return result
+        } else {
+            const asnum = Number(curr)
+            if (isNaN(asnum)) {
+                const value = CONSTANTS[curr] ?? curr
+                result.push(value)
+            } else {
+                result.push(asnum)
+            }
+        }
+    }
 }
 
 const CONSTANTS: Record<string, any> = {
-    'true': true,
-    'false': false,
-    'null': null,
-    'undefined': undefined
-}
-
-export function parseSExpression(toks: any[], placeholders: any[]): any {
-    const tok = toks[0]
-    if (tok === '(') {
-        toks.shift()
-
-        const result: any[] = []
-
-        while (toks[0] !== ')') {
-            result.push(parseSExpression(toks, placeholders))
-        }
-
-        toks.shift()
-
-        return result
-    } else {
-        toks.shift()
-
-        if (tok in CONSTANTS) {
-            return CONSTANTS[tok]
-        }
-
-        if (tok.startsWith(PLACEHOLDER)) {
-            const val = parseInt(tok.substring(PLACEHOLDER.length))
-            return placeholders[val]
-        }
-
-        const asnum = Number(tok)
-        return isNaN(asnum) ? tok : asnum
-    }
+    true: true,
+    false: false,
+    null: null,
+    undefined: undefined
 }
 
 function tokens(input: string): any {
@@ -69,6 +50,7 @@ function tokens(input: string): any {
                 } else if (isWhitespace(char)) {
                     // do nothing
                 } else if (char === '"') {
+                    curr += '"'
                     state = 'string'
                 } else {
                     curr += char
@@ -91,7 +73,7 @@ function tokens(input: string): any {
                 break
             case 'string':
                 if (char === '"') {
-                    result.push(curr)
+                    result.push(curr + '"')
                     curr = ""
                     state = 'start'
                 } else {
@@ -106,7 +88,7 @@ function tokens(input: string): any {
 }
 
 function isPunct(c: string): boolean {
-    return c === '(' || c === ')'
+    return c === '(' || c === ')' || c === ','
 }
 
 function isWhitespace(c: string): boolean {
