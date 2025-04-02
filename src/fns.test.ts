@@ -73,4 +73,17 @@ describe('run', () => {
         const e = evaluate(['negate', () => 20])
         expect(e).toEqual(-20)
     })
+
+    it.each([
+        { lhs: 1, rhs: 2, expected: 2 },
+        { lhs: 10, rhs: 20, expected: 200 },
+        { lhs: '10', rhs: 20, expected: expr`(error "lhs not a number")` },
+        { lhs: 10, rhs: '20', expected: expr`(error "rhs not a number")` },
+        { lhs: 0, rhs: undefined, expected: 0 },
+        { lhs: undefined, rhs: 0, expected: 0 },
+        { lhs: expr`(error foo)`, rhs: 0, expected: 0 },
+        { lhs: 0, rhs: expr`(error foo)`, expected: 0 }
+    ])('can multiply two numbers #%#', ({ lhs, rhs, expected }) => {
+        expect(evaluate(expr`(mul ${lhs} ${rhs})`)).toEqual(expected)
+    })
 })
