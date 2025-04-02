@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { runMachine } from './runMachine'
 import { evaluate } from './__FIXTURES__/evaluate'
+import { expr } from './parse'
 
 describe('runMachine', () => {
     it('can put a number on the stack', () => {
@@ -12,7 +13,7 @@ describe('runMachine', () => {
     })
 
     it('can emit a numeric symbol', () => {
-        const result = evaluate(123)
+        const result = evaluate(expr`123`)
         expect(result).toEqual([123])
     })
 
