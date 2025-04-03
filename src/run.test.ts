@@ -14,12 +14,12 @@ describe('runMachine', () => {
 
     it('can emit a numeric symbol', () => {
         const result = evaluate(parse("123"))
-        expect(result).toEqual([123])
+        expect(result).toEqual(123)
     })
 
     it('can emit a string symbol', () => {
         const result = evaluate(parse('"hello"'))
-        expect(result).toEqual(["hello"])
+        expect(result).toEqual("hello")
     })
 
     it.each([
@@ -27,17 +27,22 @@ describe('runMachine', () => {
         [ 'undefined', undefined ]
     ])('can negate a number #%#', (input, expected) => {
         const result = evaluate(parse(`${input} negate`))
-        expect(result).toEqual([expected])
+        expect(result).toEqual(expected)
     })
 
     it('can branch', () => {
         // This (x, y) syntax means that if the thing on the top of the stack is true, then it'll return the first expression otherwise the second.
         const result = evaluate(parse("true (10, 20)"))
-        expect(result).toEqual([10])
+        expect(result).toEqual(10)
     })
 
     it('can check if a thing is a number', () => {
         const result = evaluate(parse("true isNumber"))
-        expect(result).toEqual([false])
+        expect(result).toEqual(false)
+    })
+
+    it('can create an error', () => {
+        const result = evaluate(parse('"ERROR" error'))
+        expect(result).toMatchObject({ message: "ERROR" })
     })
 })

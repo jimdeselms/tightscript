@@ -1,7 +1,7 @@
 import { InputSymbol, OutputSymbol } from "..";
 import { runMachine } from "../runMachine";
 
-export function evaluate(input: InputSymbol[]): OutputSymbol[] {
+export function evaluate(input: InputSymbol[]): OutputSymbol {
     const state = { stack: [] }
     const result: OutputSymbol[] = []
 
@@ -9,7 +9,9 @@ export function evaluate(input: InputSymbol[]): OutputSymbol[] {
         runMachine(i, val => result.push(val), state)
     }
 
-    runMachine('emit', val => result.push(val), state)
+    if (state.stack.length !== 1) {
+        throw "Expected a stack with a single element in it"
+    }
 
-    return result
+    return state.stack.pop()
 }

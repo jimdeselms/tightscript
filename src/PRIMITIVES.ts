@@ -24,4 +24,8 @@ export const PRIMITIVES: Record<string, PrimitiveFn> = {
     drop: (state) => {
         state.stack.pop()
     },
+
+    error: (state) => {
+        state.stack.push(new Error(state.stack.pop()))
+    }
 }
