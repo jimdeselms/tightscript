@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { runMachine } from './runMachine'
-import { evaluate } from './__FIXTURES__/evaluate'
+import { evaluate, evaluateGetStack } from './__FIXTURES__/evaluate'
 import { parse } from './support/parse'
 
 describe('runMachine', () => {
@@ -24,15 +24,37 @@ describe('runMachine', () => {
 
     it.each([
         [ '42', -42 ],
-        [ 'undefined', undefined ]
-    ])('can negate a number #%#', (input, expected) => {
+        [ 'undefined', undefined ],
+        [ 'null', new Error("not a number") ]
+    ])('can negate a number #%#', (input, expected: any) => {
         const result = evaluate(parse(`${input} negate`))
-        expect(result).toEqual(expected)
+        expect(result).toMatchObject(expected)
+    })
+
+    it.each([
+        [ '10 assertNumber [10 add] [] cond', 20 ],
+        [ 'undefined assertNumber [10 add] [] cond', undefined ],
+        [ '10 assertNumber [undefined add] [] cond', undefined ],
+        [ 'true assertNumber [undefined add] [] cond', new Error("not a number") ],
+        [ '10 assertNumber [true add] [] cond', new Error("not a number") ],
+    ])('can add two numbers #%#', (expr, expected: any) => {
+        const result = evaluate(parse(expr))
+        expect(result).toMatchObject(expected)
     })
 
     it('can branch', () => {
         // This (x, y) syntax means that if the thing on the top of the stack is true, then it'll return the first expression otherwise the second.
-        const result = evaluate(parse("true (10, 20)"))
+        const result = evaluate(parse("true [10] [20] cond"))
+        expect(result).toEqual(10)
+    })
+
+    it('can run a code block', () => {
+        const result = evaluate(parse("[10] eval"))
+        expect(result).toEqual(10)
+    })
+
+    it('can run a code block that does nothing', () => {
+        const result = evaluate(parse("10 [] eval"))
         expect(result).toEqual(10)
     })
 
@@ -44,5 +66,14 @@ describe('runMachine', () => {
     it('can create an error', () => {
         const result = evaluate(parse('"ERROR" error'))
         expect(result).toMatchObject({ message: "ERROR" })
+    })
+
+    it.each([
+        [ '5 assertNumber', [5, true] ],//
+        [ 'null assertNumber', [new Error("not a number"), false] ],
+        [ 'undefined assertNumber', [undefined, false] ],
+    ])('can assert that a thing is a number #%#', (expr, expected) => {
+        const result = evaluateGetStack(parse(expr))
+        expect(result).toEqual(expected)
     })
 })

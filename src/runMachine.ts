@@ -22,15 +22,27 @@ export function runMachine(input: InputSymbol, output: OutputCallback, state: an
             }
         }
     } else if (Array.isArray(input)) {
-        const nextInputs = state.stack.pop()
+        if (input.length === 1) {
+            // It's a block; just push it onto the stack as is.
+            state.stack.push(input[0])
+        } else {
+            const nextInputs = state.stack.pop()
             ? input[0]
             : input[1]
 
-        for (const nextInput of nextInputs) {
-            runMachine(nextInput, output, state)
+            for (const nextInput of nextInputs) {
+                runMachine(nextInput, output, state)
+            }
         }
 
     } else {
         state.stack.push(input)
+    }
+}
+
+export function createMachine(output: OutputCallback): (input: InputSymbol) => void {
+    const state = { stack: [] }
+    return (input: InputSymbol) => {
+        runMachine(input, output, state)
     }
 }

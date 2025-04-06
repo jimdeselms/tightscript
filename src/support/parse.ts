@@ -16,7 +16,9 @@ function parseExpr(tokens: string[]): InputSymbol[] {
         const curr = tokens.shift()
         if (curr === '(') {
             result.push([ parseExpr(tokens), parseExpr(tokens) ])
-        } else if (curr === ')' || curr === ',' || curr === undefined) {
+        } else if (curr === '[') {
+            result.push([ parseExpr(tokens) ])
+        } else if (curr === ')' || curr === ']' || curr === ',' || curr === undefined) {
             return result
         } else {
             const asnum = Number(curr)
@@ -88,7 +90,7 @@ function tokens(input: string): any {
 }
 
 function isPunct(c: string): boolean {
-    return c === '(' || c === ')' || c === ','
+    return c === '(' || c === ')' || c === ',' || c === '[' || c === ']'
 }
 
 function isWhitespace(c: string): boolean {
