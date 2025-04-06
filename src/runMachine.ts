@@ -25,14 +25,6 @@ export function runMachine(input: InputSymbol, output: OutputCallback, state: an
         if (input.length === 1) {
             // It's a block; just push it onto the stack as is.
             state.stack.push(input[0])
-        } else {
-            const nextInputs = state.stack.pop()
-            ? input[0]
-            : input[1]
-
-            for (const nextInput of nextInputs) {
-                runMachine(nextInput, output, state)
-            }
         }
 
     } else {

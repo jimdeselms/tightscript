@@ -14,11 +14,9 @@ function parseExpr(tokens: string[]): InputSymbol[] {
 
     while (true) {
         const curr = tokens.shift()
-        if (curr === '(') {
-            result.push([ parseExpr(tokens), parseExpr(tokens) ])
-        } else if (curr === '[') {
+        if (curr === '[') {
             result.push([ parseExpr(tokens) ])
-        } else if (curr === ')' || curr === ']' || curr === ',' || curr === undefined) {
+        } else if (curr === ']' || curr === undefined) {
             return result
         } else {
             const asnum = Number(curr)
