@@ -1,5 +1,7 @@
 // @ts-nocheck
 
+import { MACHINE_PRIMITIVES } from './MACHINE_PRIMITIVES'
+
 export function machine(state) {
     if (state.input.length === 0) {
         // If there's no input, there's nothing to do
@@ -15,8 +17,4 @@ export function machine(state) {
     } else {
         state.stack.push(input)
     }
-}
-
-const MACHINE_PRIMITIVES = {
-    negate: ({ stack }) => stack.push(-stack.pop())
 }
