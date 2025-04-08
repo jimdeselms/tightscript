@@ -3,7 +3,10 @@ import { expr } from "./parse"
 
 // A primitive is a function that takes some number of args and returns an array of low-level instructions that will be "compiled" by the compiler.
 export const EXPRESSION_PRIMITIVES = {
-//    negate: (arg) => postfix(expr`(negate ${arg})`),
+    negate: (arg) => postfix(expr`(negate ${arg})`),
+    ifelse: (condition, trueBranch, falseBranch) => {
+        return return [...postfix]
+    }
 }
 
 function* postfix(sExpression) {
