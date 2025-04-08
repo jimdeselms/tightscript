@@ -14,4 +14,10 @@ describe('optimize', () => {
         const result = optimize(e, {})
         expect(result).toEqual(expr`(negate 10)`)
     })
+
+    it('can handle a deferred sub-expression', () => {
+        const e = ['negate', () => 100]
+        const result = optimize(e, {})
+        expect(result).toEqual(expr`(negate 100)`)
+    })
 })

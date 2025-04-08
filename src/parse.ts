@@ -39,6 +39,11 @@ export function parseSExpression(toks: any[], placeholders: any[]): any {
         toks.shift()
 
         return result
+    } else if (tok === "'") {
+        toks.shift()
+        const expr = toks.shift()
+
+        return ['quote', expr]
     } else {
         toks.shift()
 
@@ -106,7 +111,7 @@ function tokens(input: string): any {
 }
 
 function isPunct(c: string): boolean {
-    return c === '(' || c === ')'
+    return c === '(' || c === ')' || c === "'"
 }
 
 function isWhitespace(c: string): boolean {

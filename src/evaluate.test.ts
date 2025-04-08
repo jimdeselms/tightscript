@@ -27,4 +27,14 @@ describe('evaluate', () => {
     ])('can tell me if a value is a number', (value, expected) => {
         expect(evaluate(expr`(isNumber ${value})`)).toEqual(expected)
     })
+
+    it.each(
+        [
+            [true, expr`(fn 1)`, expr`(fn 2)`, 1],
+            [false, expr`(fn 1)`, expr`(fn 2)`, 2],
+            [true, expr`(fn (negate 1))`, expr`(fn (negate 2))`, -1],
+        ]
+    )('can do conditionals #%#', (condition, ifTrue, ifFalse, expected) => {
+        expect(evaluate(expr`(ifelse ${condition} ${ifTrue} ${ifFalse})`)).toEqual(expected)
+    })
 })

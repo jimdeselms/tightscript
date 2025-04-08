@@ -2,11 +2,12 @@
 import { optimize } from './optimize'
 import { expr } from './parse'
 import { machine } from './machine'
+import { toStream } from './toStream'
 
 export function evaluate(sExpression) {
     const state = {}
     const optimized = optimize(sExpression, state)
-    const postfixed = Array.from(postfix(optimized))
+    const postfixed = Array.from(toStream(optimized))
     
     const machineState = { input: postfixed, stack: [] }
 
@@ -15,14 +16,4 @@ export function evaluate(sExpression) {
     }
 
     return machineState.stack[0]
-}
-
-function* postfix(sExpression) {
-    if (Array.isArray(sExpression)) {
-        for (const item of sExpression.reverse()) {
-            yield* postfix(item)
-        }
-    } else {
-        yield sExpression
-    }
 }
