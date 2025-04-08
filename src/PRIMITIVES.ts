@@ -1,7 +1,7 @@
-import { PrimitiveFn } from ".";
+// @ts-nocheck
 import { runMachine } from "./runMachine";
 
-export const PRIMITIVES: Record<string, PrimitiveFn> = {
+export const PRIMITIVES = {
     emit: (state, output) => {
         output(state.stack.pop())
     },
@@ -52,4 +52,4 @@ export const PRIMITIVES: Record<string, PrimitiveFn> = {
             ifFalse.forEach((i: any) => runMachine(i, output, state))
         }
     }
-}
+}``

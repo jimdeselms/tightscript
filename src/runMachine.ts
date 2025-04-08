@@ -7,7 +7,7 @@ export function runMachine(input: InputSymbol, output: OutputCallback, state: an
         if (input[0] === '"' && input[input.length - 1] === '"') {
             state.stack.push(input.slice(1, -1))
         } else {
-            const nextSymbols = BUILTINS[input]
+            const nextSymbols = (BUILTINS as any)[input]
             if (nextSymbols) {
                 for (const nextSymbol of nextSymbols) {
                     runMachine(nextSymbol, output, state)

@@ -1,7 +1,7 @@
-import { InputSymbol } from ".";
+// @ts-nocheck
 import { parse } from "./support/parse";
 
-export const BUILTINS: Record<string, InputSymbol[]> = {
+export const BUILTINS = {
     negate: parse(`
         dup isUndefined 
             [drop undefined]
@@ -17,7 +17,7 @@ export const BUILTINS: Record<string, InputSymbol[]> = {
             [drop drop undefined]
             [dup isNumber 
                 [addNumbers]
-                [drop drop "not a number" error] cond
+                [drop drop "not a number+" error] cond
             ] cond
         `),
 
