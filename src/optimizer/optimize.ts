@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expr } from './parse'
+import { expr } from '../parse'
 
 import { OPTIMIZE_PRIMITIVES } from './OPTIMIZE_PRIMITIVES'
 

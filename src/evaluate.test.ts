@@ -54,10 +54,16 @@ describe('evaluate', () => {
         expect(evaluate(expr`(ifelse ${condition} ${ifTrue} ${ifFalse})`)).toEqual(expected)
     })
 
-    it('can expand a function', () => {
-        const fn = expr`(expand (quote (add 1 2)))`
+    it('can unquote a quote', () => {
+        const fn = expr`(unquote (quote (add 1 2)))`
         const result = evaluate(fn)
         expect(result).toEqual(3)
+    })
+
+    it('can build a function that is returned to the host', () => {
+        const fn = expr`(fn (quote (add (arg) (arg))))`
+        const resultFn = evaluate(fn)
+        expect(resultFn(10)).toEqual(20) as any
     })
 
     // it('can apply an argument to a function', () => {

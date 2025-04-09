@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { describe, it, expect } from 'vitest';
 import { optimize } from './optimize'
-import { expr } from './parse'
+import { expr } from '../parse'
 
 describe('optimize', () => {
     it('can do stuff', () => {

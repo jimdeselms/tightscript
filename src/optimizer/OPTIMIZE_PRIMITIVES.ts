@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { expr } from './parse'
+import { expr } from '../parse'
 import { optimize } from './optimize'
 
 const SIMPLE_UNARY = (name) => (state, onOut, arg) => {
@@ -18,6 +18,11 @@ export const OPTIMIZE_PRIMITIVES = {
     isNumber: SIMPLE_UNARY('isNumber'),
     isError: SIMPLE_UNARY('isError'),
     isUndefined: SIMPLE_UNARY('isUndefined'),
+    arg: (state, onOut, arg) => ['arg'],
+    fn: (state, onOut, arg) => {
+        const newArg = optimize(arg, state, onOut)
+        return expr`(fn ${newArg})`
+    },
     quote: (state, onOut, arg) => {
         // For a function, we optimize all the parts separately
         const args = []
@@ -32,7 +37,7 @@ export const OPTIMIZE_PRIMITIVES = {
 
         return ['quote', newArgs]
     },
-    expand: SIMPLE_UNARY('expand'),
+    unquote: SIMPLE_UNARY('unquote'),
     ifelse: (state, onOut, condition, ifTrue, ifFalse) => {
         const optimizedCondition = optimize(condition, state, onOut)
         const optimizedIfTrue = optimize(ifTrue, state, onOut)

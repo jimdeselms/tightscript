@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { fn } from './primitives/fn'
 
 export const MACHINE_PRIMITIVES = {
     negateNumber: ({ stack }) => stack.push(-stack.pop()),
@@ -6,7 +7,10 @@ export const MACHINE_PRIMITIVES = {
     isNumber: ({ stack }) => stack.push(typeof stack.pop() === 'number'),
     isError: ({ stack }) => stack.push(stack.pop() instanceof Error),
     isUndefined: ({ stack }) => stack.push(stack.pop() === undefined),
-    expand: (state) => {
+    arg: ({ argStack, stack }) => {
+        stack.push(argStack[0])
+    },
+    unquote: (state) => {
         const fn = state.stack.pop()
         state.input.unshift(...fn)
     },
@@ -23,7 +27,7 @@ export const MACHINE_PRIMITIVES = {
             state.input.unshift(...ifFalse)
         }
     },
-    fn: () => {}
+    fn
 }
 
 function asArray(expr) {
