@@ -17,6 +17,7 @@ export const OPTIMIZE_PRIMITIVES = {
             (fn (negateNumber ${arg}))
         )`, state, onOut)
     },
+    error: SIMPLE_UNARY('error'),
     negateNumber: SIMPLE_UNARY('negateNumber'),
     add: SIMPLE_BINARY('add'),
     isNumber: SIMPLE_UNARY('isNumber'),

@@ -24,6 +24,10 @@ describe('evaluate', () => {
         expect(evaluate(expr`(negate undefined)`)).toEqual(undefined)
     })
 
+    it('can return an error object', () => {
+        expect(evaluate(expr`(error "foo")`)).toEqual(new Error("foo"))
+    })
+
     it.each([
         [100, true],
         ['"house"', false],

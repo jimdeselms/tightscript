@@ -21,8 +21,9 @@ export function optimize(sExpression, state, onOut) {
     } else if (typeof sExpression === 'function') {
         return optimize(sExpression(state), state, onOut)
     } else {
-        onOut(sExpression)
-        return sExpression
+        typeof sExpression === 'string'
+            ? onOut(`"${sExpression}"`)
+            : onOut(sExpression)
     }
 }
 

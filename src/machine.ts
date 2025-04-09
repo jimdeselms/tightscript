@@ -10,13 +10,19 @@ export function machine(state) {
 
     const input = state.input.shift()
 
-    if (typeof input === 'string' && !input.startsWith('"')) {
-        // If it's a string, we need to call the corresponding primitive
-        const handler = MACHINE_PRIMITIVES[input]
-        if (!handler) {
-            throw new Error(`Unknown machine primitive: ${input}`)
+    if (typeof input === 'string') {
+        if (input.startsWith('"')) {
+            // If it's a string, we need to push it onto the stack
+            state.stack.push(input.slice(1, -1))
+            return
+        } else {
+            // If it's a string, we need to call the corresponding primitive
+            const handler = MACHINE_PRIMITIVES[input]
+            if (!handler) {
+                throw new Error(`Unknown machine primitive: ${input}`)
+            }
+            handler(state)
         }
-        handler(state)
     } else if (Array.isArray(input)) {
         // If it's an array, we need to push it onto the stack
         // If we call "expand" after that, then the list will be expanded.

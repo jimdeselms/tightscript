@@ -9,6 +9,7 @@ export const MACHINE_PRIMITIVES = {
         const fn = state.stack.pop()
         state.input.unshift(...fn)
     },
+    error: ({ stack }) => stack.push(new Error(stack.pop())),
     ifelse: (state) => {
         const { stack } = state
         const ifFalse = stack.pop()
