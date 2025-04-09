@@ -4,6 +4,7 @@ export const MACHINE_PRIMITIVES = {
     negateNumber: ({ stack }) => stack.push(-stack.pop()),
     add: ({ stack }) => stack.push(stack.pop() + stack.pop()),
     isNumber: ({ stack }) => stack.push(typeof stack.pop() === 'number'),
+    isError: ({ stack }) => stack.push(stack.pop() instanceof Error),
     isUndefined: ({ stack }) => stack.push(stack.pop() === undefined),
     expand: (state) => {
         const fn = state.stack.pop()

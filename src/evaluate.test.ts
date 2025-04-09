@@ -24,8 +24,16 @@ describe('evaluate', () => {
         expect(evaluate(expr`(negate undefined)`)).toEqual(undefined)
     })
 
+    it('can propagate an error argument to negate', () => {
+        expect(evaluate(expr`(negate (error fail))`)).toEqual(new Error("fail"))
+    })
+
+    it('can return an error when negating something that is not a number', () => {
+        expect(evaluate(expr`(negate string)`)).toEqual(new Error("not a number"))
+    })
+
     it('can return an error object', () => {
-        expect(evaluate(expr`(error "foo")`)).toEqual(new Error("foo"))
+        expect(evaluate(expr`(error foo)`)).toEqual(new Error("foo"))
     })
 
     it.each([
