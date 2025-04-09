@@ -14,7 +14,7 @@ export function optimize(sExpression, state, onOut) {
         const result = handler(state, onOut, ...args)
         if (Array.isArray(result)) {
             const [newPrimitive, ...newArgs] = result
-            if (newPrimitive !== 'fn' && newArgs.every(isOptimized)) {
+            if (newPrimitive !== 'quote' && newArgs.every(isOptimized)) {
                 onOut(newPrimitive)
             }
         }
@@ -28,5 +28,5 @@ export function optimize(sExpression, state, onOut) {
 }
 
 function isOptimized(sExpression) {
-    return !Array.isArray(sExpression)
+    return !Array.isArray(sExpression) && typeof sExpression !== 'function'
 }

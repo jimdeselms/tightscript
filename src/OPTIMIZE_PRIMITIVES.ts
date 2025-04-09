@@ -18,7 +18,7 @@ export const OPTIMIZE_PRIMITIVES = {
     isNumber: SIMPLE_UNARY('isNumber'),
     isError: SIMPLE_UNARY('isError'),
     isUndefined: SIMPLE_UNARY('isUndefined'),
-    fn: (state, onOut, arg) => {
+    quote: (state, onOut, arg) => {
         // For a function, we optimize all the parts separately
         const args = []
         const newArgs = Array.isArray(arg)
@@ -30,7 +30,7 @@ export const OPTIMIZE_PRIMITIVES = {
 
         onOut(args)
 
-        return ['fn', newArgs]
+        return ['quote', newArgs]
     },
     expand: SIMPLE_UNARY('expand'),
     ifelse: (state, onOut, condition, ifTrue, ifFalse) => {
@@ -45,12 +45,12 @@ export const OPTIMIZE_PRIMITIVES = {
 function NUMERIC_UNARY(name) {
     return (state, onOut, arg) => {
         return optimize(expr`(ifelse (isUndefined ${arg}) 
-            (fn undefined) 
-            (fn (ifelse (isError ${arg})
-                (fn ${arg}) 
-                (fn (ifelse (isNumber ${arg})
-                    (fn (${name} ${arg}))
-                    (fn (error "not a number"))
+            (quote undefined) 
+            (quote (ifelse (isError ${arg})
+                (quote ${arg}) 
+                (quote (ifelse (isNumber ${arg})
+                    (quote (${name} ${arg}))
+                    (quote (error "not a number"))
                 ))
             ))
         )`, state, onOut)

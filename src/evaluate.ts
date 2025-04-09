@@ -2,7 +2,6 @@
 import { optimize } from './optimize'
 import { expr } from './parse'
 import { machine } from './machine'
-import { toStream } from './toStream'
 
 export function evaluate(sExpression) {
     const state = {}

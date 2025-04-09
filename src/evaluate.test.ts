@@ -46,17 +46,21 @@ describe('evaluate', () => {
 
     it.each(
         [
-            [true, expr`(fn 1)`, expr`(fn 2)`, 1],
-            [false, expr`(fn 1)`, expr`(fn 2)`, 2],
-            [true, expr`(fn (negate 1))`, expr`(fn (negate 2))`, -1],
+            [true, expr`(quote 1)`, expr`(quote 2)`, 1],
+            [false, expr`(quote 1)`, expr`(quote 2)`, 2],
+            [true, expr`(quote (negate 1))`, expr`(quote (negate 2))`, -1],
         ]
     )('can do conditionals #%#', (condition, ifTrue, ifFalse, expected) => {
         expect(evaluate(expr`(ifelse ${condition} ${ifTrue} ${ifFalse})`)).toEqual(expected)
     })
 
     it('can expand a function', () => {
-        const fn = expr`(expand (fn (add 1 2)))`
+        const fn = expr`(expand (quote (add 1 2)))`
         const result = evaluate(fn)
         expect(result).toEqual(3)
     })
+
+    // it('can apply an argument to a function', () => {
+    //     const quote = expr`(call )`
+    // })
 })
