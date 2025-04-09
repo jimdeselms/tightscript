@@ -8,8 +8,8 @@ describe('machine', () => {
         expect(state).toEqual({ input: [], stack: [10] })
     })
 
-    it('can apply to a function', () => {
-        const state = { input: [10, [5, 'add'], 'apply'], stack: [] }
+    it('can expand a function', () => {
+        const state = { input: [[5, 10, 'add'], 'expand'], stack: [] }
         while (state.input.length > 0) machine(state)
 
         expect(state).toEqual({ input: [], stack: [15]})

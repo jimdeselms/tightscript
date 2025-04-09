@@ -37,4 +37,10 @@ describe('evaluate', () => {
     )('can do conditionals #%#', (condition, ifTrue, ifFalse, expected) => {
         expect(evaluate(expr`(ifelse ${condition} ${ifTrue} ${ifFalse})`)).toEqual(expected)
     })
+
+    it('can expand a function', () => {
+        const fn = expr`(expand (fn (add 1 2)))`
+        const result = evaluate(fn)
+        expect(result).toEqual(3)
+    })
 })

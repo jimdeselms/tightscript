@@ -6,10 +6,12 @@ import { toStream } from './toStream'
 
 export function evaluate(sExpression) {
     const state = {}
-    const optimized = optimize(sExpression, state)
-    const postfixed = Array.from(toStream(optimized))
+    const symbols = []
     
-    const machineState = { input: postfixed, stack: [] }
+    optimize(sExpression, state, (sym) => symbols.push(sym))
+//    const postfixed = Array.from(toStream(optimized))
+    
+    const machineState = { input: symbols, stack: [] }
 
     while (machineState.input.length > 0) {
         machine(machineState)

@@ -19,7 +19,7 @@ export function machine(state) {
         handler(state)
     } else if (Array.isArray(input)) {
         // If it's an array, we need to push it onto the stack
-        // If we call "apply" after that, then the list will be expanded.
+        // If we call "expand" after that, then the list will be expanded.
         state.stack.push(input)
     } else {
         state.stack.push(input)
