@@ -12,16 +12,16 @@ describe('optimize', () => {
     })
 
     it('can negate a number', () => {
-        const e = expr`(negate 10)`
+        const e = expr`(negateNumber 10)`
         let result = []
         optimize(e, {}, x => { result.push(x) })
-        expect(result).toEqual([10, 'negate'])
+        expect(result).toEqual([10, 'negateNumber'])
     })
 
     it('can handle a deferred sub-expression', () => {
-        const e = ['negate', () => 100]
+        const e = ['negateNumber', () => 100]
         let result = []
         optimize(e, {}, x => { result.push(x) })
-        expect(result).toEqual([100, 'negate'])
+        expect(result).toEqual([100, 'negateNumber'])
     })
 })

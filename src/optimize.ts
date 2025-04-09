@@ -12,8 +12,11 @@ export function optimize(sExpression, state, onOut) {
             throw new Error(`Unknown optimizer primitive: ${primitive}`)
         }
         const result = handler(state, onOut, ...args)
-        if (primitive !== 'fn' && result.every(isOptimized)) {
-            onOut(primitive)
+        if (Array.isArray(result)) {
+            const [newPrimitive, ...newArgs] = result
+            if (newPrimitive !== 'fn' && newArgs.every(isOptimized)) {
+                onOut(newPrimitive)
+            }
         }
     } else if (typeof sExpression === 'function') {
         return optimize(sExpression(state), state, onOut)

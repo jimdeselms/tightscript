@@ -20,6 +20,10 @@ describe('evaluate', () => {
         expect(evaluate(expr`(add (negate 10) (negate 20))`)).toEqual(-30)
     })
 
+    it('can negate undefined and return undefined', () => {
+        expect(evaluate(expr`(negate undefined)`)).toEqual(undefined)
+    })
+
     it.each([
         [100, true],
         ['"house"', false],

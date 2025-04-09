@@ -11,9 +11,16 @@ const SIMPLE_BINARY = (name) => (state, onOut, arg1, arg2) => {
 }
 
 export const OPTIMIZE_PRIMITIVES = {
-    negate: SIMPLE_UNARY('negate'),
+    negate: (state, onOut, arg) => {
+        return optimize(expr`(ifelse (isUndefined ${arg}) 
+            (fn undefined) 
+            (fn (negateNumber ${arg}))
+        )`, state, onOut)
+    },
+    negateNumber: SIMPLE_UNARY('negateNumber'),
     add: SIMPLE_BINARY('add'),
     isNumber: SIMPLE_UNARY('isNumber'),
+    isUndefined: SIMPLE_UNARY('isUndefined'),
     fn: (state, onOut, arg) => {
         // For a function, we optimize all the parts separately
         const args = []

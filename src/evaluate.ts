@@ -9,7 +9,6 @@ export function evaluate(sExpression) {
     const symbols = []
     
     optimize(sExpression, state, (sym) => symbols.push(sym))
-//    const postfixed = Array.from(toStream(optimized))
     
     const machineState = { input: symbols, stack: [] }
 
