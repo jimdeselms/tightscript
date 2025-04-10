@@ -1,33 +1,69 @@
-// @ts-nocheck
+import { Handler, MachineState } from ".";
+import { HANDLERS } from "./handlers";
 
-import { MACHINE_PRIMITIVES } from './MACHINE_PRIMITIVES'
+export const a = 1
 
-export function machine(state) {
-    if (state.input.length === 0) {
-        // If there's no input, there's nothing to do
-        return
-    }
+function INITIAL_STATE() { 
+    return structuredClone({
+        input: [],
+        output: [],
+        stack: [],
+    })
+}
 
-    const input = state.input.shift()
+export type Machine = (state: MachineState) => void
 
-    if (typeof input === 'string') {
-        if (input.startsWith('"')) {
-            // If it's a string, we need to push it onto the stack
-            state.stack.push(input.slice(1, -1))
-            return
-        } else {
-            // If it's a string, we need to call the corresponding primitive
-            const handler = MACHINE_PRIMITIVES[input]
-            if (!handler) {
-                throw new Error(`Unknown machine primitive: ${input}`)
-            }
-            handler(state)
+export function createMachine(onOut: (value: any) => void) {
+    const state = INITIAL_STATE()
+
+    const theMachine = machine(HANDLERS)
+
+    return (...input: any[]) => {
+        for(const i of input) {
+            run(i, state, theMachine)
         }
-    } else if (Array.isArray(input)) {
-        // If it's an array, we need to push it onto the stack
-        // If we call "expand" after that, then the list will be expanded.
-        state.stack.push(input)
-    } else {
-        state.stack.push(input)
+
+        for (const out of state.output) {
+            onOut(out)
+        }
+        state.output = []
+    }
+}
+
+function run(input: any, state: MachineState, theMachine: Machine) {
+    state.input.push(input)
+
+    while (state.input.length > 0) {
+        theMachine(state)
+    }
+}
+
+export function machine(handlers: Record<string, Handler>): Machine {
+    return (state: MachineState) => {
+        if (state.input.length === 0) return
+
+        const curr = state.input.shift()
+
+        let handler: Handler | undefined
+
+        switch (typeof curr) {
+            case 'string':
+                handler = handlers[curr]
+                break
+            case 'number':
+            case 'boolean':
+                handler = handlers[typeof curr]
+                break
+            case 'object':
+                if (curr === null) {
+                    return handlers.null
+                } else {
+                    return handlers.expr
+                }
+            default:
+                throw new Error(`Unknown type: ${typeof curr}`)
+        }
+
+        handler(state, curr)
     }
 }
