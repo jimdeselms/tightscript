@@ -1,43 +1,18 @@
-here is the game plan for the umpteenth time.
+# Tightscript
 
-A "machine" is a thing that:
-1) Accepts inputs
-2) Writes outputs
-3) Modifies state.
+Okay, I believe that I have a new idea here, and I think this might possibly be the best one yet.
 
-```
-function machine(handlers, initialState) {
-    const state = clone(initialState)
-    return (input, onOut) => {
+Compilation works with S-Expressions - I'll work in a real parser at some point... I want it to be a modified Typescript parser.
 
-        // Returns the next function to call to 
-    }
-}
-```
+Compiling builds a function which takes an argument and gives a result.
 
+Compiling is a two step process. First, we simplify the S-expression, and then we compile it down to the final function.
+
+However, the simplification itself uses the compiler to build each of the arguments to the S-exrpession.
+
+The compiler function 
+
+So... let me get this straight
 
 
-What is that I want to accomplish?
-
-Here's the pattern that I want.
-
-Let's just say, unapologetically, that I want to build is a thing that returns a function that takes an argument.
-
-Yes, as far as the pipeline thing is concerned, 
-
-
-
-
-
-
-This is what I always get hung up and I always forget to remind myself that the most important thing is that I just pick one, because they are all interchangeable.
-
-And the nice thing about 
-
-
-Right, I've said it a million times, the most important thing is that I just have that basic concept; state, input, output. That's the key to having a good pipeline.
-
-
-
-You know, the more I think about this, you've kind of got an interface.
-
+Dood? Dood!

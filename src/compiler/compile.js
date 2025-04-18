@@ -40,10 +40,16 @@ export class Compiler {
             return [primitive, ...simplifiedArgs]
         }
 
+        if (!PRIMITIVES_THAT_ALLOW_UNDEFINED_ARGS.includes(primitive) && simplifiedArgs.some(arg => arg === undefined)) {
+            return undefined
+        }
+
         return handler(...simplifiedArgs)
     }
 }
 
+const PRIMITIVES_THAT_ALLOW_UNDEFINED_ARGS = [ "isUndefined" ]
+
 function resolved(sExpr) {
-    return !Array.isArray(sExpr) && sExpr !== '$'
+    return !Array.isArray(sExpr)
 }

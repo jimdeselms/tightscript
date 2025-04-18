@@ -22,7 +22,8 @@ const CONSTANTS = {
     'true': true,
     'false': false,
     'null': null,
-    'undefined': undefined
+    'undefined': undefined,
+    '$': ['arg'],
 }
 
 export function parseSExpression(toks, placeholders) {

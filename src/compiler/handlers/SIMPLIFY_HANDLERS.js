@@ -1,15 +1,25 @@
-
+import { expr } from '../../parse'
 /**
  * @reutrns Record<string, (arg: any | undefined) => SExpression
  */
 export function SIMPLIFY_HANDLERS(state, simplify, compile) {
     return {
         negate: (value) => {
-            if (value === undefined) { return undefined }
             const cValue = compile(value)()
             return cValue === undefined
-                ? ['negate', value]
+                ? expr`(if (isNumber ${value}) (negate_safe ${value}) null)`
                 : -cValue
+        },
+
+        error: (value) => {
+            const cValue = compile(value)()
+
+            return new Error(cValue)
+        },
+
+        isUndefined: (value) => {
+            const cValue = compile(value)()
+            return cValue === undefined
         }
-    }    
+    }
 }
