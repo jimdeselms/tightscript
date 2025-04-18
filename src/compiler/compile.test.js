@@ -64,6 +64,17 @@ describe('compile', () => {
 
         expect(result).toEqual(new Error("hello"))
     })
+
+    it.each([
+        [ '($)', 10, 10 ],
+        [ '(negate $)', 5, -5]
+    ])('can define a function', (body, arg, expected) => {
+        const fn = evaluate(`(fn ${body})`)
+
+        const result = fn(arg)
+
+        expect(result).toEqual(expected)
+    })
 })
 
 function evaluate(expr, arg=undefined) {

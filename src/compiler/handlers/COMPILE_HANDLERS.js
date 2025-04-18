@@ -20,6 +20,10 @@ export function COMPILE_HANDLERS(state, compile) {
 
         isUndefined: (value) => {
             return (value) => value === undefined
+        },
+
+        fn: (body) => {
+            return () => (fnArg) => body(fnArg)
         }
     }
 }
