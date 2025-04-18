@@ -1,7 +1,11 @@
 export function COMPILE_HANDLERS(state, compile) {
     return {
-        arg: () => {
-            return (arg) => arg
+        arg: (idx) => {
+            return (args) => {
+                const first = args[0]
+                const i = idx(first)
+                return i === undefined ? undefined : args[i]
+            }
         },
 
         negate_safe: (value) => {
@@ -9,21 +13,21 @@ export function COMPILE_HANDLERS(state, compile) {
         },
 
         if: (cond, ifTrue, ifFalse) => {
-            return (arg) => {
-                return cond(arg) ? ifTrue(arg) : ifFalse(arg)
+            return (args) => {
+                return cond(args) ? ifTrue(args) : ifFalse(args)
             }
         },
 
         isNumber: (value) => {
-            return (arg) => typeof value(arg) === 'number'
+            return (args) => typeof value(args) === 'number'
         },
 
         isUndefined: (value) => {
-            return (value) => value === undefined
+            return (args) => value(args) === undefined
         },
 
         fn: (body) => {
-            return () => (fnArg) => body(fnArg)
+            return () => (...fnArgs) => body(fnArgs)
         }
     }
 }

@@ -23,7 +23,7 @@ const CONSTANTS = {
     'false': false,
     'null': null,
     'undefined': undefined,
-    '$': ['arg'],
+    '$': ['arg', 0],
 }
 
 export function parseSExpression(toks, placeholders) {
@@ -50,6 +50,13 @@ export function parseSExpression(toks, placeholders) {
         if (tok.startsWith(PLACEHOLDER)) {
             const val = parseInt(tok.substring(PLACEHOLDER.length))
             return placeholders[val]
+        }
+
+        if (tok[0] === '$') {
+            const argIdx = parseInt(tok.slice(1))
+            return isNaN(argIdx)
+                ? argIdx
+                : ['arg', argIdx]
         }
 
         const asnum = Number(tok)
