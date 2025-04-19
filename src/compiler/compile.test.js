@@ -1,6 +1,6 @@
 import { Compiler } from './compile'
-import { parse } from '../parse'
-import { it } from 'vitest'
+import { parse, exprToString } from '../parse'
+import { expect, it } from 'vitest'
 
 describe('compile', () => {
     it('can compile a resovled expression', () => {
@@ -15,23 +15,46 @@ describe('compile', () => {
         [ "undefined", undefined ],
         [ "(negate 5)", 5 ],
         [ "(negate undefined)", undefined],
+        [ "X", new Error("negate value must be a number")],
     ])('can negate $0', (expr, expected) => {
         const compiler = new Compiler()
         const sExpr = parse(`(negate ${expr})`)
         const compiled = compiler.compile(sExpr)
         const result = compiled(0)
 
-        expect(result).toBe(expected)
+        expect(result).toEqual(expected)
     })
 
     it.each([
         ["(arg 0)", 5, 5],
         ["$", 5, 5],
-        ["(negate $)", 5, -5]
+        ["(negate $)", 5, -5],
+        ["(negate $)", "X", new Error("negate value must be a number")],
     ])('can handle expression $0 with arg $1', (expr, arg, expected) => {
         const result = evaluate(expr, arg)
 
-        expect(result).toBe(expected)
+        expect(result).toEqual(expected)
+    })
+
+    it.each([
+        ['5', '10', 15],
+        ['(negate 5)', '10', 5],
+        [undefined, 10, undefined]
+        [10, undefined, undefined],
+        ['notANumber', 10, new Error('add lhs must be a number')]
+        [10, 'notANumber', new Error('add rhs must be a number')]
+    ])('can add $0 and $1', (lhs, rhs, expected) => {
+        expect(evaluate(`(add ${lhs} ${rhs})`)).toEqual(expected)
+    })
+
+    it.each([
+        // { lhs: '$0', rhs: '5', arg: 2, expected: 7 },
+        // { lhs: '2', rhs: '$0', arg: 2, expected: 4 },
+        // { lhs: '$0', rhs: '$0', arg: 5, expected: 10 },
+        { lhs: '(negate $0)', rhs: '(negate $0)', arg: 10, expected: -20 },
+        // { lhs: '(negate $0)', rhs: '1', arg: "X", expected: new Error('add lhs must be a number') }
+    ])('can add $lhs and $rhs where arg is $arg', ({ lhs, rhs, arg, expected }) => {
+        expect(evaluate(`(add ${lhs} ${rhs})`, arg)).toEqual(expected)
     })
 
     it.each([
@@ -49,6 +72,16 @@ describe('compile', () => {
     ])('isUndefined $0', (expr, expected) => {
         const result = evaluate(`(isUndefined ${expr})`)
         expect(result).toBe(expected)
+    })
+
+    it.each([
+        ['undefined', undefined],
+        ['5', false],
+        ['(error "Hello")', true],
+        ['(negate "X")', true]
+    ])('isError $0', (expr, expected) => {
+        const result = evaluate(`(isError ${expr})`)
+        expect(result).toEqual(expected)
     })
 
     it.each([
@@ -91,6 +124,7 @@ describe('compile', () => {
 function evaluate(expr, ...args) {
     const compiler = new Compiler()
     const sExpr = parse(expr)
+    const sExprStr = exprToString(sExpr)
     const compiled = compiler.compile(sExpr)
     const result = compiled(args)
     return result

@@ -9,7 +9,18 @@ export function COMPILE_HANDLERS(state, compile) {
         },
 
         negate_safe: (value) => {
-            return (arg) => -value(arg)
+            return (args) => -value(args)
+        },
+
+        add_safe: (lhs, rhs) => {
+            return (args) => lhs(args) + rhs(args)
+        },
+
+        error: (payload) => {
+            return (args) => {
+                const p = payload(args)
+                return new Error(p)
+            }
         },
 
         if: (cond, ifTrue, ifFalse) => {
@@ -24,6 +35,10 @@ export function COMPILE_HANDLERS(state, compile) {
 
         isUndefined: (value) => {
             return (args) => value(args) === undefined
+        },
+
+        isError: (value) => {
+            return (args) => value(args) instanceof Error
         },
 
         fn: (body) => {

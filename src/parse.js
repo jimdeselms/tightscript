@@ -8,14 +8,22 @@ export function expr(arr, ...values) {
         text += arr[i]
     }
 
-    return parse(text, values)
+    const result = parse(text, values)
+
+    console.log(result)
+    return result
 }
 
 export function parse(expr, placeholders=[]) {
+    if (typeof expr === 'number' || typeof expr === 'boolean' || expr === null || expr === undefined) {
+        return expr
+    }
+
     // Add a new line so that the last word is terminated
     const tok = tokens(expr + '\n')
     
-    return parseSExpression(tok, placeholders)
+    const result = parseSExpression(tok, placeholders)
+    return result
 }
 
 const CONSTANTS = {
@@ -33,8 +41,12 @@ export function parseSExpression(toks, placeholders) {
 
         const result = []
 
-        while (toks[0] !== ')') {
+        while (toks.length > 0 && toks[0] !== ')') {
             result.push(parseSExpression(toks, placeholders))
+        }
+
+        if (toks.length === 0) {
+            throw new Error("Expected matching parenthesis")
         }
 
         toks.shift()
@@ -119,4 +131,15 @@ function isPunct(c) {
 
 function isWhitespace(c) {
     return c === ' ' || c === '\t' || c === '\n' || c === '\r'
+}
+
+
+export function exprToString(expr) {
+    if (Array.isArray(expr)) {
+        return `(${expr.map(exprToString).join(' ')})`
+    } else if (expr instanceof Error) {
+        return `(error ${expr.message})`
+    } else {
+        return typeof expr === 'string' && expr.indexOf(' ') > -1 ? `"${expr}"` : String(expr)
+    }
 }
