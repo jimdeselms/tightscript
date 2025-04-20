@@ -53,6 +53,7 @@ describe('compile', () => {
     it.each([
         { lhs: '$0', rhs: '5', arg: 2, expected: 7 },
         { lhs: '2', rhs: '$0', arg: 2, expected: 4 },
+        { lhs: '(negate 2)', rhs: '$0', arg: 2, expected: 0 },
         { lhs: '$0', rhs: '$0', arg: 5, expected: 10 },
     ])('can add $lhs and $rhs where arg is $arg', ({ lhs, rhs, arg, expected }) => {
         expect(evaluate(`(add ${lhs} ${rhs})`, arg)).toEqual(expected)
