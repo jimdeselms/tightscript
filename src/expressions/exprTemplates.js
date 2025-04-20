@@ -43,6 +43,12 @@ export function BINARY(typeCheck, lhsErrorMsg, rhsErrorMsg, ifValidFn) {
     }
 }
 
+// Here is the behavior with short-circuiting operators:
+// Let's say we have multiplcation, where anything * 0 is 0.
+// Generally speaking, undefined takes precedence over an error. So, if we have "error * undefined", the result is undefined.
+// And then, if the right hand side resolves to "0", then that 0 will also take precedence over the error.
+//
+// So... in short circuiting operators, if one of the values is the short circuit value, then THAT takes precedence over everything else.
 export function BINARY_WITH_SHORT_CIRCUIT(typeCheck, lhsErrorMsg, rhsErrorMsg, ifValidFn, shortCircuitFn) {
     return (lhs, rhs) => {
         return expr`
