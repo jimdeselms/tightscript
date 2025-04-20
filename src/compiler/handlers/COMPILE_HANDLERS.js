@@ -2,24 +2,28 @@ export function COMPILE_HANDLERS(state, compile) {
     return {
         arg: (idx) => {
             return (args) => {
+                // TODO - Can I figure out a more elegant way to do this?
+                // I said that the only condition would be "if"
+                if (args === undefined) { return undefined }
+
                 const first = args[0]
-                const i = idx(first)
+                const i = idx(args)
                 return i === undefined ? undefined : args[i]
             }
         },
 
-        negate_safe: (value) => {
+        negate: (value) => {
             return (args) => -value(args)
         },
 
-        add_safe: (lhs, rhs) => {
+        add: (lhs, rhs) => {
             return (args) => lhs(args) + rhs(args)
         },
 
         error: (payload) => {
             return (args) => {
                 const p = payload(args)
-                return new Error(p)
+                return ['error', p]
             }
         },
 
@@ -38,7 +42,10 @@ export function COMPILE_HANDLERS(state, compile) {
         },
 
         isError: (value) => {
-            return (args) => value(args) instanceof Error
+            return (args) => {
+                const val = value(args)
+                return Array.isArray(val) && val[0] === 'error'
+            }
         },
 
         fn: (body) => {
