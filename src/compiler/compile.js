@@ -1,36 +1,46 @@
 import { COMPILE_HANDLERS } from './handlers/COMPILE_HANDLERS'
 import { exprToString } from '../parse'
+import { Registry } from '../Registry'
 
 export class Compiler {
     constructor() {
         this.state = {}
-//        this.simplifyHandlers = SIMPLIFY_HANDLERS(this.state, this.simplify.bind(this), this.compile.bind(this))
         this.compileHandlers = COMPILE_HANDLERS(this.state, this.compile.bind(this))
+        this.registry = new Registry()
     }
     
     compile(sExpr) {
-        const sExprAsString = exprToString(sExpr)
-        if (resolved(sExpr)) {
-            return () => sExpr
+        const exprDetails = this.registry.get(sExpr)
+        if (exprDetails?.compiled) {
+            // If it has an optimized value, then we'll get that instead.
+            return exprDetails.compiled
         }
 
-        const [primitive, ...args] = sExpr
+        let compiledFn
 
-        const compiledArgs = args.map((arg) => {
-            return this.compile(arg)
-        })
+        if (resolved(sExpr)) {
+            compiledFn = () => sExpr
+        } else {
+            const [primitive, ...args] = sExpr
 
-        const handler = this.compileHandlers[primitive]
+            const compiledArgs = args.map((arg) => {
+                return this.compile(arg)
+            })
 
-        const compiledFn = handler(...compiledArgs)
+            const handler = this.compileHandlers[primitive]
 
-        if (canBeSimplified(sExpr)) {
-            const simplifiedValue = compiledFn()
-            if (simplifiedValue !== undefined) {
-                return this.compile(simplifiedValue)
+            compiledFn = handler(...compiledArgs)
+
+            if (canBeSimplified(sExpr)) {
+                const simplifiedValue = compiledFn()
+                if (simplifiedValue !== undefined) {
+                    this.registry.setDetail(sExpr, 'optimized', simplifiedValue)
+                    compiledFn = this.compile(simplifiedValue)
+                }
             }
         }
 
+        this.registry.setDetail(sExpr, 'compiled', compiledFn)
         return compiledFn
     }
 }
@@ -47,9 +57,6 @@ function canBeSimplified(sExpr) {
 
     return args.every(canBeSimplified)
 }
-
-const UNDEFINED_AWARE_PRIMITIVES = [ "isUndefined", "isError" ]
-const ERROR_AWARE_PRIMITIVES = [ "isError" ]
 
 function resolved(sExpr) {
     return !Array.isArray(sExpr) || (sExpr[0] === 'error' && resolved(sExpr[1]))
