@@ -8,7 +8,7 @@ export class Compiler {
         this.compileHandlers = COMPILE_HANDLERS(this.state, this.compile.bind(this))
         this.registry = new Registry()
     }
-    
+
     compile(sExpr) {
         const exprDetails = this.registry.get(sExpr)
         if (exprDetails?.compiled) {
@@ -57,7 +57,7 @@ function canBeSimplified(sExpr) {
     }
 
     const [ primitive, ...args ] = sExpr
-    if (primitive === 'arg') {
+    if (primitive === 'arg' || primitive === 'isUndefined') {
         return false
     }
 

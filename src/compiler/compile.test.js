@@ -120,6 +120,15 @@ describe('compile', () => {
 
         expect(result).toEqual(expected)
     })
+
+    it.each([
+        ['5', '5', true],
+        ['5', '6', false],
+    ])('eq $0 $1', (lhs, rhs, expected) => {
+        const result = evaluate(`(eq ${parse(lhs)} ${parse(rhs)})`)
+
+        expect(result).toEqual(expected)
+    })
 })
 
 function evaluate(expr, ...args) {

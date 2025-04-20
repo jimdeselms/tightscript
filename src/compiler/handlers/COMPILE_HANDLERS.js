@@ -1,5 +1,5 @@
 export function COMPILE_HANDLERS(state, compile) {
-    return {
+    const prims = {
         arg: (idx) => {
             return (args) => {
                 // TODO - Can I figure out a more elegant way to do this?
@@ -35,7 +35,10 @@ export function COMPILE_HANDLERS(state, compile) {
         },
 
         isNumber: (value) => {
-            return (args) => typeof value(args) === 'number'
+            return (args) => {
+                const result = typeof value(args) === 'number'
+                return result
+            }
         },
 
         isUndefined: (value) => {
@@ -51,6 +54,17 @@ export function COMPILE_HANDLERS(state, compile) {
 
         fn: (body) => {
             return () => (...fnArgs) => body(fnArgs)
+        },
+
+        eq: (lhs, rhs) => {
+            return (args) => {
+                const l = lhs(args)
+                const r = rhs(args)
+
+                return l === r
+            }
         }
     }
+
+    return prims
 }
