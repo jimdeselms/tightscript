@@ -53,6 +53,24 @@ describe('exprs', () => {
     })
 
     it.each([
+        ["5", "2", "10"],
+        ["undefined", "5", "undefined"],
+        ["5", "undefined", "undefined"],
+        ["A", "5", '(error "mul lhs must be a number")'],
+        ["5", "A", '(error "mul rhs must be a number")'],
+        ["(error 'some error')", "5", "(error 'some error')"],
+        ["5", "(error 'some error')", "(error 'some error')"],
+        ["0", "undefined", "0"],
+        ["undefined", "0", "0"],
+        ["0", '(error "err")', "0"],
+        ['(error "err")', "0", "0"],
+    ])('mul #%#', (lhs, rhs, expected) => {
+        const expr = E.mul(parse(lhs), parse(rhs))
+        const result = evaluate(expr)
+        expect(result).toEqual(parse(expected))
+    })
+
+    it.each([
         ["5", "2", "3"],
         ["undefined", "5", "undefined"],
         ["5", "undefined", "undefined"],

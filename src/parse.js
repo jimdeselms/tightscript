@@ -10,7 +10,6 @@ export function expr(arr, ...values) {
 
     const result = parse(text, values)
 
-    console.log(result)
     return result
 }
 
