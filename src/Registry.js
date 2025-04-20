@@ -32,6 +32,11 @@ export class Registry{
         exprDetails[id] = value
     }
 
+    getDetail(expr, id) {
+        const exprDetails = this.get(expr)
+        return exprDetails?.[id]
+    }
+
     calcSha(str) {
         const sha = createHash('sha256')
         sha.update(str)

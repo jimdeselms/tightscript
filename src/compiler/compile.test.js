@@ -110,7 +110,9 @@ describe('compile', () => {
 
     it.each([
         [ '$', [10], 10 ],
-        [ '(negate $1)', [5, 20], -20]
+        [ '(negate $1)', [5, 20], -20],
+        [ '(add $0 $1)', [5, 20], 25],
+        [ '(div $0 (sub $1 (negate $2)))', [100, 20, 5], 4],
     ])('can define a function that takes multiple arguments $0', (body, args, expected) => {
         const fn = evaluate(`(fn ${body})`)
 

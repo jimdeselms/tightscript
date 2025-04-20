@@ -1,18 +1,17 @@
 # Tightscript
 
-Okay, I believe that I have a new idea here, and I think this might possibly be the best one yet.
+Okay, here are some rules for this new incarnation of the engine.
 
-Compilation works with S-Expressions - I'll work in a real parser at some point... I want it to be a modified Typescript parser.
-
-Compiling builds a function which takes an argument and gives a result.
-
-Compiling is a two step process. First, we simplify the S-expression, and then we compile it down to the final function.
-
-However, the simplification itself uses the compiler to build each of the arguments to the S-exrpession.
-
-The compiler function 
-
-So... let me get this straight
+1) An expression that doesn't reference an argument can be simplified
+2) If a function can be simplified, then calling the function with zero arguments will give you the simplified expression.
+3) Other than that, it's the Javascript -> SExpression compiler's job to:
+    * Make sure that the types handed to any expression are correct
+    * Split up any booleans; there's no "and" or "or" or "xor", but there's:
+        * x && y -> x ? y ? true : false : false
+        * x || y -> x ? true : y ? true : false
+        * x ^ y -> x ? y ? false : true : y
+        * !x -> x ? false : true
 
 
-Dood? Dood!
+
+!x || y -> (x ? false : true) ? true : y ? true : false

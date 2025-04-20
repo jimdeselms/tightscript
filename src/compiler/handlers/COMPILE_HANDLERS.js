@@ -16,9 +16,10 @@ export function COMPILE_HANDLERS(state, compile) {
             return (args) => -value(args)
         },
 
-        add: (lhs, rhs) => {
-            return (args) => lhs(args) + rhs(args)
-        },
+        add: (lhs, rhs) => { return (args) => lhs(args) + rhs(args) },
+        sub: (lhs, rhs) => { return (args) => lhs(args) - rhs(args) },
+        mul: (lhs, rhs) => { return (args) => lhs(args) * rhs(args) },
+        div: (lhs, rhs) => { return (args) => lhs(args) / rhs(args) },
 
         error: (payload) => {
             return (args) => {

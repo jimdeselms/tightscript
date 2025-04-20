@@ -31,7 +31,13 @@ export class Compiler {
 
             compiledFn = handler(...compiledArgs)
 
-            if (canBeSimplified(sExpr)) {
+            let simp = this.registry.getDetail(sExpr, 'canBeSimplified')
+            if (simp === undefined) {
+                simp = canBeSimplified(sExpr)
+                this.registry.setDetail(sExpr, 'canBeSimplified', simp)
+            }
+
+            if (simp) {
                 const simplifiedValue = compiledFn()
                 if (simplifiedValue !== undefined) {
                     this.registry.setDetail(sExpr, 'optimized', simplifiedValue)
