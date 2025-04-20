@@ -37,6 +37,35 @@ describe('exprs', () => {
         const result = evaluate(expr)
         expect(result).toEqual(parse(expected))
     })
+
+    it.each([
+        ["5", "2", "3"],
+        ["undefined", "5", "undefined"],
+        ["5", "undefined", "undefined"],
+        ["A", "5", '(error "sub lhs must be a number")'],
+        ["5", "A", '(error "sub rhs must be a number")'],
+        ["(error 'some error')", "5", "(error 'some error')"],
+        ["5", "(error 'some error')", "(error 'some error')"],
+    ])('sub #%#', (lhs, rhs, expected) => {
+        const expr = E.sub(parse(lhs), parse(rhs))
+        const result = evaluate(expr)
+        expect(result).toEqual(parse(expected))
+    })
+
+    it.each([
+        ["5", "2", "3"],
+        ["undefined", "5", "undefined"],
+        ["5", "undefined", "undefined"],
+        ["A", "5", '(error "div lhs must be a number")'],
+        ["5", "A", '(error "div rhs must be a number")'],
+        ["(error 'some error')", "5", "(error 'some error')"],
+        ["5", "(error 'some error')", "(error 'some error')"],
+        ["5", "0", '(error "division by zero")'],
+    ])('div #%#', (lhs, rhs, expected) => {
+        const expr = E.div(parse(lhs), parse(rhs))
+        const result = evaluate(expr)
+        expect(result).toEqual(parse(expected))
+    })
 })
 
 function evaluate(sExpr, ...args) {

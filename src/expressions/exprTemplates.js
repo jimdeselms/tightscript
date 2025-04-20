@@ -43,4 +43,3 @@ export function BINARY(typeCheck, lhsErrorMsg, rhsErrorMsg, ifValidFn) {
         `
     }
 }
-
