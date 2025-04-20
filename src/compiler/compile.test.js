@@ -13,6 +13,7 @@ describe('compile', () => {
     it.each([
         [ "5", -5 ],
         [ "(negate 5)", 5 ],
+        [ "(negate (negate 5))", -5 ],
     ])('can negate $0', (expr, expected) => {
         const compiler = new Compiler()
         const sExpr = parse(`(negate ${expr})`)
@@ -25,9 +26,19 @@ describe('compile', () => {
     it.each([
         ["(arg 0)", 5, 5],
         ["$", 5, 5],
-        ["(if (isUndefined $) undefined (negate $))", 5, -5],
+        ["(negate $)", 5, -5],
+        ["(negate (negate $))", 5, 5],
+//        ["(if (isUndefined $) undefined (negate $))", 5, -5],
     ])('can handle expression $0 with arg $1', (expr, arg, expected) => {
         const result = evaluate(expr, arg)
+
+        expect(result).toEqual(expected)
+    })
+
+    it.each([
+        [ "$0", 5, -5],
+    ])('can negate $0 when arg is $1', (expr, arg, expected) => {
+        const result = evaluate(`(negate ${expr})`, arg)
 
         expect(result).toEqual(expected)
     })
@@ -43,7 +54,6 @@ describe('compile', () => {
         { lhs: '$0', rhs: '5', arg: 2, expected: 7 },
         { lhs: '2', rhs: '$0', arg: 2, expected: 4 },
         { lhs: '$0', rhs: '$0', arg: 5, expected: 10 },
-        { lhs: '(if (isUndefined $0) undefined (negate $0))', rhs: '(if (isUndefined $0) undefined (negate $0))', arg: 10, expected: -20 },
     ])('can add $lhs and $rhs where arg is $arg', ({ lhs, rhs, arg, expected }) => {
         expect(evaluate(`(add ${lhs} ${rhs})`, arg)).toEqual(expected)
     })

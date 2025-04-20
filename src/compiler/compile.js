@@ -16,27 +16,36 @@ export class Compiler {
 
         const [primitive, ...args] = sExpr
 
-        const compiledArgs = args.map((arg) => this.compile(arg))
+        const compiledArgs = args.map((arg) => {
+            return this.compile(arg)
+        })
 
         const handler = this.compileHandlers[primitive]
-        if (!handler) {
-            throw "Cannot find handler " + primitive
-        }
 
-        const compiled = handler(...compiledArgs)
+        const compiledFn = handler(...compiledArgs)
 
-        if (primitive !== 'if' && primitive !== 'isUndefined') {
-            // Try to call the compiled expression with no args; if it returns a result, then it's been simplified further.
-            const simplifiedResult = compiled()
-            if (simplifiedResult !== undefined) {
-                if (resolved(simplifiedResult) || simplifiedResult.slice(1).every(e => e !== undefined)) {
-                    return this.compile(simplifiedResult)
-                }
+        if (canBeSimplified(sExpr)) {
+            const simplifiedValue = compiledFn()
+            if (simplifiedValue !== undefined) {
+                return this.compile(simplifiedValue)
             }
         }
 
-        return compiled
+        return compiledFn
     }
+}
+
+function canBeSimplified(sExpr) {
+    if (resolved(sExpr)) {
+        return true
+    }
+
+    const [ primitive, ...args ] = sExpr
+    if (primitive === 'arg') {
+        return false
+    }
+
+    return args.every(canBeSimplified)
 }
 
 const UNDEFINED_AWARE_PRIMITIVES = [ "isUndefined", "isError" ]
