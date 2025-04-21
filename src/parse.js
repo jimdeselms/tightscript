@@ -10,7 +10,7 @@ export function expr(arr, ...values) {
 
     const result = parse(text, values)
 
-    return result
+    return createExprProxy(result)
 }
 
 export function parse(expr, placeholders=[]) {
@@ -22,7 +22,7 @@ export function parse(expr, placeholders=[]) {
     const tok = tokens(expr + '\n')
     
     const result = parseSExpression(tok, placeholders)
-    return result
+    return createExprProxy(result)
 }
 
 const CONSTANTS = {
@@ -65,7 +65,9 @@ export function parseSExpression(toks, placeholders) {
 
         if (tok.startsWith(PLACEHOLDER)) {
             const val = parseInt(tok.substring(PLACEHOLDER.length))
-            return placeholders[val]
+
+            // Make it lazy
+            return () => placeholders[val]
         }
 
         if (tok[0] === '$') {
@@ -160,4 +162,24 @@ export function exprToString(expr) {
     } else {
         return typeof expr === 'string' && expr.indexOf(' ') > -1 ? `"${expr}"` : String(expr)
     }
+}
+
+function createExprProxy(expr) {
+    // We want to seamlessly support having expressions that have functions in them, so let's give that a shot.
+    if (typeof expr === 'function') {
+        // If it's a function at the root level, we have to resolved it now.
+        return expr()
+    }
+
+    if (!Array.isArray(expr)) {
+        return expr
+    }
+
+    return new Proxy(expr, {
+        get: (target, prop) => {
+            return typeof prop !== 'string' || isNaN(parseInt(prop))
+                ? target[prop]
+                : createExprProxy(target[prop])
+        }
+    })
 }

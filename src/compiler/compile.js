@@ -2,6 +2,8 @@ import { COMPILE_HANDLERS } from './handlers/COMPILE_HANDLERS'
 import { exprToString } from '../parse'
 import { Registry } from '../Registry'
 
+const DEBUG = false
+
 export class Compiler {
     constructor() {
         this.state = {
@@ -39,41 +41,10 @@ export class Compiler {
         } else {
             const [primitive, ...args] = sExpr
 
+            // If it's an if -- and the condition can be inferred statically -- then we can lop off 
+            // an entire branch of the if statement.
             if (primitive === 'if') {
-                const [cond, ifTrue, ifFalse] = args
-                const [ccond, coptimized] = this.compileImpl(cond)
-                const condSha = this.registry.getDetail(cond, 'sha')
-
-                const currentValue = this.state.knownConditions.get(condSha)
-
-                if (currentValue !== undefined) {
-                    [ compiledFn, optimized ] = currentValue
-                        ? this.compileImpl(ifTrue)
-                        : this.compileImpl(ifFalse)
-                } else if (typeof coptimized === 'boolean') {
-                    if (coptimized) {
-                        this.state.knownConditions.set(condSha, true)
-                        const result = this.compileImpl(ifTrue)
-                        compiledFn = result[0]
-                        optimized = result[1]
-                        this.state.knownConditions.delete(condSha)
-                    } else {
-                        this.state.knownConditions.set(condSha, false)
-                        const result = this.compileImpl(ifFalse)
-                        compiledFn = result[0]
-                        optimized = result[1]
-                        this.state.knownConditions.delete(condSha)
-                    }
-                } else {
-                    this.state.knownConditions.set(condSha, true)
-                    const [cIfTrue, oIfTrue] = this.compileImpl(ifTrue)
-                    this.state.knownConditions.set(condSha, false)
-                    const [cIfFalse, oIfFalse] = this.compileImpl(ifFalse)
-                    this.state.knownConditions.delete(condSha)
-
-                    optimized = ['if', coptimized, oIfTrue, oIfFalse]
-                    compiledFn = this.compileHandlers.if(ccond, cIfTrue, cIfFalse)
-                }
+                [ compiledFn, optimized ] = this.applyIfOptimizations(args)
             } else {
                 const compiledArgs = args.map((arg) => {
                     return this.compileImpl(arg)
@@ -99,13 +70,58 @@ export class Compiler {
             }
         }
 
-        // console.log("*** " + exprToString(sExpr))
-        // console.log("    " + exprToString(optimized))
+        if (DEBUG) {
+            const before = exprToString(sExpr)
+            const after = exprToString(optimized)
+            if (before !== after && !resolved(optimized)) {
+                console.log("*** " + before)
+                console.log("    " + after)
+            }
+        }
 
         this.registry.setDetail(sExpr, 'compiled', compiledFn)
         this.registry.setDetail(sExpr, 'optimized', optimized)
 
         return [compiledFn, optimized]
+    }
+
+    applyIfOptimizations(args, compiledFn, optimized) {
+        const [cond, ifTrue, ifFalse] = args
+        const [ccond, coptimized] = this.compileImpl(cond)
+        const condSha = this.registry.getDetail(cond, 'sha')
+
+        const currentValue = this.state.knownConditions.get(condSha)
+
+        if (currentValue !== undefined) {
+            [ compiledFn, optimized ] = currentValue
+                ? this.compileImpl(ifTrue)
+                : this.compileImpl(ifFalse)
+        } else if (typeof coptimized === 'boolean') {
+            if (coptimized) {
+                this.state.knownConditions.set(condSha, true)
+                const result = this.compileImpl(ifTrue)
+                compiledFn = result[0]
+                optimized = result[1]
+                this.state.knownConditions.delete(condSha)
+            } else {
+                this.state.knownConditions.set(condSha, false)
+                const result = this.compileImpl(ifFalse)
+                compiledFn = result[0]
+                optimized = result[1]
+                this.state.knownConditions.delete(condSha)
+            }
+        } else {
+            this.state.knownConditions.set(condSha, true)
+            const [cIfTrue, oIfTrue] = this.compileImpl(ifTrue)
+            this.state.knownConditions.set(condSha, false)
+            const [cIfFalse, oIfFalse] = this.compileImpl(ifFalse)
+            this.state.knownConditions.delete(condSha)
+
+            optimized = ['if', coptimized, oIfTrue, oIfFalse]
+            compiledFn = this.compileHandlers.if(ccond, cIfTrue, cIfFalse)
+        }
+
+        return [ compiledFn, optimized ]
     }
 
     applyPrimitiveSpecificOptimizations(sExpr, optimized, compiledFn) {
