@@ -93,17 +93,81 @@ export class Compiler {
                         optimized = simplifiedValue
                         compiledFn = this.compile(simplifiedValue)
                     }
-                } else if (primitive === 'isUndefined' && resolved(optimized[1])) {
-                    optimized = optimized[1] === undefined
-                    compiledFn = this.compile(optimized)
+                } else {
+                    [ compiledFn, optimized ] = this.applyPrimitiveSpecificOptimizations(sExpr, optimized, compiledFn)
                 }
             }
         }
+
+        // console.log("*** " + exprToString(sExpr))
+        // console.log("    " + exprToString(optimized))
 
         this.registry.setDetail(sExpr, 'compiled', compiledFn)
         this.registry.setDetail(sExpr, 'optimized', optimized)
 
         return [compiledFn, optimized]
+    }
+
+    applyPrimitiveSpecificOptimizations(sExpr, optimized, compiledFn) {
+        const primitive = sExpr[0]
+
+        switch (primitive) {
+            case "isUndefined":
+                optimized = this.optimizeIsFn(
+                    e => e === undefined, 
+                    e => resolved(e), 
+                    optimized)
+                break
+            case "isNumber":
+                optimized = this.optimizeIsFn(
+                    e => typeof e === 'number', 
+                    e => !isError(e) && resolved(e) || e[0] === 'fn' || e[0] === 'fnref', 
+                    optimized)
+                break
+
+            case "isBoolean":
+                optimized = this.optimizeIsFn(
+                    e => typeof e === 'boolean', 
+                    e => !isError(e) && resolved(e) || e[0] === 'fn' || e[0] === 'fnref', 
+                    optimized)
+                break
+    
+            case "isString":
+                optimized = this.optimizeIsFn(
+                    e => typeof e === 'string', 
+                    e => !isError(e) && resolved(e) || e[0] === 'fn' || e[0] === 'fnref', 
+                    optimized)
+                break
+
+                        case "isFunction":
+                optimized = this.optimizeIsFn(
+                    e => Array.isArray(e) && (e[0] === 'fn' || e[0] === 'fnref'),
+                    e => resolved(e) && !isError(e),
+                    optimized)
+                break
+        }
+
+        if (typeof optimized === "boolean") {
+            compiledFn = this.compile(optimized)
+        }
+
+return [compiledFn, optimized]
+    }
+
+    optimizeIsFn(isTrueTest, isFalseTest, optimized) {
+        if (!Array.isArray(optimized)) {
+            return false
+        }
+
+        const argument = optimized[1]
+        if (isTrueTest(argument)) {
+            return true
+        } else if (isFalseTest(argument)) {
+            return false
+        } else {
+            // no change
+            return optimized
+        }
     }
 
     canBeSimplified(sExpr) {
@@ -118,7 +182,7 @@ export class Compiler {
         }
     
         const [ primitive, ...args ] = sExpr
-        const result = primitive === 'arg' || primitive === 'isUndefined' || primitive === 'call' || primitive === 'fnref'
+        const result = primitive === 'arg' || primitive === 'isUndefined' || primitive === 'call' || primitive === 'fn' || primitive === 'fnref'
             ? false
             : args.every(a => this.canBeSimplified(a))
 
@@ -131,3 +195,5 @@ export class Compiler {
 function resolved(sExpr) {
     return !Array.isArray(sExpr) || (sExpr[0] === 'error' && resolved(sExpr[1]))
 }
+
+const isError = (sExpr) => Array.isArray(sExpr) && sExpr[0] === 'error'

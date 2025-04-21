@@ -84,8 +84,27 @@ describe('compile', () => {
     it.each([
         ['5', true],
         ['true', false],
+        ['hello', false],
     ])('isNumber $0', (expr, expected) => {
         const result = evaluate(`(isNumber ${expr})`)
+        expect(result).toBe(expected)
+    })
+
+    it.each([
+        ['5', false],
+        ['true', true],
+        ['hello', false],
+    ])('isBoolean $0', (expr, expected) => {
+        const result = evaluate(`(isBoolean ${expr})`)
+        expect(result).toBe(expected)
+    })
+
+    it.each([
+        ['5', false],
+        ['true', false],
+        ['hello', true],
+    ])('isString $0', (expr, expected) => {
+        const result = evaluate(`(isString ${expr})`)
         expect(result).toBe(expected)
     })
 

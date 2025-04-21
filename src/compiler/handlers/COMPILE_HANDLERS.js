@@ -46,6 +46,13 @@ export function COMPILE_HANDLERS(state, compile) {
             }
         },
 
+        isString: (value) => {
+            return (args) => {
+                const result = typeof value(args) === 'string'
+                return result
+            }
+        },
+
         isBoolean: (value) => {
             return (args) => {
                 const result = typeof value(args) === 'boolean'

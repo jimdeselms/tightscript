@@ -90,6 +90,7 @@ describe('exprs', () => {
             ['(fn $)', ['5'], 5],
             ['(fn (negate $))', ['5'], -5],
             ['(fn (sub $0 $1))', ['20', '5'], 15],
+            ['(fn (add $0 $0))', ['10'], 20],
             ['undefined', ['5'], undefined],
             ['(error "ERROR")', ['5'], parse('(error "ERROR")')],
             ['"HELLO"', ['5'], parse('(error "call first argument must be a function")')]

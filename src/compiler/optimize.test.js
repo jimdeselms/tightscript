@@ -4,9 +4,60 @@ import { expect, it } from 'vitest'
 import * as E from '../expressions/exprs'
 
 describe('optimize', () => {
-    it('can optimize isUndefined if its argument is literal', () => {
-        const result = optimize("(isUndefined 5)")
-        expect(result).toBe(false)
+    it.each([
+        [ "5", false ],
+        [ "undefined", true ],
+        [ "(negate $)", parse("(isUndefined (negate $))")]
+    ])('can optimize isUndefined #%#', (expr, expected) => {
+        const result = optimize(`(isUndefined ${expr})`)
+        expect(result).toEqual(expected)
+    })
+
+    it.each([
+        [ "5", false ],
+        [ "undefined", false ],
+        [ "(fn $)", true],
+        [ "(fnref 1)", true],
+        [ "(negate $)", parse("(isFunction (negate $))")]
+    ])('can optimize isFunction #%#', (expr, expected) => {
+        const result = optimize(`(isFunction ${expr})`)
+        expect(result).toEqual(expected)
+    })
+
+    it.each([
+        [ "5", true ],
+        [ '"5"', false ],
+        [ '"HI"', false ],
+        [ true, false ],
+        [ "undefined", false ],
+        [ "(fn $)", false],
+    ])('can optimize isNumber #%#', (expr, expected) => {
+        const result = optimize(`(isNumber ${expr})`)
+        expect(result).toEqual(expected)
+    })
+
+    it.each([
+        [ "5", false ],
+        [ '"5"', false ],
+        [ '"HI"', false ],
+        [ true, true ],
+        [ "undefined", false ],
+        [ "(fn $)", false],
+    ])('can optimize isBoolean #%#', (expr, expected) => {
+        const result = optimize(`(isBoolean ${expr})`)
+        expect(result).toEqual(expected)
+    })
+
+    it.each([
+        [ "5", false ],
+        [ '"5"', true ],
+        [ '"HI"', true ],
+        [ true, false ],
+        [ "undefined", false ],
+        [ "(fn $)", false],
+    ])('can optimize isString #%#', (expr, expected) => {
+        const result = optimize(`(isString ${expr})`)
+        expect(result).toEqual(expected)
     })
 })
 

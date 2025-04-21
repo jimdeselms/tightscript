@@ -15,3 +15,6 @@ Okay, here are some rules for this new incarnation of the engine.
 
 
 !x || y -> (x ? false : true) ? true : y ? true : false
+
+
+All right! Making some progress!
