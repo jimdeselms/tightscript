@@ -29,43 +29,57 @@ export class Compiler {
     }
 
     compileImpl(sExpr) {
-        let optimized = this.registry.getDetail(sExpr, "optimized")
-        let compiledFn = this.registry.getDetail(sExpr, "compiled")
+        let optimized
+        let compiledFn
 
-        if (compiledFn) {
-            // If it has an optimized value, then we'll get that instead.
-            return [ compiledFn, optimized ]
-        } else if (resolved(sExpr)) {
-            optimized = sExpr
-            compiledFn = () => sExpr
+        if (Array.isArray(sExpr) && sExpr[0] === 'if') {
+            const args = sExpr.slice(1);
+            // Try to optimize the if first, because we may find that one of the branches can be pruned, in which case we can
+            // avoid it.
+            [ compiledFn, optimized ] = this.applyIfOptimizations(args)
+
+            // We can't compute the sha of the unoptimized expression, because that will cause the lazy branches to be evaluated,
+            // so we'll just pretend that this is the original.
+            sExpr = optimized
         } else {
-            const [primitive, ...args] = sExpr
+            optimized = this.registry.getDetail(sExpr, "optimized")
+            compiledFn = this.registry.getDetail(sExpr, "compiled")
 
-            // If it's an if -- and the condition can be inferred statically -- then we can lop off 
-            // an entire branch of the if statement.
-            if (primitive === 'if') {
-                [ compiledFn, optimized ] = this.applyIfOptimizations(args)
+            if (compiledFn) {
+                // If it has an optimized value, then we'll get that instead.
+                return [ compiledFn, optimized ]
+            } else if (resolved(sExpr)) {
+                optimized = sExpr
+                compiledFn = () => sExpr
             } else {
-                const compiledArgs = args.map((arg) => {
-                    return this.compileImpl(arg)
-                })
+                const [primitive, ...args] = sExpr
 
-                const handler = this.compileHandlers[primitive]
-                if (!handler) {
-                    throw new Error(`No handler for primitive: ${primitive}`)
-                }
-
-                optimized = [primitive, ...compiledArgs.map(a => a[1])]
-                compiledFn = handler(...compiledArgs.map(a => a[0]))
-
-                if (this.canBeSimplified(sExpr)) {
-                    const simplifiedValue = compiledFn()
-                    if (simplifiedValue !== undefined) {
-                        optimized = simplifiedValue
-                        compiledFn = this.compile(simplifiedValue)
-                    }
+                // If it's an if -- and the condition can be inferred statically -- then we can lop off 
+                // an entire branch of the if statement.
+                if (primitive === 'if') {
+                    [ compiledFn, optimized ] = this.applyIfOptimizations(args)
                 } else {
-                    [ compiledFn, optimized ] = this.applyPrimitiveSpecificOptimizations(sExpr, optimized, compiledFn)
+                    const compiledArgs = args.map((arg) => {
+                        return this.compileImpl(arg)
+                    })
+
+                    const handler = this.compileHandlers[primitive]
+                    if (!handler) {
+                        throw new Error(`No handler for primitive: ${primitive}`)
+                    }
+
+                    optimized = [primitive, ...compiledArgs.map(a => a[1])]
+                    compiledFn = handler(...compiledArgs.map(a => a[0]))
+
+                    if (this.canBeSimplified(sExpr)) {
+                        const simplifiedValue = compiledFn()
+                        if (simplifiedValue !== undefined) {
+                            optimized = simplifiedValue
+                            compiledFn = this.compile(simplifiedValue)
+                        }
+                    } else {
+                        [ compiledFn, optimized ] = this.applyPrimitiveSpecificOptimizations(sExpr, optimized, compiledFn)
+                    }
                 }
             }
         }

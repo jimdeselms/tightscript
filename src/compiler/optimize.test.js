@@ -59,6 +59,14 @@ describe('optimize', () => {
         const result = optimize(`(isString ${expr})`)
         expect(result).toEqual(expected)
     })
+
+    it.skip('will not optimize pruned branches', () => {
+        // It can't handle symbols, so this would blow up if the false branch weren't pruned
+        const e = expr`(if true 1 ${ Symbol.for("FOO") })`
+        const compiler = new Compiler()
+        const result = compiler.optimize(e)
+        expect(result).toEqual(1)
+    })
 })
 
 function optimize(expr) {
