@@ -1,6 +1,7 @@
 import { Compiler } from './compile'
 import { expr, parse, exprToString } from '../parse'
 import { expect, it } from 'vitest'
+import * as E from '../expressions/exprs'
 
 describe('compile', () => {
     it('can compile a resovled expression', () => {
@@ -216,6 +217,16 @@ describe('compile', () => {
         const fn = compiled([])
         const result = fn(() => 10)
         expect(result).toBe(55)
+    })
+
+    it.each([
+        ["(if (eq $0 1) (if (eq $0 1) 1 2) (if (eq $0 1) 3 4))", "(if (eq $0 1) 1 4)"],
+        ["(if (eq $0 1) (if (eq $0 1) 1 2) 3)", "(if (eq $0 1) 1 3)"],
+        ["(if (isUndefined 0) 1 2)", "2"]
+    ])('will simplify expressions that have nested if statements #%#', (expr, expected) => {
+        const compiler = new Compiler()
+        const optimized = compiler.optimize(parse(expr))
+        expect(exprToString(optimized)).toEqual(expected)
     })
 })
 
