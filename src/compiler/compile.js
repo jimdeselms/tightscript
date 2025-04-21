@@ -57,7 +57,7 @@ export class Compiler {
         }
     
         const [ primitive, ...args ] = sExpr
-        const result = primitive === 'arg' || primitive === 'isUndefined'
+        const result = primitive === 'arg' || primitive === 'isUndefined' || primitive === 'call'
             ? false
             : args.every(a => this.canBeSimplified(a))
 

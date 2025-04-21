@@ -84,6 +84,21 @@ describe('exprs', () => {
             expect(result).toEqual(parse(expected))
         })
     })
+
+    describe('call', () => {
+        it.each([
+            ['(fn $)', ['5'], 5],
+            ['(fn (negate $))', ['5'], -5],
+            ['(fn (sub $0 $1))', ['20', '5'], 15],
+            ['undefined', ['5'], undefined],
+            ['(error "ERROR")', ['5'], parse('(error "ERROR")')],
+            ['"HELLO"', ['5'], parse('(error "call first argument must be a function")')]
+        ])('call #%#', (fn, args, expected) => {
+            const expr = E.call(parse(fn), ...args.map(a => parse(a)))
+            const result = evaluate(expr)
+            expect(result).toEqual(expected)
+        })
+    })
 })
 
 function evaluate(sExpr, ...args) {

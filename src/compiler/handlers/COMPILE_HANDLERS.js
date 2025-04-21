@@ -42,6 +42,13 @@ export function COMPILE_HANDLERS(state, compile) {
             return (args) => value(args) === undefined
         },
 
+        isFunction: (value) => {
+            return (args) => {
+                const val = value(args)
+                return typeof val === 'function'
+            }
+        },
+
         isError: (value) => {
             return (args) => {
                 const val = value(args)
@@ -57,7 +64,9 @@ export function COMPILE_HANDLERS(state, compile) {
         call: (fn, ...fnargs) => {
             return (args) => {
                 // We need to capture the arguments so that we can use them to resolve the arguments later
-                return fn(args)(...fnargs.map(arg => () => arg(args)))
+                const fnValue = fn(args)
+
+                return fnValue(...fnargs.map(arg => () => arg(args)))
             }
         },
 

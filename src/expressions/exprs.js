@@ -19,3 +19,19 @@ export const div = BINARY('isNumber', 'div lhs must be a number', 'div rhs must 
         (sub ${lhs} ${rhs})
     )`)
 
+export const call = (fn, ...args) => {
+    const callExpr = ['call', fn, ...args]
+
+    return expr`
+        (if (isUndefined ${fn})
+            undefined
+            (if (isError ${fn})
+                ${fn}
+                (if (isFunction ${fn})
+                    ${callExpr}
+                    (error "call first argument must be a function")
+                )
+            )
+        )
+    `
+}
