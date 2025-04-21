@@ -99,6 +99,19 @@ describe('exprs', () => {
             expect(result).toEqual(expected)
         })
     })
+
+    describe('ifte', () => {
+        it.each([
+            ['true', '1', '2', 1],
+            ['false', '1', '2', 2],
+            ['undefined', '1', '2', undefined],
+            ['HELLO', '1', '2', parse('(error "if condition must be boolean")')],
+        ])('ifte #%#', (condition, ifTrue, ifFalse, expected) => {
+            const expr = E.ifte(parse(condition), parse(ifTrue), parse(ifFalse))
+            const result = evaluate(expr)
+            expect(result).toEqual(expected)
+        })
+    })
 })
 
 function evaluate(sExpr, ...args) {

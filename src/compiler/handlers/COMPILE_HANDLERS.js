@@ -38,6 +38,13 @@ export function COMPILE_HANDLERS(state, compile) {
             }
         },
 
+        isBoolean: (value) => {
+            return (args) => {
+                const result = typeof value(args) === 'boolean'
+                return result
+            }
+        },
+
         isUndefined: (value) => {
             return (args) => value(args) === undefined
         },

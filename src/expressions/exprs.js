@@ -35,3 +35,17 @@ export const call = (fn, ...args) => {
         )
     `
 }
+
+export const ifte = (cond, ifTrue, ifFalse) => expr`
+    (if (isUndefined ${cond})
+        undefined
+        (if (isError ${cond})
+            ${cond}
+            (if (isBoolean ${cond})
+                (if ${cond} ${ifTrue} ${ifFalse})
+                (error "if condition must be boolean")
+            )
+        )
+    )
+    (if ${cond} ${ifTrue} ${ifFalse})
+`

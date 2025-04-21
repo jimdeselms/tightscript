@@ -28,6 +28,9 @@ export class Compiler {
             })
 
             const handler = this.compileHandlers[primitive]
+            if (!handler) {
+                throw new Error(`No handler for primitive: ${primitive}`)
+            }
 
             compiledFn = handler(...compiledArgs)
 
@@ -45,7 +48,6 @@ export class Compiler {
     }
 
     canBeSimplified(sExpr) {
-        false
         const exprAsString = exprToString(sExpr)
         if (resolved(sExpr)) {
             return true
