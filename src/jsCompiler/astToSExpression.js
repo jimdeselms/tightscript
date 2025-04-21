@@ -11,6 +11,12 @@ function toExpr(ast) {
         case 'BinaryExpression':
             const lhs = toExpr(ast.left), rhs = toExpr(ast.right)
             return BINARY_OPERATORS[ast.operator](lhs, rhs)
+        case 'ConditionalExpression':
+            const cond = toExpr(ast.test)
+            const ifTrue = toExpr(ast.consequent)
+            const ifFalse = toExpr(ast.alternate)
+
+            return E.ifte(cond, ifTrue, ifFalse)
         default:
             throw new Error(`Unsupported AST node type: ${ast.type}`)
     }
