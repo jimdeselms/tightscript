@@ -165,6 +165,20 @@ describe('compile', () => {
         const result = fn(() => 10, () => 5)
         expect(result).toBe(5)
     })
+
+    it('can call a recursive function', () => {
+        const compiler = new Compiler()
+        compiler.declareFunction(0, parse(`
+            (if (eq $0 0)
+                0
+                (call (fnref 0) (sub $0 1))
+            )`))
+
+        const compiled = compiler.compile(parse('(fnref 0)'))
+        const fn = compiled([])
+        const result = fn(() => 10)
+        expect(result).toBe(0)
+    })
 })
 
 function evaluate(expr, ...args) {
