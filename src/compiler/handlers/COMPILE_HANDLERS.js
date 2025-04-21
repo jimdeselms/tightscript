@@ -3,9 +3,13 @@ export function COMPILE_HANDLERS(state, compile) {
         arg: (idx) => {
             return (args) => {
                 return args[idx()]()
-                //return args ? args[idx()]() : undefined
-                // const i = idx()
-                // return i === undefined ? undefined : args[i]()
+            }
+        },
+
+        fnref: (idx) => {
+            // Like "arg", the index must be a resolved number.
+            return () => {
+                return state.fns[idx()]
             }
         },
 

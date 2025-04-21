@@ -156,6 +156,15 @@ describe('compile', () => {
         const result = evaluate(expr)
         expect(result).toEqual(15)
     })
+
+    it('can declare numbered functions', () => {
+        const compiler = new Compiler()
+        compiler.declareFunction(0, parse('(add $0 (negate $1))'))
+        const compiled = compiler.compile(parse('(fnref 0)'))
+        const fn = compiled([])
+        const result = fn(() => 10, () => 5)
+        expect(result).toBe(5)
+    })
 })
 
 function evaluate(expr, ...args) {

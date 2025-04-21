@@ -4,9 +4,15 @@ import { Registry } from '../Registry'
 
 export class Compiler {
     constructor() {
-        this.state = {}
+        this.state = {
+            fns: [],
+        }
         this.compileHandlers = COMPILE_HANDLERS(this.state, this.compile.bind(this))
         this.registry = new Registry()
+    }
+
+    declareFunction(ordinal, body) {
+        this.state.fns[ordinal] = this.compile(['fn', body])()
     }
 
     compile(sExpr) {
@@ -59,7 +65,7 @@ export class Compiler {
         }
     
         const [ primitive, ...args ] = sExpr
-        const result = primitive === 'arg' || primitive === 'isUndefined' || primitive === 'call'
+        const result = primitive === 'arg' || primitive === 'isUndefined' || primitive === 'call' || primitive === 'fnref'
             ? false
             : args.every(a => this.canBeSimplified(a))
 
