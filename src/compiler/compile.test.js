@@ -1,5 +1,5 @@
 import { Compiler } from './compile'
-import { parse, exprToString } from '../parse'
+import { expr, parse, exprToString } from '../parse'
 import { expect, it } from 'vitest'
 
 describe('compile', () => {
@@ -103,7 +103,7 @@ describe('compile', () => {
     ])('can define a function $0', (body, arg, expected) => {
         const fn = evaluate(`(fn ${body})`)
 
-        const result = fn(arg)
+        const result = fn(() => arg)
 
         expect(result).toEqual(expected)
     })
@@ -116,7 +116,7 @@ describe('compile', () => {
     ])('can define a function that takes multiple arguments $0', (body, args, expected) => {
         const fn = evaluate(`(fn ${body})`)
 
-        const result = fn(...args)
+        const result = fn(...args.map(a => () => a))
 
         expect(result).toEqual(expected)
     })
@@ -131,9 +131,11 @@ describe('compile', () => {
     })
 
     it.each([
-        ["$", ["5"], 5],
-    ])('I can call a function in the code', (body, args, expected) => {
-        const result = evaluate(`(call (fn ${parse(body)}) ${args.map(a => parse(a))})`)
+        ["$", "5", 5],
+        ["(negate $)", "5", -5],
+        ["(add $ $)", "5", 10],
+    ])('I can call a function in the code #%#', (body, arg, expected) => {
+        const result = evaluate(`(call (fn ${body}) ${arg})`)
 
         expect(result).toEqual(expected)
     })
@@ -144,6 +146,6 @@ function evaluate(expr, ...args) {
     const sExpr = parse(expr)
     const sExprStr = exprToString(sExpr)
     const compiled = compiler.compile(sExpr)
-    const result = compiled(args)
+    const result = compiled(args.map(a => () => a))
     return result
 }

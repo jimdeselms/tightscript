@@ -90,6 +90,6 @@ function evaluate(sExpr, ...args) {
     const compiler = new Compiler()
     const asString = exprToString(sExpr)
     const compiled = compiler.compile(sExpr)
-    const result = compiled(args)
+    const result = compiled(args.map(arg => () => arg))
     return result
 }

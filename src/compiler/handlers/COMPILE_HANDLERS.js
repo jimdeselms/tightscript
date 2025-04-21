@@ -3,7 +3,7 @@ export function COMPILE_HANDLERS(state, compile) {
         arg: (idx) => {
             return (args) => {
                 const i = idx()
-                return i === undefined ? undefined : args[i]
+                return i === undefined ? undefined : args[i]()
             }
         },
 
@@ -53,7 +53,7 @@ export function COMPILE_HANDLERS(state, compile) {
         },
 
         call: (fn, ...fnargs) => {
-            return (args) => fn(args)(...fnargs.map((arg) => arg(args)))
+            return (args) => fn(args)(...fnargs)
         },
 
         eq: (lhs, rhs) => {
