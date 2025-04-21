@@ -24,6 +24,27 @@ describe('compile', () => {
     })
 
     it.each([
+        [ "5", 5 ],
+        [ "-5", -5 ],
+        [ "hello", "hello" ],
+        [ '"this is a test"', "this is a test" ],
+        [ "null", null ],
+        [ "true", true ],
+        [ "false", false ],
+        [ '"null"', "null" ],
+        [ '"true"', "true" ],
+        [ '"false"', "false" ],
+        
+    ])('can parse literals $0', (expr, expected) => {
+        const compiler = new Compiler()
+        const sExpr = parse(expr)
+        const compiled = compiler.compile(sExpr)
+        const result = compiled(0)
+
+        expect(result).toEqual(expected)
+    })
+
+    it.each([
         ["(arg 0)", 5, 5],
         ["$", 5, 5],
         ["(negate $)", 5, -5],
@@ -166,7 +187,7 @@ describe('compile', () => {
         expect(result).toBe(5)
     })
 
-    it('can call a recursive function', () => {
+    it('can call a recursive function (simple)', () => {
         const compiler = new Compiler()
         compiler.declareFunction(0, parse(`
             (if (eq $0 0)
@@ -178,6 +199,23 @@ describe('compile', () => {
         const fn = compiled([])
         const result = fn(() => 10)
         expect(result).toBe(0)
+    })
+
+    it('can call a recursive function (fibb)', () => {
+        const compiler = new Compiler()
+        compiler.declareFunction(0, parse(`
+            (if (eq $0 1)
+                1
+                (if (eq $0 2)
+                    1
+                    (add (call (fnref 0) (sub $0 1)) (call (fnref 0) (sub $0 2)))
+                )
+            )`))
+
+        const compiled = compiler.compile(parse('(fnref 0)'))
+        const fn = compiled([])
+        const result = fn(() => 10)
+        expect(result).toBe(55)
     })
 })
 

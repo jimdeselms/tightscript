@@ -21,6 +21,10 @@ export function COMPILE_HANDLERS(state, compile) {
         sub: (lhs, rhs) => { return (args) => lhs(args) - rhs(args) },
         mul: (lhs, rhs) => { return (args) => lhs(args) * rhs(args) },
         div: (lhs, rhs) => { return (args) => lhs(args) / rhs(args) },
+        lt: (lhs, rhs) => { return (args) => lhs(args) < rhs(args) },
+        le: (lhs, rhs) => { return (args) => lhs(args) <= rhs(args) },
+        gt: (lhs, rhs) => { return (args) => lhs(args) > rhs(args) },
+        gte: (lhs, rhs) => { return (args) => lhs(args) >= rhs(args) },
 
         error: (payload) => {
             return (args) => {

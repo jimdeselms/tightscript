@@ -34,7 +34,12 @@ const CONSTANTS = {
 }
 
 export function parseSExpression(toks, placeholders) {
-    const tok = toks[0]
+    let tok = toks[0]
+    if (tok[0] === '"') {
+        toks.shift()
+        return tok.slice(1, -1)
+    }
+
     if (tok === '(') {
         toks.shift()
 
@@ -70,6 +75,14 @@ export function parseSExpression(toks, placeholders) {
                 : ['arg', argIdx]
         }
 
+        if (tok === '-') {
+            const asnum = parseNumber[tok[0]]
+            if (!isNaN(asnum)) {
+                toks.shift()
+                return -asnum
+            }
+        }
+
         const asnum = Number(tok)
         return isNaN(asnum) ? tok : asnum
     }
@@ -88,6 +101,7 @@ function tokens(input) {
                 } else if (isWhitespace(char)) {
                     // do nothing
                 } else if (char === '"') {
+                    curr = '"'
                     state = 'string'
                 } else {
                     curr += char
@@ -99,6 +113,8 @@ function tokens(input) {
                     result.push(curr)
                     curr = ""
                     state = 'start'
+                } else if (char === '-') {
+                    state = 'minus'
                 } else if (isPunct(char)) {
                     result.push(curr)
                     curr = ""
@@ -110,7 +126,7 @@ function tokens(input) {
                 break
             case 'string':
                 if (char === '"') {
-                    result.push(curr)
+                    result.push(curr + '"')
                     curr = ""
                     state = 'start'
                 } else {

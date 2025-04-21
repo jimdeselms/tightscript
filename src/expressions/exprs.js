@@ -3,6 +3,11 @@ import { UNARY, BINARY, BINARY_WITH_SHORT_CIRCUIT } from './exprTemplates'
 
 export const negate = UNARY('isNumber', 'negate value must be a number', (val) => expr`(negate ${val})`)
 
+export const lt = BINARY('isNumber', 'lt lhs must be a number', 'lt rhs must be a number', (lhs, rhs) => expr`(lt ${lhs} ${rhs})`)
+export const le = BINARY('isNumber', 'le lhs must be a number', 'le rhs must be a number', (lhs, rhs) => expr`(le ${lhs} ${rhs})`)
+export const gt = BINARY('isNumber', 'gt lhs must be a number', 'gt rhs must be a number', (lhs, rhs) => expr`(gt ${lhs} ${rhs})`)
+export const ge = BINARY('isNumber', 'ge lhs must be a number', 'ge rhs must be a number', (lhs, rhs) => expr`(ge ${lhs} ${rhs})`)
+
 export const add = BINARY('isNumber', 'add lhs must be a number', 'add rhs must be a number', (lhs, rhs) => expr`(add ${lhs} ${rhs})`)
 export const sub = BINARY('isNumber', 'sub lhs must be a number', 'sub rhs must be a number', (lhs, rhs) => expr`(sub ${lhs} ${rhs})`)
 

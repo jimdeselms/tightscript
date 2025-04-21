@@ -3,9 +3,11 @@ import { JavascriptCompiler } from "./JavascriptCompiler";
 describe('JavascriptCompiler', () => {
     it.each([
         [ '5', 5 ],
+        [ '-5', -5],
         [ '5 + 10', 15 ],
         [ '10 - 5', 5 ],
         [ 'true ? 1 : 2', 1],
+        [ '5 < 10', true]
     ])('can compile expressions #%#', (js, expected) => {
         const compiler = new JavascriptCompiler()
 
