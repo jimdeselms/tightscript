@@ -129,6 +129,14 @@ describe('compile', () => {
 
         expect(result).toEqual(expected)
     })
+
+    it.each([
+        ["$", ["5"], 5],
+    ])('I can call a function in the code', (body, args, expected) => {
+        const result = evaluate(`(call (fn ${parse(body)}) ${args.map(a => parse(a))})`)
+
+        expect(result).toEqual(expected)
+    })
 })
 
 function evaluate(expr, ...args) {

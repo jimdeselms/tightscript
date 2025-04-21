@@ -2,12 +2,7 @@ export function COMPILE_HANDLERS(state, compile) {
     const prims = {
         arg: (idx) => {
             return (args) => {
-                // TODO - Can I figure out a more elegant way to do this?
-                // I said that the only condition would be "if"
-                if (args === undefined) { return undefined }
-
-                const first = args[0]
-                const i = idx(args)
+                const i = idx()
                 return i === undefined ? undefined : args[i]
             }
         },
@@ -52,8 +47,13 @@ export function COMPILE_HANDLERS(state, compile) {
             }
         },
 
+        // TODO - I want to make sure that the arguments to a function are themselves compiled expressions.
         fn: (body) => {
             return () => (...fnArgs) => body(fnArgs)
+        },
+
+        call: (fn, ...fnargs) => {
+            return (args) => fn(args)(...fnargs.map((arg) => arg(args)))
         },
 
         eq: (lhs, rhs) => {
