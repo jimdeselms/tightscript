@@ -10,10 +10,10 @@ export class Compiler {
     }
 
     compile(sExpr) {
-        const exprDetails = this.registry.get(sExpr)
-        if (exprDetails?.compiled) {
+        const compiled = this.registry.getDetail(sExpr, "compiled")
+        if (compiled) {
             // If it has an optimized value, then we'll get that instead.
-            return exprDetails.compiled
+            return compiled
         }
 
         let compiledFn
@@ -31,13 +31,7 @@ export class Compiler {
 
             compiledFn = handler(...compiledArgs)
 
-            let simp = this.registry.getDetail(sExpr, 'canBeSimplified')
-            if (simp === undefined) {
-                simp = canBeSimplified(sExpr)
-                this.registry.setDetail(sExpr, 'canBeSimplified', simp)
-            }
-
-            if (simp) {
+            if (this.canBeSimplified(sExpr)) {
                 const simplifiedValue = compiledFn()
                 if (simplifiedValue !== undefined) {
                     this.registry.setDetail(sExpr, 'optimized', simplifiedValue)
@@ -49,19 +43,28 @@ export class Compiler {
         this.registry.setDetail(sExpr, 'compiled', compiledFn)
         return compiledFn
     }
-}
 
-function canBeSimplified(sExpr) {
-    if (resolved(sExpr)) {
-        return true
+    canBeSimplified(sExpr) {
+        false
+        const exprAsString = exprToString(sExpr)
+        if (resolved(sExpr)) {
+            return true
+        }
+
+        const fromCache = this.registry.getDetail(sExpr, 'canBeSimplified')
+        if (fromCache !== undefined) {
+            return fromCache
+        }
+    
+        const [ primitive, ...args ] = sExpr
+        const result = primitive === 'arg' || primitive === 'isUndefined'
+            ? false
+            : args.every(a => this.canBeSimplified(a))
+
+        this.registry.setDetail(sExpr, 'canBeSimplified', result)
+
+        return result
     }
-
-    const [ primitive, ...args ] = sExpr
-    if (primitive === 'arg' || primitive === 'isUndefined') {
-        return false
-    }
-
-    return args.every(canBeSimplified)
 }
 
 function resolved(sExpr) {

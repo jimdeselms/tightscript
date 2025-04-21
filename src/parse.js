@@ -135,6 +135,9 @@ function isWhitespace(c) {
 
 export function exprToString(expr) {
     if (Array.isArray(expr)) {
+        if (expr[0] === 'arg') {
+            return '$' + expr[1]
+        }
         return `(${expr.map(exprToString).join(' ')})`
     } else if (expr instanceof Error) {
         return `(error ${expr.message})`

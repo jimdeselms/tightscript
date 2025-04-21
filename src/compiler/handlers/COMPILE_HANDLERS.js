@@ -2,8 +2,10 @@ export function COMPILE_HANDLERS(state, compile) {
     const prims = {
         arg: (idx) => {
             return (args) => {
-                const i = idx()
-                return i === undefined ? undefined : args[i]()
+                return args[idx()]()
+                //return args ? args[idx()]() : undefined
+                // const i = idx()
+                // return i === undefined ? undefined : args[i]()
             }
         },
 
@@ -53,7 +55,10 @@ export function COMPILE_HANDLERS(state, compile) {
         },
 
         call: (fn, ...fnargs) => {
-            return (args) => fn(args)(...fnargs)
+            return (args) => {
+                // We need to capture the arguments so that we can use them to resolve the arguments later
+                return fn(args)(...fnargs.map(arg => () => arg(args)))
+            }
         },
 
         eq: (lhs, rhs) => {

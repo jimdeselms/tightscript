@@ -99,9 +99,20 @@ describe('compile', () => {
 
     it.each([
         [ '$', 10, 10 ],
-        [ '(negate $)', 5, -5]
+        [ '(negate $)', 5, -5],
     ])('can define a function $0', (body, arg, expected) => {
         const fn = evaluate(`(fn ${body})`)
+
+        const result = fn(() => arg)
+
+        expect(result).toEqual(expected)
+    })
+
+    it.each([
+        ['$', 5, 5],
+        ['(negate $)', 6, -6],
+    ])('can define a function that calls a function #%#', (body, arg, expected) => {
+        const fn = evaluate(`(fn (call (fn ${body}) $))`)
 
         const result = fn(() => arg)
 
@@ -138,6 +149,12 @@ describe('compile', () => {
         const result = evaluate(`(call (fn ${body}) ${arg})`)
 
         expect(result).toEqual(expected)
+    })
+
+    it('can call a function with two arguments', () => {
+        const expr = `(call (fn (add $0 $1)) 5 10)`
+        const result = evaluate(expr)
+        expect(result).toEqual(15)
     })
 })
 
