@@ -10,6 +10,7 @@ export const ge = BINARY('isNumber', 'ge lhs must be a number', 'ge rhs must be 
 
 export const add = BINARY('isNumber', 'add lhs must be a number', 'add rhs must be a number', (lhs, rhs) => expr`(add ${lhs} ${rhs})`)
 export const sub = BINARY('isNumber', 'sub lhs must be a number', 'sub rhs must be a number', (lhs, rhs) => expr`(sub ${lhs} ${rhs})`)
+export const sub_opp = BINARY('isNumber', 'sub rhs must be a number', 'sub lhs must be a number', (lhs, rhs) => expr`(sub_opp ${lhs} ${rhs})`)
 
 export const mul = BINARY_WITH_SHORT_CIRCUIT(
     'isNumber', 

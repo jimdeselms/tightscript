@@ -1,6 +1,7 @@
 import { COMPILE_HANDLERS } from './handlers/COMPILE_HANDLERS'
 import { exprToString } from '../parse'
 import { Registry } from '../Registry'
+import * as E from '../expressions/exprs'
 
 const DEBUG = false
 
@@ -52,13 +53,20 @@ export class Compiler {
                 optimized = sExpr
                 compiledFn = () => sExpr
             } else {
-                const [primitive, ...args] = sExpr
+                let [primitive, ...args] = sExpr
 
                 // If it's an if -- and the condition can be inferred statically -- then we can lop off 
                 // an entire branch of the if statement.
                 if (primitive === 'if') {
                     [ compiledFn, optimized ] = this.applyIfOptimizations(args)
                 } else {
+                    [primitive, ...args] = sExpr
+                    if (primitive.endsWith("_safe")) {
+                        const safe = this.substituteSafeOperators(sExpr)
+                        const asString = exprToString(safe)
+                        return this.compileImpl(safe)
+                    }
+
                     const compiledArgs = args.map((arg) => {
                         return this.compileImpl(arg)
                     })
@@ -181,7 +189,7 @@ export class Compiler {
             compiledFn = this.compile(optimized)
         }
 
-return [compiledFn, optimized]
+        return [compiledFn, optimized]
     }
 
     optimizeIsFn(isTrueTest, isFalseTest, optimized) {
@@ -220,6 +228,59 @@ return [compiledFn, optimized]
 
         return result
     }
+
+    substituteSafeOperators(sExpr) {
+        let [primitive, ...args] = sExpr
+
+        const basePrim = primitive.slice(0, -5)
+        const swapIfNeeded = SWAPPABLE_PRIMITIVES[basePrim]
+        if (swapIfNeeded) {
+            const [lhs, rhs] = args
+            const lhsCost = this.calculateCost(lhs)
+            const rhsCost = this.calculateCost(rhs)
+
+            if (lhsCost > rhsCost) {
+                // If the left hand side is more expensive, then we'll swap them so that the cheaper one is evaluated first.
+                primitive = swapIfNeeded
+                args = [rhs, lhs]
+            } else {
+                primitive = basePrim
+            }
+        } else {
+            primitive = basePrim
+        }
+
+        return this.expandSafeOperator(primitive, args)
+    }
+
+    expandSafeOperator(primitive, args) {
+        switch (primitive) {
+            case 'add': return E.add(...args)
+            case 'sub': return E.sub(...args)
+            case 'sub_opp': return E.sub_opp(...args)
+            default: throw "TBD - expandSafeOperaor"
+        }
+    }
+
+    calculateCost(sExpr) {
+        const existingCost = this.registry.getDetail(sExpr, 'cost')
+        if (existingCost !== undefined) {
+            return existingCost
+        }
+    
+        if (resolved(sExpr)) {
+            return 1
+        }
+    
+        // A very very simple cost estimate; just see how many nodes there are in the expression.
+        const cost = sExpr.slice(1).reduce((acc, arg) => {
+            return acc + this.calculateCost(arg)
+        }, 1)
+
+        this.registry.setDetail(sExpr, 'cost', cost)
+
+        return cost
+    }
 }
 
 function resolved(sExpr) {
@@ -227,3 +288,21 @@ function resolved(sExpr) {
 }
 
 const isError = (sExpr) => Array.isArray(sExpr) && sExpr[0] === 'error'
+
+// Each of these binary primitives can be swapped, meaning that the more expensive side of the operation can be put first.
+// However, this means that we can't really do the 
+const SWAPPABLE_PRIMITIVES = {
+    add: 'add',
+    sub: 'sub_opp',
+    mul: 'mul',
+    div: 'div_opp',
+    mod: 'mod_opp',
+    or: 'or',
+    and: 'and',
+    xor: 'xor',
+    lt: 'gt',
+    le: 'ge',
+    gt: 'lt',
+    ge: 'le',
+    eq: 'eq',
+}

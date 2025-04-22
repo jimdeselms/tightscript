@@ -10,7 +10,7 @@ function toExpr(ast, state) {
         case 'Literal': return ast.value
         case 'BinaryExpression':
             const lhs = toExpr(ast.left), rhs = toExpr(ast.right)
-            return BINARY_OPERATORS[ast.operator](lhs, rhs)
+            return [BINARY_OPERATORS[ast.operator], lhs, rhs]
         case 'UnaryExpression':
             const arg = toExpr(ast.argument)
 
@@ -27,27 +27,29 @@ function toExpr(ast, state) {
 
             return E.ifte(cond, ifTrue, ifFalse)
 
+        case 'Identifier':
+            if (ast.name === 'undefined') {
+                return undefined
+            } else {
+                throw "TBD - Identifier"
+            }
+
         default:
             throw new Error(`Unsupported AST node type: ${ast.type}`)
     }
 }
 
 const BINARY_OPERATORS = {
-    '+': E.add,
-    '-': E.sub,
-    '*': E.mul,
-    '/': E.div,
-    '%': E.mod,
-    '&&': E.and,
-    '||': E.or,
-    '==': E.eq,
-    '!=': E.neq,
-    '===': E.strictEq,
-    '!==': E.strictNeq,
-    '<': E.lt,
-    '<=': E.le,
-    '>': E.gt,
-    '>=': E.ge
+    '+': 'add_safe',
+    '-': 'sub_safe',
+    '*': 'mul',
+    '/': 'div',
+    '==': 'eq',
+    '===': 'eq',
+    '<': 'lt',
+    '<=': 'le',
+    '>': 'gt',
+    '>=': 'ge'
 }
 
 const UNARY_OPERATORS = {

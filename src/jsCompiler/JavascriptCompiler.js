@@ -23,8 +23,3 @@ export class JavascriptCompiler {
         }
     }
 }
-
-
-const OPERATOR_TO_FN = {
-    '+': E.add,
-}

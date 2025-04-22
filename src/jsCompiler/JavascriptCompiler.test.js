@@ -7,7 +7,8 @@ describe('JavascriptCompiler', () => {
         [ '5 + 10', 15 ],
         [ '10 - 5', 5 ],
         [ 'true ? 1 : 2', 1],
-        [ '5 < 10', true]
+        [ '5 < 10', true],
+        [ '2 + undefined', undefined],
     ])('can compile expressions #%#', (js, expected) => {
         const compiler = new JavascriptCompiler()
 

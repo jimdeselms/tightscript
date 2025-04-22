@@ -6,7 +6,7 @@ import { Parser } from 'acorn'
 describe("astToSExpression", () => {
     it.each([
         ["5", 5],
-        ["5 + 6", E.add(5, 6)],
+        ["5 + 6", ['add_safe', 5, 6]],
     ])('should convert %s', (code, expected) => {
         const ast = getExpressionAst(code)
         const expr = astToSExpression(ast);
