@@ -42,14 +42,14 @@ function toExpr(ast, state) {
 const BINARY_OPERATORS = {
     '+': 'add_safe',
     '-': 'sub_safe',
-    '*': 'mul',
-    '/': 'div',
-    '==': 'eq',
-    '===': 'eq',
-    '<': 'lt',
-    '<=': 'le',
-    '>': 'gt',
-    '>=': 'ge'
+    '*': 'mul_safe',
+    '/': 'div_safe',
+    '==': 'eq_safe',
+    '===': 'eq_safe',
+    '<': 'lt_safe',
+    '<=': 'le_safe',
+    '>': 'gt_safe',
+    '>=': 'ge_safe'
 }
 
 const UNARY_OPERATORS = {

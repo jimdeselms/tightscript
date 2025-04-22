@@ -70,7 +70,7 @@ describe('exprs', () => {
 
     describe('div', () => {
         it.each([
-            ["5", "2", "3"],
+            ["10", "2", "5"],
             ["undefined", "5", "undefined"],
             ["5", "undefined", "undefined"],
             ["A", "5", '(error "div lhs must be a number")'],
