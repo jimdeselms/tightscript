@@ -10,7 +10,7 @@ export function expr(arr, ...values) {
 
     const result = parse(text, values)
 
-    return createExprProxy(result)
+    return result
 }
 
 export function parse(expr, placeholders=[]) {
@@ -22,7 +22,7 @@ export function parse(expr, placeholders=[]) {
     const tok = tokens(expr + '\n')
     
     const result = parseSExpression(tok, placeholders)
-    return createExprProxy(result)
+    return result
 }
 
 const CONSTANTS = {
@@ -67,7 +67,7 @@ export function parseSExpression(toks, placeholders) {
             const val = parseInt(tok.substring(PLACEHOLDER.length))
 
             // Make it lazy
-            return () => placeholders[val]
+            return placeholders[val]
         }
 
         if (tok[0] === '$') {
