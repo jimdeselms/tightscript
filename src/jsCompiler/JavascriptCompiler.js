@@ -1,20 +1,22 @@
 import { Compiler } from '../compiler'
 import { Parser } from 'acorn'
-import { astToSExpression } from './astToSExpression'
+import { AstToSExpression } from './AstToSExpression'
 import * as E from '../expressions/exprs'
 
 export class JavascriptCompiler {
     constructor() {
         this.compiler = new Compiler()
+        this.state = {
+            variables: {}
+        }
     }
 
     compileExpression(code) {
         try {
             const ast = Parser.parse(code, { ecmaVersion: 2020 });
 
-            const expressionAst = ast.body[0].expression
-
-            const expr = astToSExpression(expressionAst)            
+            const converter = new AstToSExpression(this.state)
+            const expr = converter.toExpr(ast)
 
             return this.compiler.compile(expr)
 

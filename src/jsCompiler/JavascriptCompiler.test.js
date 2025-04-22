@@ -16,4 +16,16 @@ describe('JavascriptCompiler', () => {
 
         expect(fn(0)).toEqual(expected)
     })
+
+    it('can declare and reference a variable', () => {
+        const code = `
+        let x = 5, y = 10
+        
+        x + y;`
+
+        const compiler = new JavascriptCompiler()
+        const fn = compiler.compileExpression(code)
+
+        expect(fn(0)).toEqual(15)
+    })
 })
