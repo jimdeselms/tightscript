@@ -284,7 +284,7 @@ function resolved(sExpr) {
     return !Array.isArray(sExpr) || (RESOLVED_EXPRESSION_TYPES.has(sExpr[0]) && resolved(sExpr[1]))
 }
 
-const RESOLVED_EXPRESSION_TYPES = new Set(["error"])
+const RESOLVED_EXPRESSION_TYPES = new Set(["error", "array"])
 
 const isError = (sExpr) => Array.isArray(sExpr) && sExpr[0] === 'error'
 

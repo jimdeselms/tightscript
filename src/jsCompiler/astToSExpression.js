@@ -34,9 +34,13 @@ export class AstToSExpression {
                 if (ast.name === 'undefined') {
                     return undefined
                 } else if (ast.name.startsWith('$')) {
-                    const argIndex = parseInt(ast.name.slice(1))
-                    if (!isNaN(argIndex)) {
-                        return ['arg', argIndex]
+                    if (ast.name === '$') {
+                        return ['arg', 0]
+                    } else {
+                        const argIndex = parseInt(ast.name.slice(1))
+                        if (!isNaN(argIndex)) {
+                            return ['arg', argIndex]
+                        }
                     }
                 }
 
@@ -129,6 +133,10 @@ export class AstToSExpression {
                 const fn = this.toExpr(ast.callee)
                 const args = ast.arguments.map((arg) => this.toExpr(arg))
                 return ['call_safe', fn, ...args]
+
+            case 'ArrayExpression':
+                const elements = ast.elements.map((element) => this.toExpr(element))
+                return ['array', ...elements]
 
             default:
                 throw new Error(`Unsupported AST node type: ${ast.type}`)

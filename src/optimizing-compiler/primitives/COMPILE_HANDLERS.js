@@ -45,6 +45,13 @@ export function COMPILE_HANDLERS(state, compile) {
             }
         },
 
+        array: (...elements) => {
+            return (args) => {
+                const compiledElements = elements.map((e) => e(args))
+                return ['array', ...compiledElements]
+            }
+        },
+
         if: (cond, ifTrue, ifFalse) => {
             return (args) => {
                 return cond(args) ? ifTrue(args) : ifFalse(args)

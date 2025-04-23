@@ -68,4 +68,6 @@ const PRIMITIVES = {
     fn: (body) => `((...$)=>{return ${body}})`,
     call: (fn, ...args) => `((${fn})(${args.join(',')}))`,
     eq: (a1,a2) => `(${a1}===${a2})`,
+
+    array: (...els) => `[${els.join(',')}]`,
 }
