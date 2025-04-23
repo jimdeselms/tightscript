@@ -13,7 +13,7 @@ describe('safeOperators', () => {
         const safeExpr = expr`(sub_safe ${lhsExpr} ${rhsExpr})`
 
         const compiler = new OptimizingCompiler()
-        const result = exprToString(compiler.optimize(safeExpr))
+        const result = exprToString(compiler.optimize(safeExpr).optimizedExpr)
         
         expect(result.indexOf(exprToFind)).toBeGreaterThan(0)
     })

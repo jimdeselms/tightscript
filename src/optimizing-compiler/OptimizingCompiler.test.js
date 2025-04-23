@@ -243,7 +243,7 @@ describe('compile', () => {
         ["(if (isUndefined 0) 1 2)", "2"]
     ])('will simplify expressions that have nested if statements #%#', (expr, expected) => {
         const compiler = new OptimizingCompiler()
-        const optimized = compiler.optimize(parse(expr))
+        const optimized = compiler.optimize(parse(expr)).optimizedExpr
         expect(exprToString(optimized)).toEqual(expected)
     })
 })

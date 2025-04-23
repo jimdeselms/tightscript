@@ -9,6 +9,7 @@ export class OptimizingCompiler {
     constructor() {
         this.state = {
             fns: [],
+            fnExpressions: [],
             knownConditions: new Map()
         }
 
@@ -18,11 +19,15 @@ export class OptimizingCompiler {
 
     declareFunction(ordinal, body) {
         this.state.fns[ordinal] = this.compile(['fn', body])()
+        this.state.fnExpressions[ordinal] = this.optimize(['fn', body]).optimizedExpr
     }
 
     optimize(sExpr) {
         const [ _, optimized ] = this.compileImpl(sExpr)
-        return optimized
+        return {
+            ordinalFunctions: this.state.fnExpressions, 
+            optimizedExpr: optimized
+        }
     }
 
     compile(sExpr) {

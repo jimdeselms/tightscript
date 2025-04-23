@@ -28,6 +28,7 @@ export class JavascriptCompiler {
             this.compiler.declareFunction(i, this.state.functions[i][1])
         }
 
+        
         return this.compiler.optimize(expr)
     }
 

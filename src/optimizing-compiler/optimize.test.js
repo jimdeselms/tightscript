@@ -71,5 +71,5 @@ describe('optimize', () => {
 function optimize(expr) {
     const compiler = new OptimizingCompiler()
     const sExpr = parse(expr)
-    return compiler.optimize(sExpr)
+    return compiler.optimize(sExpr).optimizedExpr
 }

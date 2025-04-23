@@ -22,6 +22,19 @@ describe('FinalCompiler', () => {
         expect(max).toEqual(expected)
     })
 
+    it('can compile a function', () => {
+        const fn = evaluate("(a) => a")
+        expect(fn(10)).toBe(10)
+    })
+
+    it('can declare a variable', () => {
+        const result = evaluate(`
+            const fn = (x) => x + 1
+            fn($0)`
+        , 10)
+        expect(result).toBe(11)
+    })
+
     // it('can compile an add', () => {
     //     const expr = parsePostfix("5 2 add")
 
@@ -36,10 +49,14 @@ describe('FinalCompiler', () => {
 
 function evaluate(code, ...args) {
     const jsCompiler = new JavascriptCompiler()
-    const sExpr = jsCompiler.optimize(code)
+    const { ordinalFunctions, optimizedExpr } = jsCompiler.optimize(code)
 
     const compiler = new FinalCompiler()
-    const compiled = compiler.compile(sExpr)
+    for (let i = 0; i < ordinalFunctions.length; i++) {
+        compiler.declareFunction(i, ordinalFunctions[i])
+    }
+
+    const compiled = compiler.compile(optimizedExpr)
     const fn = eval(compiled)
 
     const result = fn(...args)
