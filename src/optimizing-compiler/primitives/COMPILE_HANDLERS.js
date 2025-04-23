@@ -30,13 +30,13 @@ export function COMPILE_HANDLERS(state, compile) {
         lt_opp: (lhs, rhs) => { return (args) => rhs(args) > lhs(args) },
 
         le: (lhs, rhs) => { return (args) => lhs(args) <= rhs(args) },
-        le_opp: (lhs, rhs) => { return (args) => rhs(args) >= rhs(args) },
+        le_opp: (lhs, rhs) => { return (args) => rhs(args) >= lhs(args) },
 
         gt: (lhs, rhs) => { return (args) => lhs(args) > rhs(args) },
-        gt_opp: (lhs, rhs) => { return (args) => rhs(args) < rhs(args) },
+        gt_opp: (lhs, rhs) => { return (args) => rhs(args) < lhs(args) },
 
         ge: (lhs, rhs) => { return (args) => lhs(args) >= rhs(args) },
-        ge_opp: (lhs, rhs) => { return (args) => rhs(args) <= rhs(args) },
+        ge_opp: (lhs, rhs) => { return (args) => rhs(args) <= lhs(args) },
 
         error: (payload) => {
             return (args) => {

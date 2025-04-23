@@ -35,6 +35,33 @@ describe('FinalCompiler', () => {
         expect(result).toBe(11)
     })
 
+    it('can build the lame fibbonacci function', () => {
+        const result = evaluate(`
+            function fibb(n) {
+                return n <= 2 ? 1 : fibb(n-1) + fibb(n-2)
+            }
+
+            fibb(6)
+        `)
+        
+        expect(result).toBe(8)
+    })
+
+    it('can have a local variable in a function', () => {
+        const result = evaluate(`
+            function doubleSum(x, y) {
+                const sum = x + y
+                const factor = 2
+
+                return sum * factor
+            }
+
+            doubleSum(10, 20)
+        `)
+        
+        expect(result).toBe(60)
+    })
+
     // it('can compile an add', () => {
     //     const expr = parsePostfix("5 2 add")
 
