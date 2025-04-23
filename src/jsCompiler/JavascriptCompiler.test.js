@@ -114,5 +114,30 @@ describe('JavascriptCompiler', () => {
         const fn = compiler.compile(code)
         expect(() => fn(() => 5)).toThrow('External functions may only be called with non-function arguments')
     })
+
+    it('can take a function as an argument to an internal function', () => {
+        const code = `
+            const apply = (fn, arg) => fn(arg)
+            const double = (x) => x * 2
+            apply(double, 5)
+        `
+
+        const compiler = new JavascriptCompiler()
+        const result = compiler.compile(code)()
+
+        expect(result).toEqual(10)
+    })
+
+    it('can reference the arguments passed into the program', () => {
+        const code = `
+            $0
+        `
+
+        const compiler = new JavascriptCompiler()
+        const program = compiler.compile(code)
+        const result = program(10)
+
+        expect(result).toEqual(10)
+    })
 })
 

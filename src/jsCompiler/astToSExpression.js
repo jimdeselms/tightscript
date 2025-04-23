@@ -33,16 +33,21 @@ export class AstToSExpression {
             case 'Identifier':
                 if (ast.name === 'undefined') {
                     return undefined
-                } else {
-                    for (let i = 0; i < this.state.scopes.length; i++) {
-                        const value = this.state.scopes[i][ast.name]
-                        if (value !== undefined) {
-                            return value
-                        }
+                } else if (ast.name.startsWith('$')) {
+                    const argIndex = parseInt(ast.name.slice(1))
+                    if (!isNaN(argIndex)) {
+                        return ['arg', argIndex]
                     }
-
-                    throw new Error(`Undefined variable: ${ast.name}`)
                 }
+
+                for (let i = 0; i < this.state.scopes.length; i++) {
+                    const value = this.state.scopes[i][ast.name]
+                    if (value !== undefined) {
+                        return value
+                    }
+                }
+
+                throw new Error(`Undefined variable: ${ast.name}`)
 
             case 'VariableDeclaration':
                 for (const decl of ast.declarations) {

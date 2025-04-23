@@ -32,13 +32,16 @@ export class JavascriptCompiler {
     }
 
     // Takes the thing and applies whatever fixes to it that we need to to make it work with the outside world
-    externalize(obj) {
+    externalize(obj, spread=false) {
         if (typeof obj === 'function') {
             return (...args) => {
                 if (args.some(a => typeof a === 'function')) {
                     throw new Error('External functions may only be called with non-function arguments')
                 } 
-                return this.externalize(obj(...args.map(a => () => a)))
+
+                const argFns = args.map(a => () => a)
+                const result = spread ? obj(...argFns) : obj(argFns)
+                return this.externalize(result, true)
             }
         } else {
             // TODO - when we add complex types, we'll need to traverse the object
