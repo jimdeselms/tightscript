@@ -70,6 +70,38 @@ export class AstToSExpression {
             case 'ExpressionStatement':
                 return this.toExpr(ast.expression)
 
+            case 'FunctionDeclaration':
+                const ordinal = this.state.functions.length
+                const id = ast.id.name
+
+                const params = ast.params.map((param) => param.name)
+                for (let i = 0; i < params.length; i++) {
+                    this.state.variables[params[i]] = ['arg', i]
+                }
+
+                this.state.functions[ordinal] = ['fn', this.toExpr(ast.body)]
+                this.state.variables[id] = ['fnref', ordinal]
+
+                return undefined
+
+            case 'BlockStatement':
+                for (const stmt of ast.body) {
+                    const result = this.toExpr(stmt)
+                    if (result !== undefined) {
+                        return result
+                    }
+                }
+                return undefined
+
+            case 'ReturnStatement':
+                const returnValue = this.toExpr(ast.argument)
+                return returnValue
+
+            case 'CallExpression':
+                const fn = this.toExpr(ast.callee)
+                const args = ast.arguments.map((arg) => this.toExpr(arg))
+                return ['call', fn, ...args]
+
             default:
                 throw new Error(`Unsupported AST node type: ${ast.type}`)
         }

@@ -7,7 +7,8 @@ export class JavascriptCompiler {
     constructor() {
         this.compiler = new Compiler()
         this.state = {
-            variables: {}
+            variables: {},
+            functions: [],
         }
     }
 
@@ -17,6 +18,10 @@ export class JavascriptCompiler {
 
             const converter = new AstToSExpression(this.state)
             const expr = converter.toExpr(ast)
+
+            for (let i = 0; i < this.state.functions.length; i++) {
+                this.compiler.declareFunction(i, this.state.functions[i][1])
+            }
 
             return this.compiler.compile(expr)
 
