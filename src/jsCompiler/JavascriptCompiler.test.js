@@ -1,3 +1,4 @@
+import { expr } from "../parse";
 import { JavascriptCompiler } from "./JavascriptCompiler";
 
 describe('JavascriptCompiler', () => {
@@ -13,7 +14,7 @@ describe('JavascriptCompiler', () => {
         ])('can compile expressions #%#', (js, expected) => {
             const compiler = new JavascriptCompiler()
     
-            const fn = compiler.compileExpression(js)
+            const fn = compiler.compile(js)
     
             expect(fn(0)).toEqual(expected)
         })
@@ -27,7 +28,7 @@ describe('JavascriptCompiler', () => {
         `
 
         const compiler = new JavascriptCompiler()
-        const fn = compiler.compileExpression(code)
+        const fn = compiler.compile(code)
 
         expect(fn(0)).toEqual(15)
     })
@@ -42,7 +43,7 @@ describe('JavascriptCompiler', () => {
         `
 
         const compiler = new JavascriptCompiler()
-        const fn = compiler.compileExpression(code)
+        const fn = compiler.compile(code)
         expect(fn(0)).toEqual(8)
     })
 
@@ -60,7 +61,7 @@ describe('JavascriptCompiler', () => {
         `
 
         const compiler = new JavascriptCompiler()
-        const fn = compiler.compileExpression(code)
+        const fn = compiler.compile(code)
         expect(fn(0)).toEqual(605)
     })
 
@@ -74,7 +75,7 @@ describe('JavascriptCompiler', () => {
         `
 
         const compiler = new JavascriptCompiler()
-        const fn = compiler.compileExpression(code)
+        const fn = compiler.compile(code)
         expect(fn(0)).toEqual(5)
     })
 
@@ -86,7 +87,26 @@ describe('JavascriptCompiler', () => {
         `
 
         const compiler = new JavascriptCompiler()
-        const fn = compiler.compileExpression(code)
+        const fn = compiler.compile(code)
         expect(fn(0)).toEqual(50)
     })
+
+    it.each([
+        [10, 20, 10],
+        // [undefined, 5, undefined],
+        // [5, undefined, undefined],
+    ])('will return undefined if the input is undefined', (arg1, arg2, expected) => {
+        const code = `
+            const min = (x, y) => x > y ? y : x;
+    
+            min
+        `
+
+        const compiler = new JavascriptCompiler()
+        const outerFn = compiler.compile(code)
+        const fn = outerFn(0)
+        expect(fn(arg1, arg2)).toEqual(expected)
+
+    })
 })
+
