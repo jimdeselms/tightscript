@@ -1,6 +1,4 @@
-import { FinalCompiler } from './FinalCompiler';
-import { parse } from '../parse';
-import { JavascriptCompiler } from '../jsCompiler';
+import { JsToJsCompiler } from '../js-to-js-compiler/JsToJsCompiler';
 
 describe('FinalCompiler', () => {
     it('can compile a very simple stream', () => {
@@ -75,15 +73,8 @@ describe('FinalCompiler', () => {
 })
 
 function evaluate(code, ...args) {
-    const jsCompiler = new JavascriptCompiler()
-    const { ordinalFunctions, optimizedExpr } = jsCompiler.optimize(code)
-
-    const compiler = new FinalCompiler()
-    for (let i = 0; i < ordinalFunctions.length; i++) {
-        compiler.declareFunction(i, ordinalFunctions[i])
-    }
-
-    const compiled = compiler.compile(optimizedExpr)
+    const compiler = new JsToJsCompiler()
+    const compiled = compiler.compile(code)
     const fn = eval(compiled)
 
     const result = fn(...args)
