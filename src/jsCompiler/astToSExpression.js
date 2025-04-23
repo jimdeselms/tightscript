@@ -1,6 +1,3 @@
-import { Parser } from 'acorn'
-import * as E from '../expressions/exprs'
-
 export function astToSExpression(expressionAst) {
     return toExpr(expressionAst)
 }
@@ -25,7 +22,7 @@ export class AstToSExpression {
                     return -(ast.argument.value)
                 }
 
-                return UNARY_OPERATORS[ast.operator](arg)
+                return [UNARY_OPERATORS[ast.operator], arg]
             case 'ConditionalExpression':
                 const cond = this.toExpr(ast.test)
                 const ifTrue = this.toExpr(ast.consequent)
@@ -148,5 +145,5 @@ const BINARY_OPERATORS = {
 }
 
 const UNARY_OPERATORS = {
-    '-': E.negate,
+    '-': 'negate_safe',
 }

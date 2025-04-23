@@ -281,6 +281,8 @@ export class Compiler {
 
             case 'if': return E.ifte(...args)
 
+            case 'negate': return E.negate(...args)
+
             default: throw "TBD - expandSafeOperaor"
         }
     }
