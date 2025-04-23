@@ -1,7 +1,6 @@
 import { Compiler } from '../compiler'
 import { Parser } from 'acorn'
 import { AstToSExpression } from './AstToSExpression'
-import * as E from '../expressions/exprs'
 
 export class JavascriptCompiler {
     constructor() {

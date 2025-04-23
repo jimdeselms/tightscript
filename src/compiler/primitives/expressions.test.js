@@ -1,6 +1,6 @@
-import * as E from './exprs'
-import { parse, exprToString } from '../parse'
-import { Compiler } from '../compiler'
+import * as E from './expressions'
+import { parse, exprToString } from '../../parse'
+import { Compiler } from '..'
 
 describe('exprs', () => {
     describe('negate', () => {

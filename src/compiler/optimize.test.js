@@ -1,7 +1,6 @@
 import { Compiler } from './compile'
 import { expr, parse, exprToString } from '../parse'
 import { expect, it } from 'vitest'
-import * as E from '../expressions/exprs'
 
 describe('optimize', () => {
     it.each([

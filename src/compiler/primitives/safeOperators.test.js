@@ -1,5 +1,5 @@
-import { Compiler } from './compile'
-import { expr, parse, exprToString } from '../parse'
+import { Compiler } from '../compile'
+import { expr, parse, exprToString } from '../../parse'
 
 describe('safeOperators', () => {
     it.each([
