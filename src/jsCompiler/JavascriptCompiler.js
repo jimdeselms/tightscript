@@ -7,7 +7,7 @@ export class JavascriptCompiler {
     constructor() {
         this.compiler = new Compiler()
         this.state = {
-            variables: {},
+            scopes: [{}],
             functions: [],
         }
     }

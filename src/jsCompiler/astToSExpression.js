@@ -37,11 +37,14 @@ export class AstToSExpression {
                 if (ast.name === 'undefined') {
                     return undefined
                 } else {
-                    const value = this.state.variables[ast.name]
-                    if (value === undefined) {
-                        throw new Error(`Undefined variable: ${ast.name}`)
+                    for (let i = 0; i < this.state.scopes.length; i++) {
+                        const value = this.state.scopes[i][ast.name]
+                        if (value !== undefined) {
+                            return value
+                        }
                     }
-                    return value
+
+                    throw new Error(`Undefined variable: ${ast.name}`)
                 }
 
             case 'VariableDeclaration':
@@ -53,7 +56,7 @@ export class AstToSExpression {
             case 'VariableDeclarator':
                 const name = ast.id.name
                 const value = this.toExpr(ast.init)
-                this.state.variables[name] = value
+                this.state.scopes[0][name] = value
 
                 return undefined
 
@@ -76,22 +79,28 @@ export class AstToSExpression {
 
                 const params = ast.params.map((param) => param.name)
                 for (let i = 0; i < params.length; i++) {
-                    this.state.variables[params[i]] = ['arg', i]
+                    this.state.scopes[0][params[i]] = ['arg', i]
                 }
 
                 this.state.functions[ordinal] = ['fn', this.toExpr(ast.body)]
-                this.state.variables[id] = ['fnref', ordinal]
+                this.state.scopes[0][id] = ['fnref', ordinal]
 
                 return undefined
 
             case 'BlockStatement':
+                this.state.scopes.unshift({})
+                let result
+
                 for (const stmt of ast.body) {
-                    const result = this.toExpr(stmt)
+                    result = this.toExpr(stmt)
                     if (result !== undefined) {
-                        return result
+                        break
                     }
                 }
-                return undefined
+
+                this.state.scopes.shift()
+
+                return result
 
             case 'ReturnStatement':
                 const returnValue = this.toExpr(ast.argument)

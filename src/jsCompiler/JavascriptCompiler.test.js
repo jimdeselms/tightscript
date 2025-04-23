@@ -45,4 +45,21 @@ describe('JavascriptCompiler', () => {
         const fn = compiler.compileExpression(code)
         expect(fn(0)).toEqual(8)
     })
+
+    it('can scope variables inside the function and they are not accessible outside the function', () => {
+        const code = `
+            const var1 = 100
+
+            function add(x, y) {
+                const var1 = 500
+                return x + y + var1
+            }
+
+            add(2, 3) + var1
+        `
+
+        const compiler = new JavascriptCompiler()
+        const fn = compiler.compileExpression(code)
+        expect(fn(0)).toEqual(605)
+    })
 })
