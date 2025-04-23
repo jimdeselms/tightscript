@@ -3,6 +3,8 @@
 Okay, here are some rules for this new incarnation of the engine.
 
 1) An expression that doesn't reference an argument can be simplified
+2) It is never a primitive's job to do type checks on inputs; type checks are all accomplished through other primtiives.
+    * For example, `(negate "x")` by itself will be undefined behavior. It is the compiler's job to never produce that expression; rather, it will produce something like `(if (isNumber x) (negate x) (error "not a number"))`
 2) If a function can be simplified, then calling the function with zero arguments will give you the simplified expression.
 3) Other than that, it's the Javascript -> SExpression compiler's job to:
     * Make sure that the types handed to any expression are correct

@@ -33,6 +33,23 @@ const CONSTANTS = {
     '$': ['arg', 0],
 }
 
+export function parsePostfix(expr) {
+    const toks = tokens(expr + '\n')
+    const result = new Array(toks.length)
+    for (let i = 0; i < result.length; i++) {
+        const tok = toks[i]
+        if (tok in CONSTANTS) {
+            result[i] = CONSTANTS[tok]
+        } else if (!isNaN(Number(tok))) {
+            result[i] = Number(tok)
+        } else {
+            result[i] = toks[i]
+        }
+    }
+
+    return result
+}
+
 export function parseSExpression(toks, placeholders) {
     let tok = toks[0]
     if (tok[0] === '"') {
@@ -90,7 +107,7 @@ export function parseSExpression(toks, placeholders) {
     }
 }
 
-function tokens(input) {
+function tokens(input, keepQuotes=false) {
     let curr = ""
     let state = 'start'
     const result = []

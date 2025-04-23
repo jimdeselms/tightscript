@@ -1,4 +1,4 @@
-import { OptimizingCompiler } from '../compiler'
+import { OptimizingCompiler } from '../optimizing-compiler'
 import { Parser } from 'acorn'
 import { AstToSExpression } from './AstToSExpression'
 import { BUILTINS } from './BUILTINS'
@@ -18,6 +18,19 @@ export class JavascriptCompiler {
         }
     }
 
+    optimize(code) {
+        const ast = Parser.parse(code, { ecmaVersion: 2020 });
+
+        const converter = new AstToSExpression(this.state)
+        const expr = converter.toExpr(ast)
+
+        for (let i = 0; i < this.state.functions.length; i++) {
+            this.compiler.declareFunction(i, this.state.functions[i][1])
+        }
+
+        return this.compiler.optimize(expr)
+    }
+
     compile(code) {
         try {
             const ast = Parser.parse(code, { ecmaVersion: 2020 });
@@ -32,7 +45,6 @@ export class JavascriptCompiler {
             const fn = this.compiler.compile(expr)
 
             return this.externalize(fn)
-
         } catch (error) {
           console.error("Parsing error:", error);
         }
