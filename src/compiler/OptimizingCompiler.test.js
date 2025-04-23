@@ -1,10 +1,10 @@
-import { Compiler } from './compile'
-import { expr, parse, exprToString } from '../parse'
+import { OptimizingCompiler } from './OptimizingCompiler'
+import { parse, exprToString } from '../parse'
 import { expect, it } from 'vitest'
 
 describe('compile', () => {
     it('can compile a resovled expression', () => {
-        const compiler = new Compiler()
+        const compiler = new OptimizingCompiler()
         const expr = compiler.compile(5)
 
         expect(expr(0)).toBe(5)
@@ -15,7 +15,7 @@ describe('compile', () => {
         [ "(negate 5)", 5 ],
         [ "(negate (negate 5))", -5 ],
     ])('can negate $0', (expr, expected) => {
-        const compiler = new Compiler()
+        const compiler = new OptimizingCompiler()
         const sExpr = parse(`(negate ${expr})`)
         const compiled = compiler.compile(sExpr)
         const result = compiled(0)
@@ -36,7 +36,7 @@ describe('compile', () => {
         [ '"false"', "false" ],
         
     ])('can parse literals $0', (expr, expected) => {
-        const compiler = new Compiler()
+        const compiler = new OptimizingCompiler()
         const sExpr = parse(expr)
         const compiled = compiler.compile(sExpr)
         const result = compiled(0)
@@ -198,7 +198,7 @@ describe('compile', () => {
     })
 
     it('can declare numbered functions', () => {
-        const compiler = new Compiler()
+        const compiler = new OptimizingCompiler()
         compiler.declareFunction(0, parse('(add $0 (negate $1))'))
         const compiled = compiler.compile(parse('(fnref 0)'))
         const fn = compiled([])
@@ -207,7 +207,7 @@ describe('compile', () => {
     })
 
     it('can call a recursive function (simple)', () => {
-        const compiler = new Compiler()
+        const compiler = new OptimizingCompiler()
         compiler.declareFunction(0, parse(`
             (if (eq $0 0)
                 0
@@ -221,7 +221,7 @@ describe('compile', () => {
     })
 
     it('can call a recursive function (fibb)', () => {
-        const compiler = new Compiler()
+        const compiler = new OptimizingCompiler()
         compiler.declareFunction(0, parse(`
             (if (eq $0 1)
                 1
@@ -242,14 +242,14 @@ describe('compile', () => {
         ["(if (eq $0 1) (if (eq $0 1) 1 2) 3)", "(if (eq $0 1) 1 3)"],
         ["(if (isUndefined 0) 1 2)", "2"]
     ])('will simplify expressions that have nested if statements #%#', (expr, expected) => {
-        const compiler = new Compiler()
+        const compiler = new OptimizingCompiler()
         const optimized = compiler.optimize(parse(expr))
         expect(exprToString(optimized)).toEqual(expected)
     })
 })
 
 function evaluate(expr, ...args) {
-    const compiler = new Compiler()
+    const compiler = new OptimizingCompiler()
     const sExpr = parse(expr)
     const sExprStr = exprToString(sExpr)
     const compiled = compiler.compile(sExpr)

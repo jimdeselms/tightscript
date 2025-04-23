@@ -1,4 +1,4 @@
-import { Compiler } from './compile'
+import { OptimizingCompiler } from './OptimizingCompiler'
 import { expr, parse, exprToString } from '../parse'
 import { expect, it } from 'vitest'
 
@@ -62,14 +62,14 @@ describe('optimize', () => {
     it.skip('will not optimize pruned branches', () => {
         // It can't handle symbols, so this would blow up if the false branch weren't pruned
         const e = expr`(if true 1 ${ Symbol.for("FOO") })`
-        const compiler = new Compiler()
+        const compiler = new OptimizingCompiler()
         const result = compiler.optimize(e)
         expect(result).toEqual(1)
     })
 })
 
 function optimize(expr) {
-    const compiler = new Compiler()
+    const compiler = new OptimizingCompiler()
     const sExpr = parse(expr)
     return compiler.optimize(sExpr)
 }

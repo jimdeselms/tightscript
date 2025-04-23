@@ -1,6 +1,6 @@
 import * as E from './expressions'
 import { parse, exprToString } from '../../parse'
-import { Compiler } from '..'
+import { OptimizingCompiler } from '..'
 
 describe('exprs', () => {
     describe('negate', () => {
@@ -116,7 +116,7 @@ describe('exprs', () => {
 })
 
 function evaluate(sExpr, ...args) {
-    const compiler = new Compiler()
+    const compiler = new OptimizingCompiler()
     const asString = exprToString(sExpr)
     const compiled = compiler.compile(sExpr)
     const result = compiled(args.map(arg => () => arg))

@@ -5,7 +5,7 @@ import { expandSafeOperator } from './primitives/expandSafeOperator'
 
 const DEBUG = false
 
-export class Compiler {
+export class OptimizingCompiler {
     constructor() {
         this.state = {
             fns: [],

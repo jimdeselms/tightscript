@@ -1,4 +1,4 @@
-import { Compiler } from '../compile'
+import { OptimizingCompiler } from '../OptimizingCompiler'
 import { expr, parse, exprToString } from '../../parse'
 
 describe('safeOperators', () => {
@@ -12,7 +12,7 @@ describe('safeOperators', () => {
 
         const safeExpr = expr`(sub_safe ${lhsExpr} ${rhsExpr})`
 
-        const compiler = new Compiler()
+        const compiler = new OptimizingCompiler()
         const result = exprToString(compiler.optimize(safeExpr))
         
         expect(result.indexOf(exprToFind)).toBeGreaterThan(0)
@@ -38,7 +38,7 @@ describe('safeOperators', () => {
 })
 
 function evaluate(expr, ...args) {
-    const compiler = new Compiler()
+    const compiler = new OptimizingCompiler()
     const sExpr = parse(expr)
     const sExprStr = exprToString(sExpr)
     const compiled = compiler.compile(sExpr)

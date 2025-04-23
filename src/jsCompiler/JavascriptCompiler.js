@@ -1,11 +1,11 @@
-import { Compiler } from '../compiler'
+import { OptimizingCompiler } from '../compiler'
 import { Parser } from 'acorn'
 import { AstToSExpression } from './AstToSExpression'
 import { BUILTINS } from './BUILTINS'
 
 export class JavascriptCompiler {
     constructor() {
-        this.compiler = new Compiler()
+        this.compiler = new OptimizingCompiler()
         this.state = {
             scopes: [{}],
             functions: [],
