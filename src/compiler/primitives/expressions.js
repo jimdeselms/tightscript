@@ -49,7 +49,7 @@ export const call = (fn, ...args) => {
                 ${fn}
                 (if (isFunction ${fn})
                     ${callExpr}
-                    (error "call first argument must be a function")
+                    (error "call target must be a function")
                 )
             )
         )

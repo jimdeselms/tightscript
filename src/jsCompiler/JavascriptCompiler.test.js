@@ -166,5 +166,23 @@ describe('JavascriptCompiler', () => {
 
         expect(program(10)).toEqual("NOT UNDEFINED ANYMORE")
     })
+
+    it('I cannot call a thing that is not a function', () => {
+        const code = '("NOT A FUNCTION")(5)'
+
+        const compiler = new JavascriptCompiler()
+        const program = compiler.compile(code)
+
+        expect(() => program(10)).toThrow("call target must be a function")
+    })
+
+    it('Calling undefined yields undefined', () => {
+        const code = '(undefined)(5)'
+
+        const compiler = new JavascriptCompiler()
+        const program = compiler.compile(code)
+
+        expect(program(10)).toBeUndefined()
+    })
 })
 

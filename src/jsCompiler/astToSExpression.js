@@ -128,7 +128,7 @@ export class AstToSExpression {
             case 'CallExpression':
                 const fn = this.toExpr(ast.callee)
                 const args = ast.arguments.map((arg) => this.toExpr(arg))
-                return ['call', fn, ...args]
+                return ['call_safe', fn, ...args]
 
             default:
                 throw new Error(`Unsupported AST node type: ${ast.type}`)

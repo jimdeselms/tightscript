@@ -30,6 +30,8 @@ export function expandSafeOperator(primitive, args) {
 
         case 'negate': return E.negate(...args)
 
+        case 'call': return E.call(...args)
+
         default: throw "TBD - expandSafeOperaor"
     }
 }

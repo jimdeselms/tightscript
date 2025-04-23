@@ -93,7 +93,7 @@ describe('exprs', () => {
             ['(fn (add $0 $0))', ['10'], 20],
             ['undefined', ['5'], undefined],
             ['(error "ERROR")', ['5'], parse('(error "ERROR")')],
-            ['"HELLO"', ['5'], parse('(error "call first argument must be a function")')]
+            ['"HELLO"', ['5'], parse('(error "call target must be a function")')]
         ])('call #%#', (fn, args, expected) => {
             const expr = E.call(parse(fn), ...args.map(a => parse(a)))
             const result = evaluate(expr)
