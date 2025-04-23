@@ -106,7 +106,13 @@ describe('JavascriptCompiler', () => {
         const outerFn = compiler.compile(code)
         const fn = outerFn(0)
         expect(fn(arg1, arg2)).toEqual(expected)
+    })
 
+    it('will not allow the external function to be called with a function', () => {
+        const code = '(x) => x * 2'
+        const compiler = new JavascriptCompiler()
+        const fn = compiler.compile(code)
+        expect(() => fn(() => 5)).toThrow('External functions may only be called with non-function arguments')
     })
 })
 
