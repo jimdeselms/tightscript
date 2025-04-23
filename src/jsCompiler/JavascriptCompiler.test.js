@@ -139,5 +139,32 @@ describe('JavascriptCompiler', () => {
 
         expect(result).toEqual(10)
     })
+
+    it('an error returned at the top level becomes a thrown error', () => {
+        const code = `error("This is an error")`
+
+        const compiler = new JavascriptCompiler()
+        const program = compiler.compile(code)
+
+        expect(() => program(10)).toThrow('This is an error')
+    })
+
+    it('we can get past error with a conditional and isError', () => {
+        const code = `isError(error("This is an error")) ? "DISASTER AVERTED" : "ERROR"`
+
+        const compiler = new JavascriptCompiler()
+        const program = compiler.compile(code)
+
+        expect(program(10)).toEqual("DISASTER AVERTED")
+    })
+
+    it('we can coalesce undefined with isUndefined', () => {
+        const code = `isUndefined(undefined) ? "NOT UNDEFINED ANYMORE" : "UNDEFINED"`
+
+        const compiler = new JavascriptCompiler()
+        const program = compiler.compile(code)
+
+        expect(program(10)).toEqual("NOT UNDEFINED ANYMORE")
+    })
 })
 

@@ -1,6 +1,7 @@
 import { Compiler } from '../compiler'
 import { Parser } from 'acorn'
 import { AstToSExpression } from './AstToSExpression'
+import { BUILTINS } from './BUILTINS'
 
 export class JavascriptCompiler {
     constructor() {
@@ -8,6 +9,12 @@ export class JavascriptCompiler {
         this.state = {
             scopes: [{}],
             functions: [],
+        }
+
+        for (const [name, body] of Object.entries(BUILTINS)) {
+            const ordinal = this.compiler.state.fns.length
+            this.compiler.declareFunction(ordinal, body)
+            this.state.scopes[0][name] = ['fnref', ordinal]
         }
     }
 
@@ -43,6 +50,8 @@ export class JavascriptCompiler {
                 const result = spread ? obj(...argFns) : obj(argFns)
                 return this.externalize(result, true)
             }
+        } else if (Array.isArray(obj) && obj[0] === 'error') {
+            throw new Error(obj[1])
         } else {
             // TODO - when we add complex types, we'll need to traverse the object
             return obj
