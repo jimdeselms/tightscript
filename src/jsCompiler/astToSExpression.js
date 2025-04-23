@@ -31,7 +31,7 @@ export class AstToSExpression {
                 const ifTrue = this.toExpr(ast.consequent)
                 const ifFalse = this.toExpr(ast.alternate)
 
-                return E.ifte(cond, ifTrue, ifFalse)
+                return ['if_safe', cond, ifTrue, ifFalse]
 
             case 'Identifier':
                 if (ast.name === 'undefined') {
@@ -53,13 +53,6 @@ export class AstToSExpression {
                 }
                 return undefined
 
-            case 'VariableDeclarator':
-                const name = ast.id.name
-                const value = this.toExpr(ast.init)
-                this.state.scopes[0][name] = value
-
-                return undefined
-
             case 'Program':
                 for (const expr of ast.body) {
                     const result = this.toExpr(expr)
@@ -73,9 +66,10 @@ export class AstToSExpression {
             case 'ExpressionStatement':
                 return this.toExpr(ast.expression)
 
-            case 'FunctionDeclaration':
+            case 'FunctionDeclaration': {
                 const ordinal = this.state.functions.length
                 const id = ast.id.name
+                this.state.scopes[0][id] = ['fnref', ordinal]
 
                 const params = ast.params.map((param) => param.name)
                 for (let i = 0; i < params.length; i++) {
@@ -83,7 +77,30 @@ export class AstToSExpression {
                 }
 
                 this.state.functions[ordinal] = ['fn', this.toExpr(ast.body)]
-                this.state.scopes[0][id] = ['fnref', ordinal]
+
+                return undefined
+            }
+
+            case 'ArrowFunctionExpression': {
+                const ordinal = this.state.functions.length
+                this.state.scopes.unshift({})
+
+                const params = ast.params.map((param) => param.name)
+                for (let i = 0; i < params.length; i++) {
+                    this.state.scopes[0][params[i]] = ['arg', i]
+                }
+
+                this.state.functions[ordinal] = ['fn', this.toExpr(ast.body)]
+
+                this.state.scopes.shift()
+
+                return ['fnref', ordinal]
+            }
+
+            case 'VariableDeclarator':
+                const name = ast.id.name
+                const value = this.toExpr(ast.init)
+                this.state.scopes[0][name] = value
 
                 return undefined
 
