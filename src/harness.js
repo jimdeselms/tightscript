@@ -27,7 +27,6 @@ const CODE = code1
 
 function comparePerformance() {
     const compiler = new JsToJsCompiler()
-    // const tightScriptFn = compiler.compileToInternalFunction(CODE)()
     const compiled = compiler.compile(CODE)
     const tightScriptFn = eval(compiled)()
     const jsFn = eval(CODE)
