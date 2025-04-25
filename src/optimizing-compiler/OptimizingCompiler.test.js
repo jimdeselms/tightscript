@@ -1,5 +1,5 @@
-import { OptimizingCompiler } from './OptimizingCompiler'
-import { parse, exprToString } from '../parse'
+import { OptimizingCompiler } from './OptimizingCompiler.js'
+import { parse, exprToString } from '../parse.js'
 import { expect, it } from 'vitest'
 
 describe('compile', () => {

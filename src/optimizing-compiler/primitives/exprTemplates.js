@@ -1,4 +1,4 @@
-import { expr } from '../parse'
+import { expr } from '../../parse.js'
 
 export function UNARY(typeCheck, errorMsg, ifValidFn) {
     return (value) => {

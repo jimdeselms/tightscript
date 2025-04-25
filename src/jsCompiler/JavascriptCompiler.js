@@ -1,7 +1,7 @@
-import { OptimizingCompiler } from '../optimizing-compiler'
+import { OptimizingCompiler } from '../optimizing-compiler/OptimizingCompiler.js'
 import { Parser } from 'acorn'
-import { AstToSExpression } from './AstToSExpression'
-import { BUILTINS } from './BUILTINS'
+import { AstToSExpression } from './AstToSExpression.js'
+import { BUILTINS } from './BUILTINS.js'
 
 export class JavascriptCompiler {
     constructor() {

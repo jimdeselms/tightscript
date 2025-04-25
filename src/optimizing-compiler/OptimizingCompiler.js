@@ -1,7 +1,7 @@
-import { COMPILE_HANDLERS } from './primitives/COMPILE_HANDLERS'
-import { exprToString } from '../parse'
-import { Registry } from '../Registry'
-import { expandSafeOperator } from './primitives/expandSafeOperator'
+import { COMPILE_HANDLERS } from './primitives/COMPILE_HANDLERS.js'
+import { exprToString } from '../parse.js'
+import { Registry } from '../Registry.js'
+import { expandSafeOperator } from './primitives/expandSafeOperator.js'
 
 const DEBUG = false
 

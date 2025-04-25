@@ -1,4 +1,4 @@
-import { JsToJsCompiler } from '../js-to-js-compiler/JsToJsCompiler';
+import { JsToJsCompiler } from '../js-to-js-compiler/JsToJsCompiler.js';
 
 describe('FinalCompiler', () => {
     it('can compile a very simple stream', () => {

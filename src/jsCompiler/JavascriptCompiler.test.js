@@ -1,4 +1,4 @@
-import { JavascriptCompiler } from "./JavascriptCompiler";
+import { JavascriptCompiler } from "./JavascriptCompiler.js";
 
 describe('JavascriptCompiler', () => {
     describe('simple', () => {

@@ -1,4 +1,4 @@
-import { JsToJsCompiler } from './JsToJsCompiler';
+import { JsToJsCompiler } from './JsToJsCompiler.js';
 
 describe('JsToJsCompiler', () => {
     it.each([

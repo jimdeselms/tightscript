@@ -1,5 +1,5 @@
-import * as E from './expressions'
-import { parse, exprToString } from '../../parse'
+import * as E from './expressions.js'
+import { parse, exprToString } from '../../parse.js'
 import { OptimizingCompiler } from '..'
 
 describe('exprs', () => {

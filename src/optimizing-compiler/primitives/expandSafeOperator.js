@@ -1,4 +1,4 @@
-import * as E from './expressions'
+import * as E from './expressions.js'
 
 export function expandSafeOperator(primitive, args) {
     switch (primitive) {

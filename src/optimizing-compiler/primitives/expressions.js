@@ -1,5 +1,5 @@
-import { expr } from '../../parse'
-import { UNARY, BINARY, BINARY_WITH_SHORT_CIRCUIT } from '../../expressions/exprTemplates'
+import { expr } from '../../parse.js'
+import { UNARY, BINARY, BINARY_WITH_SHORT_CIRCUIT } from './exprTemplates.js'
 
 export const negate = UNARY('isNumber', 'negate value must be a number', (val) => expr`(negate ${val})`)
 
