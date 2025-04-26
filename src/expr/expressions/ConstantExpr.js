@@ -2,7 +2,7 @@ import { SExpression } from './Expression.js'
 
 export class ConstantExpr extends SExpression {
     constructor(value) {
-        super()
+        super(value)
         this.value = value
     }
 

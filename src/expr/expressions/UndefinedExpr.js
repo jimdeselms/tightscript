@@ -2,7 +2,7 @@ import { SExpression } from './Expression.js'
 
 export class UndefinedExpr extends SExpression {
     constructor() {
-        super()
+        super(undefined)
     }
 
     canFail() {
