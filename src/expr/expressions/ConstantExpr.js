@@ -14,6 +14,10 @@ export class ConstantExpr extends SExpression {
         return false
     }
 
+    mayBeError() {
+        return false
+    }
+
     canAdvance() {
         return false
     }

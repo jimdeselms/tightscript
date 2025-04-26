@@ -9,7 +9,8 @@ export function compileToFunction(expr) {
 
     expr = optimize(expr)
 
-    if (expr.mayBeUndefined()) {
+    // If it's an error or undefined, we need to detect it
+    if (expr.mayBeUndefined() || expr.mayBeError()) {
         return (...args) => {
             args = args.map(toExpr)
             try {
@@ -34,7 +35,7 @@ function optimize(expr) {
     if (!Array.isArray(expr)) {
         return expr
     }
-    
+
     const primitive = expr.primitive
     const args = expr.args.map(a => optimize(a))
     const optimized = toExpr([primitive, ...args])

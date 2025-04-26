@@ -11,6 +11,10 @@ export class SExpression {
         return this.args.some(arg => arg.mayBeUndefined())
     }
 
+    mayBeError() {
+        return this.args.some(arg => arg.mayBeError())
+    }
+
     // This tells us if the expression can be evaluated without arguments. If it can,
     // then that the expression can be fully evaluated at compile time.
     needsArgs() {

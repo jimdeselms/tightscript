@@ -58,4 +58,12 @@ describe('expressions', () => {
             expect(fn()).toEqual(5)
         })
     })
+
+    describe('error', () => {
+        it('can define an error', () => {
+            const expr = parseExpression('(error "error message")')
+            const fn = compileToFunction(expr)
+            expect(() => fn()).toThrow("error message")
+        })
+    })
 })

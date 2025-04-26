@@ -13,6 +13,11 @@ export class ArgumentExpr extends SExpression {
     canAdvance() {
         return false
     }
+
+    mayBeError() {
+        // Unlike undefined, it's not possible for the outside environment to pass in an error.
+        return false
+    }
     
     mayBeUndefined() {
         return true
