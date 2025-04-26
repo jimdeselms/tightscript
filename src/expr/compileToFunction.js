@@ -14,7 +14,7 @@ export function compileToFunction(expr) {
         return (...args) => {
             args = args.map(toExpr)
             try {
-                return expr.evaluate(args)
+                return externalize(expr.evaluate(args))
             } catch (e) {
                 if (e === "UNDEFINED") {
                     return undefined
@@ -26,8 +26,19 @@ export function compileToFunction(expr) {
     } else {
         return (...args) => {
             args = args?.map(toExpr)
-            return expr.evaluate(args)
+            return externalize(expr.evaluate(args))
         }
+    }
+}
+
+function externalize(value) {
+    // Functions internally take expression objects, so we need to convert the real-world arguments to expressions.
+    if (typeof value === 'function') {
+        return (...args) => {
+            return value(...args.map(toExpr))
+        }
+    } else {
+        return value
     }
 }
 

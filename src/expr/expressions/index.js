@@ -1,9 +1,11 @@
+import * as Binary from './BinaryExpr.js'
 import { ConstantExpr } from './ConstantExpr.js'
 import { UndefinedExpr } from './UndefinedExpr.js'
 import { ArgumentExpr } from './ArgumentExpr.js'
 import { IfExpr } from './IfExpr.js'
 import { ErrorExpr } from './ErrorExpr.js'
-import * as Binary from './BinaryExpr.js'
+import { FnExpr } from './FnExpr.js'
+import { CallExpr } from './CallExpr.js'
 
 export const E = {
     constant: ConstantExpr,
@@ -12,4 +14,6 @@ export const E = {
     arg: ArgumentExpr,
     if: IfExpr,
     error: ErrorExpr,
+    fn: FnExpr,
+    call: CallExpr,
 }

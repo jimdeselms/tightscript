@@ -1,5 +1,5 @@
 import { SExpr } from './expressions/SExpr'
-import { parseExpression } from './parseExpression'
+import { parseExpression, toExpr } from './parseExpression'
 import { compileToFunction } from './compileToFunction'
 
 describe('expressions', () => {
@@ -64,6 +64,22 @@ describe('expressions', () => {
             const expr = parseExpression('(error "error message")')
             const fn = compileToFunction(expr)
             expect(() => fn()).toThrow("error message")
+        })
+    })
+
+    describe('fn', () => {
+        it('can define a function', () => {
+            const expr = parseExpression('(fn (add $ 10))')
+            const fn = compileToFunction(expr)()
+            expect(fn(5)).toEqual(15)
+        })
+    })
+
+    describe('call', () => {
+        it('can call a function', () => {
+            const expr = parseExpression('(call (fn (add $ 10)) 20)')
+            const fn = compileToFunction(expr)
+            expect(fn()).toEqual(30)
         })
     })
 })
