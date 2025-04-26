@@ -42,3 +42,7 @@ export class ConstantExpr extends SExpr {
         return this.value.toString()
     }
 }
+
+export const NULL = new ConstantExpr(null)
+export const TRUE = new ConstantExpr(true)
+export const FALSE = new ConstantExpr(false)

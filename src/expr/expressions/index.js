@@ -6,6 +6,7 @@ import { IfExpr } from './IfExpr.js'
 import { ErrorExpr } from './ErrorExpr.js'
 import { FnExpr } from './FnExpr.js'
 import { CallExpr } from './CallExpr.js'
+import * as Unary from './UnaryExpr.js'
 
 export const E = {
     constant: ConstantExpr,
@@ -16,4 +17,5 @@ export const E = {
     error: ErrorExpr,
     fn: FnExpr,
     call: CallExpr,
+    isUndefined: Unary.IsUndefinedExpr,
 }

@@ -26,6 +26,11 @@ export class SExpr {
         throw "NO IMPLEMENTATION"
     }
 
+    evaluateSafe(args) {
+        // If an expression would otherwise throw, it will just return the thing.
+        return this.evaluate(args)
+    }
+
     canAdvance() {
         return this.args.some(arg => arg.canAdvance())
     }

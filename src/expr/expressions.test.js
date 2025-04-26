@@ -82,4 +82,12 @@ describe('expressions', () => {
             expect(fn()).toEqual(30)
         })
     })
+
+    describe('isUndefined', () => {
+        it('isUndefined will not short circuit', () => {
+            const expr = parseExpression('(isUndefined undefined)')
+            const fn = compileToFunction(expr)
+            expect(fn()).toEqual(true)
+        })
+    })
 })

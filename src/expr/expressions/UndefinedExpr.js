@@ -13,6 +13,10 @@ export class UndefinedExpr extends SExpr {
         throw new Error("UNDEFINED")
     }
 
+    evaluateSafe() {
+        return undefined
+    }
+
     canAdvance() {
         return false
     }
