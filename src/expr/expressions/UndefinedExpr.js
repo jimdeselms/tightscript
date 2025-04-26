@@ -5,7 +5,7 @@ export class UndefinedExpr extends SExpression {
         super(undefined)
     }
 
-    canFail() {
+    mayBeUndefined() {
         return true
     }
 
@@ -27,5 +27,9 @@ export class UndefinedExpr extends SExpression {
 
     isResolved() {
         return true
+    }
+
+    toString() {
+        return 'undefined'
     }
 }

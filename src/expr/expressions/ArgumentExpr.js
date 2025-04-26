@@ -14,7 +14,7 @@ export class ArgumentExpr extends SExpression {
         return false
     }
     
-    canFail() {
+    mayBeUndefined() {
         return true
     }
 
@@ -32,5 +32,9 @@ export class ArgumentExpr extends SExpression {
 
     isResolved() {
         return false
+    }
+
+    toString() {
+        return '$' + this.idx
     }
 }

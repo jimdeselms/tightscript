@@ -35,3 +35,6 @@ everything is a function that takes input and returns output. It might modify th
 
 An expression throws an error ifANYTHIGN goes wrong, including trying to resolve undefined.
 
+
+
+I think that we do need to distinguish between undefined and error. It's okay for things to be undefined, and when they are, we want to exit out.

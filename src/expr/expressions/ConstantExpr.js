@@ -10,7 +10,7 @@ export class ConstantExpr extends SExpression {
         return false
     }
     
-    canFail() {
+    mayBeUndefined() {
         return false
     }
 
@@ -32,5 +32,9 @@ export class ConstantExpr extends SExpression {
 
     isResolved() {
         return true
+    }
+
+    toString() {
+        return this.value.toString()
     }
 }

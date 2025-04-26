@@ -7,8 +7,8 @@ export class SExpression {
 
     // If it's possible for this to fail.
     // It can fail if there is any path that can lead to an undefined or error that gets evaluated.
-    canFail() {
-        return this.args.some(arg => arg.canFail())
+    mayBeUndefined() {
+        return this.args.some(arg => arg.mayBeUndefined())
     }
 
     // This tells us if the expression can be evaluated without arguments. If it can,
@@ -31,6 +31,10 @@ export class SExpression {
         throw "NO IMPLEMENTATION"
     }
 
+    optimize() {
+        return [this.primitive, ...this.args.map(arg => arg.optimize())]
+    }
+
     cost() {
         return this.args.reduce((acc, arg) => acc + arg.cost(), 1)
     }
@@ -38,5 +42,9 @@ export class SExpression {
     // Meaning that it is fully evaluated
     isResolved() {
         return false
+    }
+
+    toString() {
+        return `(${this.primitive} ${this.args.map(a => a.toString()).join(' ')})`
     }
 }
