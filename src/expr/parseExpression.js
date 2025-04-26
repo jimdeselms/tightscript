@@ -1,5 +1,5 @@
-import { parse } from '../../parse.js'
-import { E } from './index.js'
+import { parse } from '../parse.js'
+import { E } from './expressions/index.js'
 
 export function parseExpression(asString) {
     const sExpression = parse(asString)

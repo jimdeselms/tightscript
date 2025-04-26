@@ -1,6 +1,6 @@
 import { SExpression } from './expressions/Expression'
-import { parseExpression } from './expressions/parseExpression'
-import { compileToFunction } from './expressions/compileToFunction'
+import { parseExpression } from './parseExpression'
+import { compileToFunction } from './compileToFunction'
 
 describe('expressions', () => {
     describe('literal', () => {
