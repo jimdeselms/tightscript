@@ -1,7 +1,7 @@
-import { SExpression } from './Expression.js'
-import { toExpr } from './parseExpression.js'
+import { SExpr } from './SExpr.js'
+import { toExpr } from '../parseExpression.js'
 
-export class BinaryExpr extends SExpression {
+export class BinaryExpr extends SExpr {
     constructor(primitive, lhs, rhs) {
         super(primitive, lhs, rhs)
     }

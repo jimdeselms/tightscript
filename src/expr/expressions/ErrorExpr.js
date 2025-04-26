@@ -1,6 +1,6 @@
-import { SExpression } from './Expression.js'
+import { SExpr } from './SExpr.js'
 
-export class ErrorExpr extends SExpression {
+export class ErrorExpr extends SExpr {
     constructor(payload) {
         super('error', payload)
     }

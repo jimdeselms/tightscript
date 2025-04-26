@@ -1,6 +1,6 @@
-import { SExpression } from './Expression.js'
+import { SExpr } from './SExpr.js'
 
-export class IfExpr extends SExpression {
+export class IfExpr extends SExpr {
 
     constructor(condition, ifTrue, ifFalse) {
         super('if', condition, ifTrue, ifFalse)

@@ -1,6 +1,6 @@
-import { SExpression } from './Expression.js'
+import { SExpr } from './SExpr.js'
 
-export class UndefinedExpr extends SExpression {
+export class UndefinedExpr extends SExpr {
     constructor() {
         super(undefined)
     }

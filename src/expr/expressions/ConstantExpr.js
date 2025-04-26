@@ -1,6 +1,6 @@
-import { SExpression } from './Expression.js'
+import { SExpr } from './SExpr.js'
 
-export class ConstantExpr extends SExpression {
+export class ConstantExpr extends SExpr {
     constructor(value) {
         super(value)
         this.value = value

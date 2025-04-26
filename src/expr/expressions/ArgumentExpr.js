@@ -1,6 +1,6 @@
-import { SExpression } from './Expression.js'
+import { SExpr } from './SExpr.js'
 
-export class ArgumentExpr extends SExpression {
+export class ArgumentExpr extends SExpr {
     constructor(idx) {
         super()
         this.idx = idx.evaluate()

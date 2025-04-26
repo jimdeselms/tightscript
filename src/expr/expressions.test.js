@@ -1,4 +1,4 @@
-import { SExpression } from './expressions/Expression'
+import { SExpr } from './expressions/SExpr'
 import { parseExpression } from './parseExpression'
 import { compileToFunction } from './compileToFunction'
 

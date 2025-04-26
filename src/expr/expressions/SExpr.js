@@ -1,4 +1,4 @@
-export class SExpression {
+export class SExpr {
 
     constructor(primitive, ...args) {
         this.primitive = primitive,
