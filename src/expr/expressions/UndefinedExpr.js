@@ -17,6 +17,10 @@ export class UndefinedExpr extends SExpression {
         return false
     }
 
+    cost() {
+        return 1
+    }
+
     advance() {
         return this
     }

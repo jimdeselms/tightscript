@@ -29,6 +29,10 @@ export class SExpression {
         throw "NO IMPLEMENTATION"
     }
 
+    cost() {
+        throw "NOT IMPLEMENTED"
+    }
+
     // Meaning that it is fully evaluated
     isResolved() {
         return false

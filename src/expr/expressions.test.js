@@ -43,5 +43,19 @@ describe('expressions', () => {
             const fn = compileToFunction(expr)
             expect(fn(15)).toEqual(35)
         })
+
+        it('can take an expression that needs two arguments', () => {
+            const expr = parseExpression('(add $0 $1)')
+            const fn = compileToFunction(expr)
+            expect(fn(15, 50)).toEqual(65)
+        })
+    })
+
+    describe('conditional', () => {
+        it('can define a conditional expression that does not need arguments', () => {
+            const expr = parseExpression('(if true 5 10)')
+            const fn = compileToFunction(expr)
+            expect(fn()).toEqual(5)
+        })
     })
 })

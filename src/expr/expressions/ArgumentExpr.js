@@ -18,6 +18,10 @@ export class ArgumentExpr extends SExpression {
         return true
     }
 
+    cost() {
+        return 1
+    }
+
     evaluate(args) {
         return args[this.idx].evaluate()
     }

@@ -18,6 +18,10 @@ export class ConstantExpr extends SExpression {
         return false
     }
 
+    cost() { 
+        return 1
+    }
+
     evaluate() {
         return this.value
     }

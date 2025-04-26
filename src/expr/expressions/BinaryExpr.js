@@ -18,6 +18,10 @@ export class BinaryExpr extends SExpression {
     canAdvance() {
         return this.lhs.canAdvance() || this.rhs.canAdvance()
     }
+
+    cost() {
+        return 1 + this.lhs.cost() + this.rhs.cost()
+    }
     
     advance() {
         if (this.needsArgs()) {
