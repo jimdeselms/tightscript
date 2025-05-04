@@ -36,6 +36,15 @@ function createHandlers(state) {
 
         add: (lhs, rhs) => {
             return (args) => lhs(args) + rhs(args)
+        },
+
+        fn: (body) => {
+            return (args) => {
+                //const bod = body(args)
+                return (...params) => {
+                    return body(...params)
+                }
+            }
         }
     }
 }

@@ -37,6 +37,12 @@ describe('evalPipeline', () => {
         expect(state.memory[10]).toBe(5)
         expect(result).toBe(5)
     })
+
+    it('can define a function', () => {
+        const fn = evalExpr('(fn $0)')
+        const result = fn(5)
+        expect(result).toBe(5)
+    })
 })
 
 function evalOnPipeline(pipeline, ...exprs) {
