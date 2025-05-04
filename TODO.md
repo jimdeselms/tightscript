@@ -1,40 +1,22 @@
 # TODO
 
-## Language features
-* Arrays
-* Objects
+Here is what we want to build:
 
-## Optimizations
-In addition to pruning conditional branches that can be proven to be true or false, we can also convert the conditions themselves to just be replaced with true or false.
+
+1) "optimize" - This is a function that will take an S-expression and optimize it. 
 
 
 
-Now, I want to start thinking about the execution layer.
 
-Currently, I am compiling everything to a function.
-
-
-# New epiphany
-
-I've been thinking about this all wrong. Ultimately, the main innovation of this project is how undefined and errors work. Nothing else is as important.
-
-This is the behavior you want:
-
-Instead of worrying so much about expressions, we're more interested in the primtiives. Anyway, w'ell
-
-
-How do we want this to work? What are the operations I can do on an expression?
-
-1) I can expand it (resolve?)
+What are the stages? These are each stages of a pipeline. Each stage of the pipeline takes a stream of inputs and outputs a stream of outputs.
 
 
 
-Here is the truth:
+Character -> Token -> AST -> SExpression -> ... -> Symbol -> Function
+                                                          -> Javascript
+                                                          -> WebAssembly/Executable
 
-everything is a function that takes input and returns output. It might modify the input.
-
-An expression throws an error ifANYTHIGN goes wrong, including trying to resolve undefined.
+                                                          
 
 
-
-I think that we do need to distinguish between undefined and error. It's okay for things to be undefined, and when they are, we want to exit out.
+So, what we're most focused on is the part where we optimize the SExpression. So, for this part, we want to optimize an SExpression. 
