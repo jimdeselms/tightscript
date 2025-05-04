@@ -1,11 +1,25 @@
 import { pipeline } from './pipeline.js'
 
-export function createCompileToFnPipeline() {
-    return pipeline(createHandlers())
+export function createCompileToFnPipeline(state = {}) {
+    return pipeline(createHandlers(state))
 }
 
-function createHandlers() {
+function createHandlers(state) {
     return {
+        arg: (index) => {
+            const idx = index()
+            return (...args) => args[idx]
+        },
+
+        set: (index, value) => {
+            return (args) => {
+                const idx = index(args)
+                const val = value(args)
+                state.memory[idx] = val
+                return val
+            }
+        },
+
         number: (val) => () => val,
         string: (val) => () => val,
 
