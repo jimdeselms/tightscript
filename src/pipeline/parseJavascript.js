@@ -38,11 +38,18 @@ function nodeToSExpression(node) {
             return node.value
         case 'BinaryExpression':
             return [
-                node.operator,
+                primitiveFromOperator[node.operator],
                 nodeToSExpression(node.left),
                 nodeToSExpression(node.right),
             ]
         default:
             throw new Error(`Unsupported node type: ${node.type}`)
     }
+}
+
+const primitiveFromOperator = {
+    '+': 'add',
+    '-': 'sub',
+    '*': 'mul',
+    '/': 'div'
 }

@@ -2,13 +2,12 @@ import { parseJavascript } from './parseJavascript.js';
 import { createCompileToFnPipeline } from './compileToFnPipeline.js';
 
 describe('parseJavascript', () => {
-    it('can compile a program', () => {
-        const program = `
-            10
-        `;
-
+    it.each([
+        ['10', 10],
+        ['5 + 3', 8],
+    ])('can compile a program', (program, expected) => {
         const result = evalProgram(program);
-        expect(result(0)).toEqual(10);
+        expect(result(0)).toEqual(expected);
     })
 })
 
