@@ -26,14 +26,38 @@ describe('evalPipeline', () => {
     })
 
     it('can set and retrieve memory', () => {
-        const expr = '(set 10 5)'
-        const state = { memory: [] }
-        const pipeline = createCompileToFnPipeline(state)
-        const fn = pipeline(parse(expr))
-        fn(undefined)
+        const [ state, pipeline ] = createPipeline()
+        const fn = evalOnPipeline(pipeline,
+            '(set 10 5)',
+            '(get 10)'
+        )
+
+        const result = fn()
+
         expect(state.memory[10]).toBe(5)
+        expect(result).toBe(5)
     })
 })
+
+function evalOnPipeline(pipeline, ...exprs) {
+    let current
+
+    return (args) => {
+        for (const expr of exprs) {
+            const parsed = parse(expr)
+            const fn = pipeline(parsed)
+            current = fn(args)
+        }
+
+        return current
+    }
+}
+
+function createPipeline() {
+    const state = { memory: [] }
+    const pipeline = createCompileToFnPipeline(state)
+    return [ state, pipeline ]
+}
 
 function evalExpr(str) {
     const sExpr = parse(str)

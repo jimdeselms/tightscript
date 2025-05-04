@@ -20,6 +20,13 @@ function createHandlers(state) {
             }
         },
 
+        get: (index) => {
+            return (args) => {
+                const idx = index(args)
+                return state.memory[idx]
+            }
+        },
+
         number: (val) => () => val,
         string: (val) => () => val,
 
