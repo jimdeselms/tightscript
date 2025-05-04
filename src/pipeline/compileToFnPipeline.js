@@ -11,40 +11,34 @@ function createHandlers(state) {
             return (...args) => args[idx]
         },
 
-        set: (index, value) => {
-            return (args) => {
-                const idx = index(args)
-                const val = value(args)
-                state.memory[idx] = val
-                return val
-            }
+        set: (index, value) => (args) => {
+            const idx = index(args)
+            const val = value(args)
+            state.memory[idx] = val
+            return val
         },
 
-        get: (index) => {
-            return (args) => {
-                const idx = index(args)
-                return state.memory[idx]
-            }
+        get: (index) => (args) => {
+            const idx = index(args)
+            return state.memory[idx]
         },
 
         number: (val) => () => val,
         string: (val) => () => val,
 
-        negate: (expr) => {
-            return (args) => expr(args) * -1
-        },
+        negate: (expr) => (args) => expr(args) * -1,
 
-        add: (lhs, rhs) => {
-            return (args) => lhs(args) + rhs(args)
-        },
+        add: (lhs, rhs) => (args) => lhs(args) + rhs(args),
+        sub: (lhs, rhs) => (args) => lhs(args) - rhs(args),
+        mul: (lhs, rhs) => (args) => lhs(args) * rhs(args),
+        div: (lhs, rhs) => (args) => lhs(args) / rhs(args),
 
-        fn: (body) => {
-            return (args) => {
-                //const bod = body(args)
-                return (...params) => {
-                    return body(...params)
-                }
-            }
-        }
+        fn: (body) => () => (...params) => body(...params),
+
+        call: (fn, arg) => (args) => {
+            const func = fn(args)
+            const argValue = arg(args)
+            return func(argValue)
+        },
     }
 }

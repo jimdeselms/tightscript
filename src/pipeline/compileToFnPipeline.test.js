@@ -38,10 +38,22 @@ describe('evalPipeline', () => {
         expect(result).toBe(5)
     })
 
-    it('can define a function', () => {
-        const fn = evalExpr('(fn $0)')
-        const result = fn(5)
-        expect(result).toBe(5)
+    it.each([
+        ['(fn $0)', 5, 5],
+        ['(fn (add 2 $0))', 5, 7]
+    ])('can define a function #%#', (fn, arg, expected) => {
+        const func = evalExpr(fn)
+        const result = func(arg)
+        expect(result).toBe(expected)
+    })
+
+    it.each([
+        ['(fn (negate $))', '5', -5],
+        ['(fn (add $0 $0))', '5', 10],
+    ])('can call a function', (fn, arg, expected) => {
+        const expr = `(call ${fn} ${arg})`
+        const result = evalExpr(expr)
+        expect(result).toBe(expected)
     })
 })
 
