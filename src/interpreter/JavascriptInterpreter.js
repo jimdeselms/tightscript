@@ -1,6 +1,5 @@
-import { createCoreHandlers, createSafeHandlers, createScopeHandlers } from './handlers.js';
+import { createCoreHandlers, createSafeHandlers, createScopeHandlers } from './handlers/handlers.js';
 import { parseJavascript } from './parseJavascript.js';
-import { astToSExpression } from './astToSExpression.js';
 
 export class JavascriptInterpreter {
 
