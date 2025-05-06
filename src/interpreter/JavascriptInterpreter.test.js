@@ -24,4 +24,10 @@ describe('JavascriptInterpreter', () => {
         const result = i.run('2 + 3');
         expect(result).toEqual(5); 
     })
+
+    it('can negate a negate', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run('-(-(5))');
+        expect(result).toEqual(5); 
+    })
 })

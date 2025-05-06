@@ -64,14 +64,14 @@ function nodeToSExpressions(node) {
 }
 
 const primitiveFromOperator = {
-    '+': 'add',
-    '-': 'sub',
-    '*': 'mul',
-    '/': 'div'
+    '+': 'add-safe',
+    '-': 'sub-safe',
+    '*': 'mul-safe',
+    '/': 'div-safe'
 }
 
 const unaryPrimitivesFromOperator = {
-    '-': 'negate',
-    '!': 'not',
-    '~': 'bitwiseNot'
+    '-': 'negate-safe',
+    '!': 'not-safe',
+    '~': 'bitwiseNot-safe'
 }

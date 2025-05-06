@@ -1,4 +1,4 @@
-import { createCoreHandlers } from './handlers.js';
+import { createCoreHandlers, createSafeHandlers } from './handlers.js';
 import { parseJavascript } from './parseJavascript.js';
 import { astToSExpression } from './astToSExpression.js';
 
@@ -11,14 +11,15 @@ export class JavascriptInterpreter {
 
         // These handlers will just do a thing with their parameters
         const coreHandlers = createCoreHandlers(this);
+        const safeHandlers = createSafeHandlers(coreHandlers, isResolved, this.step.bind(this))
+
         this.handlers = {
             ...coreHandlers,
+            ...safeHandlers,
             ast: (astNode) => {
                 return astToSExpression(astNode, this.compilerState)
             },
-            eval: (expr) => {
-
-            }
+            step: (expr) => this.step(expr),
         }
     }
 
