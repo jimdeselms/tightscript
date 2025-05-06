@@ -30,4 +30,31 @@ describe('JavascriptInterpreter', () => {
         const result = i.run('-(-(5))');
         expect(result).toEqual(5); 
     })
+
+    it('can do a more complex expression', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run('5 + (3 + 2) + -(4 + 1)');
+        expect(result).toEqual(5); 
+    })
+
+    it('can set and get a variable', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const x = 5;
+            
+            x`
+        );
+        expect(result).toEqual(5); 
+    })
+
+    it('can have multiple variables', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const x = 5;
+            const y = 123;
+            
+            x + y`
+        );
+        expect(result).toEqual(128); 
+    })
 })

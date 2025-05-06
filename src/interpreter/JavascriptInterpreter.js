@@ -1,4 +1,4 @@
-import { createCoreHandlers, createSafeHandlers } from './handlers.js';
+import { createCoreHandlers, createSafeHandlers, createScopeHandlers } from './handlers.js';
 import { parseJavascript } from './parseJavascript.js';
 import { astToSExpression } from './astToSExpression.js';
 
@@ -12,14 +12,12 @@ export class JavascriptInterpreter {
         // These handlers will just do a thing with their parameters
         const coreHandlers = createCoreHandlers(this);
         const safeHandlers = createSafeHandlers(coreHandlers, isResolved, this.step.bind(this))
+        const scopeHandlers = createScopeHandlers()
 
         this.handlers = {
             ...coreHandlers,
             ...safeHandlers,
-            ast: (astNode) => {
-                return astToSExpression(astNode, this.compilerState)
-            },
-            step: (expr) => this.step(expr),
+            ...scopeHandlers
         }
     }
 
@@ -27,12 +25,19 @@ export class JavascriptInterpreter {
         const statements = parseJavascript(javascript)
 
         // We're only going to do the top one for now
-        let expr = statements[0]
+        let currExpr
+        for (let i = 0; i < statements.length; i++) {
 
-        while (!isResolved(expr)) {
-            expr = this.step(expr)
+            currExpr = statements[i]
+
+            while (!isResolved(currExpr)) {
+                currExpr = this.step(currExpr)
+            }
+
         }
-        return expr
+
+        // The last one is the one we return
+        return currExpr
     }
 
     step(expr) {
