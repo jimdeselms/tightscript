@@ -23,6 +23,15 @@ function createHandlers(state) {
             return state.memory[idx]
         },
 
+        getvar: (name) => (args) => {
+            return state.variables[name(args)]
+        },
+
+        setvar: (name, value) => (args) => {
+            state.variables[name(args)] = value(args)
+            return value
+        },
+
         number: (val) => () => val,
         string: (val) => () => val,
 

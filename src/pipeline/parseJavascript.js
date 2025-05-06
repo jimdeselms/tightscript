@@ -17,31 +17,39 @@ export function parseJavascript(text) {
 
     for (let i = 0; i < ast.body.length; i++) {
         const node = ast.body[i]
-        statements.push(nodeToSExpression(node))
+        statements.push(...nodeToSExpressions(node))
     }
 
     return statements
 }
 
-function nodeToSExpression(node) {
+function nodeToSExpressions(node) {
     switch (node.type) {
         case 'ExpressionStatement':
-            return nodeToSExpression(node.expression)
+            return nodeToSExpressions(node.expression)
         case 'CallExpression':
-            return [
-                nodeToSExpression(node.callee),
-                ...node.arguments.map(nodeToSExpression),
-            ]
+            return [[
+                nodeToSExpressions(node.callee),
+                ...node.arguments.map(nodeToSExpressions),
+            ]]
         case 'Identifier':
-            return node.name
+            return [[ 'getvar', node.name ]]
+        case 'VariableDeclaration':
+            {
+                const res = node.declarations.map(nodeToSExpressions)
+                return res[0]
+            }
+        case 'VariableDeclarator':
+            return [[ 'setvar', node.id.name, nodeToSExpressions(node.init)[0] ]]
         case 'Literal':
-            return node.value
+            return [ node.value ]
         case 'BinaryExpression':
-            return [
+            const result = [[
                 primitiveFromOperator[node.operator],
-                nodeToSExpression(node.left),
-                nodeToSExpression(node.right),
-            ]
+                nodeToSExpressions(node.left)[0],
+                nodeToSExpressions(node.right)[0],
+            ]]
+            return result
         default:
             throw new Error(`Unsupported node type: ${node.type}`)
     }

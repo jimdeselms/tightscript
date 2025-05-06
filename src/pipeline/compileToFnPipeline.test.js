@@ -55,6 +55,10 @@ describe('evalPipeline', () => {
         const result = evalExpr(expr)
         expect(result).toBe(expected)
     })
+
+    it.each([
+        ['(block (setvar a 5) ']
+    ])
 })
 
 function evalOnPipeline(pipeline, ...exprs) {
