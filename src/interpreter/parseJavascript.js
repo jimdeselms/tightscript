@@ -43,18 +43,17 @@ function nodeToSExpressions(node) {
             return [[ 'setvar', node.id.name, nodeToSExpressions(node.init)[0] ]]
         case 'Literal':
             return [ node.value ]
-        
         case 'BinaryExpression':
-            const binaryResult = [[
+            const result = [[
                 primitiveFromOperator[node.operator],
                 nodeToSExpressions(node.left)[0],
                 nodeToSExpressions(node.right)[0],
             ]]
-            return binaryResult
+            return result
 
         case 'UnaryExpression':
             const unaryResult = [[
-                primitiveFromOperator[node.operator],
+                unaryPrimitivesFromOperator[node.operator],
                 nodeToSExpressions(node.argument)[0],
             ]]
             return unaryResult
@@ -68,7 +67,11 @@ const primitiveFromOperator = {
     '+': 'add',
     '-': 'sub',
     '*': 'mul',
-    '/': 'div',
+    '/': 'div'
+}
+
+const unaryPrimitivesFromOperator = {
     '-': 'negate',
     '!': 'not',
+    '~': 'bitwiseNot'
 }

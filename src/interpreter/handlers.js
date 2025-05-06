@@ -1,4 +1,4 @@
-export function createHandlers(interpreter) {
+export function createCoreHandlers(interpreter) {
     
     return {
         number: (val) => val,
@@ -6,9 +6,7 @@ export function createHandlers(interpreter) {
         boolean: (val) => val,
         null: () => null,
         undefined: () => undefined,
-        negate: (expr) => {
-            const value = interpreter.run(expr)
-            return -value
-        }
+        negate: (expr) => -expr,
+        add: (l, r) => l + r,
     }
 }

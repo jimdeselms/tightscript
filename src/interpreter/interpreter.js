@@ -1,6 +1,6 @@
 export class Interpreter {
-    constructor(instantiateHandlers) {
-        this.handlers = instantiateHandlers(this)
+    constructor(handlers) {
+        this.handlers = handlers
     }
 
     run(expr) {
