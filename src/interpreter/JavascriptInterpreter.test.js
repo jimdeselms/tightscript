@@ -105,4 +105,48 @@ describe('JavascriptInterpreter', () => {
 
         expect(result).toEqual(12);
     })
+
+    it('can reference a variable insidde a function', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+
+            function sub(x) { 
+                const twenty = 20;
+                return x - twenty;
+            }
+            
+            sub(50)`
+        );
+
+        expect(result).toEqual(30);
+    })
+
+    it('can reference a variable defined outside a function', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+
+            const twenty = 20;
+
+            function sub(x) { 
+                return x - twenty;
+            }
+            
+            sub(50)`
+        );
+
+        expect(result).toEqual(30);
+    })
+
+    it('can handle multiple variables with multiple declarations', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+
+            const five = 5, ten = 10;
+            const fifty = 50, hundred = 100;
+
+            five + ten + fifty + hundred;`
+        );
+
+        expect(result).toEqual(165);
+    })
 })

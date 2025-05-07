@@ -23,6 +23,9 @@ export function parseJavascript(text) {
     return statements
 }
 
+// This function takes an AST node and converts it into one or more S-expressions.
+// So, each branch returns an array of S-Expressions; don't be confused by the fact that
+// the S-expressions themselves are arrays.
 function nodeToSExpressions(node) {
     switch (node.type) {
         case 'ExpressionStatement':
@@ -30,11 +33,11 @@ function nodeToSExpressions(node) {
         case 'Identifier':
             return [[ 'getvar', node.name ]]
         case 'ReturnStatement':
-            return nodeToSExpressions(node.argument)[0]
+            return nodeToSExpressions(node.argument)
         case 'VariableDeclaration':
             {
-                const res = node.declarations.map(nodeToSExpressions)
-                return res[0]
+                const res = node.declarations.map(e => nodeToSExpressions(e))
+                return res.flat()
             }
         case 'VariableDeclarator':
             return [[ 'setvar', node.id.name, nodeToSExpressions(node.init)[0] ]]
@@ -63,18 +66,25 @@ function nodeToSExpressions(node) {
             ]]
 
         case 'BlockStatement':
-            const statements = node.body.map(nodeToSExpressions)
 
-            return statements
+            const statements = node.body.map(s => nodeToSExpressions(s)[0])
+
+            return [[
+                'block',
+                ...statements,
+            ]]
 
         case 'FunctionDeclaration':
+
+            const body = nodeToSExpressions(node.body)
+
             return [[
                 'setvar',
                 node.id.name,
                 [
                     'fn',
                     node.params.map(p => p.name),
-                    nodeToSExpressions(node.body)[0],
+                    body[0],
                 ]
             ]]
 
