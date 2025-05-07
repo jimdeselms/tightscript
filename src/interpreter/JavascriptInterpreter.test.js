@@ -57,4 +57,52 @@ describe('JavascriptInterpreter', () => {
         );
         expect(result).toEqual(128); 
     })
+
+    it('can define a function', async () => {
+        const i = new JavascriptInterpreter();
+        const fn = i.run(`
+            const add = () => 5 + 7;
+            
+            add`
+        );
+
+        const result = fn()
+        expect(result).toEqual(12);
+    })
+
+    it('can define a function that takes an argument', async () => {
+        const i = new JavascriptInterpreter();
+        const fn = i.run(`
+            const sub = (x, y) => x - y;
+            
+            sub`
+        );
+
+        const result = fn(10, 4)
+        expect(result).toEqual(6);
+    })
+
+    it('can call a function that takes an argument', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const sub = (x, y) => x - y;
+            
+            sub(15, 3)`
+        );
+
+        expect(result).toEqual(12);
+    })
+
+    it('can define a function using function syntax', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            function sub(x, y) { 
+                return x - y;
+            }
+            
+            sub(15, 3)`
+        );
+
+        expect(result).toEqual(12);
+    })
 })

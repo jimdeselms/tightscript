@@ -27,13 +27,10 @@ function nodeToSExpressions(node) {
     switch (node.type) {
         case 'ExpressionStatement':
             return nodeToSExpressions(node.expression)
-        case 'CallExpression':
-            return [[
-                nodeToSExpressions(node.callee),
-                ...node.arguments.map(nodeToSExpressions),
-            ]]
         case 'Identifier':
             return [[ 'getvar', node.name ]]
+        case 'ReturnStatement':
+            return nodeToSExpressions(node.argument)[0]
         case 'VariableDeclaration':
             {
                 const res = node.declarations.map(nodeToSExpressions)
@@ -57,6 +54,37 @@ function nodeToSExpressions(node) {
                 nodeToSExpressions(node.argument)[0],
             ]]
             return unaryResult
+
+        case 'ArrowFunctionExpression':
+            return [[
+                'fn',
+                node.params.map(p => p.name),
+                nodeToSExpressions(node.body)[0],
+            ]]
+
+        case 'BlockStatement':
+            const statements = node.body.map(nodeToSExpressions)
+
+            return statements
+
+        case 'FunctionDeclaration':
+            return [[
+                'setvar',
+                node.id.name,
+                [
+                    'fn',
+                    node.params.map(p => p.name),
+                    nodeToSExpressions(node.body)[0],
+                ]
+            ]]
+
+
+        case 'CallExpression':
+            return [[
+                'call',
+                nodeToSExpressions(node.callee)[0],
+                ...node.arguments.map(e => nodeToSExpressions(e)[0]),
+            ]]
 
         default:
             throw new Error(`Unsupported node type: ${node.type}`)
