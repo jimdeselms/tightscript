@@ -14,5 +14,13 @@ export function createCoreHandlers() {
         sub: (l, r) => l - r,
         mul: (l, r) => l * r,
         div: (l, r) => l / r,
+
+        ifelse: (cond, ifTrue, ifFalse) => {
+            return cond ? ifTrue : ifFalse
+        },
     };
+}
+
+function isResolved(expr) {
+
 }

@@ -44,17 +44,25 @@ function nodeToSExpressions(node) {
         case 'Literal':
             return [ node.value ]
         case 'BinaryExpression':
-            const result = [[
-                primitiveFromOperator[node.operator],
-                nodeToSExpressions(node.left)[0],
-                nodeToSExpressions(node.right)[0],
-            ]]
+            const result = [
+                [ 
+                    'resolve', 
+                    [
+                        primitiveFromOperator[node.operator],
+                        nodeToSExpressions(node.left)[0],
+                        nodeToSExpressions(node.right)[0],
+                    ]
+                ]
+            ]
             return result
 
         case 'UnaryExpression':
             const unaryResult = [[
-                unaryPrimitivesFromOperator[node.operator],
-                nodeToSExpressions(node.argument)[0],
+                'resolve',
+                [
+                    unaryPrimitivesFromOperator[node.operator],
+                    nodeToSExpressions(node.argument)[0],
+                ],
             ]]
             return unaryResult
 
@@ -96,20 +104,28 @@ function nodeToSExpressions(node) {
                 ...node.arguments.map(e => nodeToSExpressions(e)[0]),
             ]]
 
+        case 'ConditionalExpression':
+            return [[
+                'ifelse',
+                nodeToSExpressions(node.test)[0],
+                nodeToSExpressions(node.consequent)[0],
+                nodeToSExpressions(node.alternate)[0],
+            ]]
+
         default:
             throw new Error(`Unsupported node type: ${node.type}`)
     }
 }
 
 const primitiveFromOperator = {
-    '+': 'add-safe',
-    '-': 'sub-safe',
-    '*': 'mul-safe',
-    '/': 'div-safe'
+    '+': 'add',
+    '-': 'sub',
+    '*': 'mul',
+    '/': 'div'
 }
 
 const unaryPrimitivesFromOperator = {
-    '-': 'negate-safe',
-    '!': 'not-safe',
-    '~': 'bitwiseNot-safe'
+    '-': 'negate',
+    '!': 'not',
+    '~': 'bitwiseNot'
 }

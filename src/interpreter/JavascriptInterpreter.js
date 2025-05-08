@@ -1,4 +1,4 @@
-import { createCoreHandlers, createSafeHandlers, createScopeHandlers } from './handlers/handlers.js';
+import { createCoreHandlers, createResolveHandlers, createScopeHandlers } from './handlers/handlers.js';
 import { parseJavascript } from './parseJavascript.js';
 
 export class JavascriptInterpreter {
@@ -10,8 +10,8 @@ export class JavascriptInterpreter {
 
         // These handlers will just do a thing with their parameters
         const coreHandlers = createCoreHandlers(this);
-        const safeHandlers = createSafeHandlers(coreHandlers, isResolved, this.step.bind(this))
-        const scopeHandlers = createScopeHandlers((e) => this.runStatements([e]))
+        const safeHandlers = createResolveHandlers(isResolved, this.step.bind(this))
+        const scopeHandlers = createScopeHandlers((e) => this.runStatements(e))
 
         this.handlers = {
             ...coreHandlers,
@@ -24,10 +24,10 @@ export class JavascriptInterpreter {
         const statements = parseJavascript(javascript)
 
         // We're only going to do the top one for now
-        return this.runStatements(statements)
+        return this.runStatements(...statements)
     }
 
-    runStatements(statements) {
+    runStatements(...statements) {
         let currExpr
         
         for (let i = 0; i < statements.length; i++) {

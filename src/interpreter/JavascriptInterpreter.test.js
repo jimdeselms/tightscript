@@ -149,4 +149,18 @@ describe('JavascriptInterpreter', () => {
 
         expect(result).toEqual(165);
     })
+
+    it('can handle a conditional expression with a true condition', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run("true ? 5 : 10");
+
+        expect(result).toEqual(5);
+    })
+
+    it('can handle a conditional expression with a false condition', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run("false ? 5 : 10");
+
+        expect(result).toEqual(10);
+    })
 })
