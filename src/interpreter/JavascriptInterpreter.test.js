@@ -189,14 +189,14 @@ describe('JavascriptInterpreter', () => {
         const i = new JavascriptInterpreter();
         const result = i.run("[1, 2, 3]");
 
-        expect(result).toEqual(['array', [1, 2, 3]]);
+        expect(result).toEqual([1, 2, 3]);
     })
 
     it('can define an array with expressions in it', async () => {
         const i = new JavascriptInterpreter();
         const result = i.run("[1, 2 + 3, -(10)]");
 
-        expect(result).toEqual(['array', [1, 5, -10]]);
+        expect(result).toEqual([1, 5, -10]);
     })
 
     it('can read an element from an array', () => {
@@ -208,4 +208,77 @@ describe('JavascriptInterpreter', () => {
 
         expect(result).toEqual(200);
     })
+
+    it('can read an element from an array when the array is in a variable', () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const arr = [x, x+199, x+200];
+            const x = 1;
+            arr[x];
+        `);
+
+        expect(result).toEqual(200);
+    })
+
+
+    it('can define an object', () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const obj = { a: 1, b: 2 };
+            obj;
+        `);
+
+        expect(result).toEqual({ a: 1, b: 2 });
+    })
+
+    it('can define an object with computed name and value', () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const obj = { ["a"]: 10-5 };
+            obj;
+        `);
+
+        expect(result).toEqual({ a: 5 });
+    })
+
+    it('can read a member from an object', () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const obj = { a: 100 };
+            obj.a;
+        `);
+
+        expect(result).toEqual(100);
+    })
+
+    it('can read a computed member from an object', () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const obj = { a: 100 };
+            obj["a"];
+        `);
+
+        expect(result).toEqual(100);
+    })
+
+    it('can define a nested object', () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const obj = { a: { b: { c: 100 } } };
+            obj;
+        `);
+
+        expect(result).toEqual({ a: { b: { c: 100 } } });
+    })
+
+    it('can define a nested array', () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const arr = [1, [2, [3, 4]]];
+            arr;
+        `);
+
+        expect(result).toEqual([1, [2, [3, 4]]]);
+    })
+
 })

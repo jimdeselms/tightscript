@@ -9,10 +9,13 @@ export function createCoreHandlers() {
 
         property: (obj, prop) => {
             const [primitive, array] = obj
-            if (primitive !== 'array') {
-                throw new Error('property needs an array')
+            if (primitive === 'array') {
+                return array[prop]
+            } else if (primitive === 'object') {
+                return array.find(([key]) => key === prop)?.[1]
+            } else {
+                throw new Error('property needs an array or object')
             }
-            return array[prop]
         },
 
         // arithmetic

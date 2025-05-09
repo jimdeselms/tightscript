@@ -22,6 +22,12 @@ export function createResolveHandlers(isResolved, step) {
                 } else {
                     return ['array', args]
                 }
+            } else if (primitive === 'object') {
+                if (args[0].some(([key, value]) => !isResolvedOrSkip(key) || !isResolvedOrSkip(value))) {
+                    return ['resolve', [ 'object', args[1].map(([key, value]) => [step(key), step(value)]) ]];
+                } else {
+                    return ['object', args]
+                }
             } else if (args.some(a => !isResolvedOrSkip(a))) {
                 return ['resolve', [ primitive, ...args.map(a => step(a))] ];
             } else {
@@ -31,6 +37,7 @@ export function createResolveHandlers(isResolved, step) {
         },
 
         array: (elements) => [ 'array', elements.map(e => step(e)) ],
+        object: (properties) => [ 'object', properties.map(([k,v]) => [step(k), step(v)]) ],
 
         'resolve-skip': (expr) => expr,
 

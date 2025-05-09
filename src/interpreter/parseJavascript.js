@@ -45,7 +45,9 @@ function nodeToSExpressions(node) {
             return [ node.value ]
         case 'MemberExpression':
             const target = nodeToSExpressions(node.object)[0];
-            const property = nodeToSExpressions(node.property)[0];
+            const property = node.computed
+                ? nodeToSExpressions(node.property)[0]
+                : node.property.name;
 
             return [['resolve', [
                 'property',
@@ -131,11 +133,13 @@ function nodeToSExpressions(node) {
                 node.elements.map(e => nodeToSExpressions(e)[0]),
             ]]
 
-        case 'MemberExpression':
+        case 'ObjectExpression':
             return [[
-                'getvar',
-                nodeToSExpressions(node.object)[0],
-                node.property.name,
+                'object',
+                node.properties.map(p => {
+                    const key = p.computed ? nodeToSExpressions(p.key)[0] : p.key.name
+                    return [key, nodeToSExpressions(p.value)[0]]
+                }),
             ]]
 
         default:

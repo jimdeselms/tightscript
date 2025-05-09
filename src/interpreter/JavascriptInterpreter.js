@@ -26,7 +26,9 @@ export class JavascriptInterpreter {
         const statement = [ 'block', ...parseJavascript(javascript) ]
 
         // We're only going to do the top one for now
-        return this.runStatement(statement, until)
+        const result = this.runStatement(statement, until)
+
+        return externalize(result)
     }
 
     runStatement(statement, until=()=>false) {
@@ -77,7 +79,39 @@ function isResolved(sExpr) {
     const primitive = sExpr[0]
     if (primitive === 'array') {
         return sExpr[1].every(isResolved)
+    } else if (primitive === 'object') {
+        return sExpr[1].every(([key, value]) => isResolved(key) && isResolved(value))
     }
 
     return false
+}
+
+function externalize(expr) {
+    if (!Array.isArray(expr)) {
+        return expr
+    } else {
+        switch (expr[0]) {
+            case 'array':
+                return expr[1].map(e => externalize(e))
+            case 'object':
+                return Object.fromEntries(expr[1].map(([key, value]) => [externalize(key), externalize(value)]))
+            default:
+                throw new Error(`Cannot externalize: ${expr[0]}`)
+        }
+    }
+}
+
+function canBeExternalized(expr) {
+    if (Array.isArray(expr)) {
+        const [primitive, values] = expr
+        if (primitive === 'array') {
+            return values.every(e => canBeExternalized(e))
+        } else if (primitive === 'object') {
+            return values.every(([key, value]) => canBeExternalized(key) && canBeExternalized(value))
+        } else {
+            return false
+        }
+    } else {
+        return true
+    }
 }
