@@ -1,4 +1,4 @@
-import { createCoreHandlers, createResolveHandlers, createScopeHandlers } from './handlers/handlers.js';
+import { createCoreHandlers, createResolveHandlers, createScopeHandlers, createParseHandlers } from './handlers/handlers.js';
 import { parseJavascript } from './parseJavascript.js';
 
 export class JavascriptInterpreter {
@@ -11,33 +11,29 @@ export class JavascriptInterpreter {
         // These handlers will just do a thing with their parameters
         const coreHandlers = createCoreHandlers(this);
         const safeHandlers = createResolveHandlers(isResolved, this.step.bind(this))
-        const scopeHandlers = createScopeHandlers((e) => this.runStatements(e))
+        const scopeHandlers = createScopeHandlers((e) => this.runStatement(e))
+        const parseHandlers = createParseHandlers()
 
         this.handlers = {
             ...coreHandlers,
             ...safeHandlers,
-            ...scopeHandlers
+            ...scopeHandlers,
+            ...parseHandlers
         }
     }
 
-    run(javascript) {
-        const statements = parseJavascript(javascript)
+    run(javascript, until=()=>false) {
+        const statement = [ 'block', ...parseJavascript(javascript) ]
 
         // We're only going to do the top one for now
-        return this.runStatements(...statements)
+        return this.runStatement(statement, until)
     }
 
-    runStatements(...statements) {
-        let currExpr
+    runStatement(statement, until=()=>false) {
+        let currExpr = statement
         
-        for (let i = 0; i < statements.length; i++) {
-
-            currExpr = statements[i]
-
-            while (!isResolved(currExpr)) {
-                currExpr = this.step(currExpr)
-            }
-
+        while (!isResolved(currExpr) && !until(currExpr)) {
+            currExpr = this.step(currExpr)
         }
 
         // The last one is the one we return
@@ -78,6 +74,10 @@ function isResolved(sExpr) {
         return true
     }
 
-    // There may be more complex types that might be considered resolved in the future, like [object, { a: 123 }]
+    const primitive = sExpr[0]
+    if (primitive === 'array') {
+        return sExpr[1].every(isResolved)
+    }
+
     return false
 }

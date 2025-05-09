@@ -1,4 +1,5 @@
-import { JavascriptInterpreter } from './JavascriptInterpreter';
+import { JavascriptInterpreter } from './JavascriptInterpreter.js';
+import { sexpr } from './parseSExpression.js'
 
 describe('JavascriptInterpreter', () => {
     it('can evaluate a number', async () => {
@@ -150,6 +151,19 @@ describe('JavascriptInterpreter', () => {
         expect(result).toEqual(165);
     })
 
+    it('I can pass a function as an argument', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const add = (x, y) => x + y;
+
+            const apply = (fn, arg1, arg2) => fn(arg1, arg2);
+
+            apply(add, 20, 3);
+        `);
+
+        expect(result).toEqual(23);
+    })
+
     it('can handle a conditional expression with a true condition', async () => {
         const i = new JavascriptInterpreter();
         const result = i.run("true ? 5 : 10");
@@ -162,5 +176,36 @@ describe('JavascriptInterpreter', () => {
         const result = i.run("false ? 5 : 10");
 
         expect(result).toEqual(10);
+    })
+
+    it('can handle a conditional expression with a non-constant condition', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run("!true ? 1 + 2 : 3 + 4");
+
+        expect(result).toEqual(7);
+    })
+
+    it('can define an array constant', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run("[1, 2, 3]");
+
+        expect(result).toEqual(['array', [1, 2, 3]]);
+    })
+
+    it('can define an array with expressions in it', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run("[1, 2 + 3, -(10)]");
+
+        expect(result).toEqual(['array', [1, 5, -10]]);
+    })
+
+    it('can read an element from an array', () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const x = 1;
+            [x, x+199, x+200][x]
+        `);
+
+        expect(result).toEqual(200);
     })
 })

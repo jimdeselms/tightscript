@@ -43,6 +43,16 @@ function nodeToSExpressions(node) {
             return [[ 'setvar', node.id.name, nodeToSExpressions(node.init)[0] ]]
         case 'Literal':
             return [ node.value ]
+        case 'MemberExpression':
+            const target = nodeToSExpressions(node.object)[0];
+            const property = nodeToSExpressions(node.property)[0];
+
+            return [['resolve', [
+                'property',
+                target,
+                property,
+            ]]]
+
         case 'BinaryExpression':
             const result = [
                 [ 
@@ -106,10 +116,26 @@ function nodeToSExpressions(node) {
 
         case 'ConditionalExpression':
             return [[
-                'ifelse',
-                nodeToSExpressions(node.test)[0],
-                nodeToSExpressions(node.consequent)[0],
-                nodeToSExpressions(node.alternate)[0],
+                'resolve',
+                [
+                    'ifelse',
+                    nodeToSExpressions(node.test)[0],
+                    ['resolve-skip', nodeToSExpressions(node.consequent)[0]],
+                    ['resolve-skip', nodeToSExpressions(node.alternate)[0]],
+                ]
+            ]]
+
+        case 'ArrayExpression':
+            return [[
+                'array',
+                node.elements.map(e => nodeToSExpressions(e)[0]),
+            ]]
+
+        case 'MemberExpression':
+            return [[
+                'getvar',
+                nodeToSExpressions(node.object)[0],
+                node.property.name,
             ]]
 
         default:

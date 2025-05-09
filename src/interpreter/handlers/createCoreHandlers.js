@@ -7,6 +7,13 @@ export function createCoreHandlers() {
         null: () => null,
         undefined: () => undefined,
 
+        property: (obj, prop) => {
+            const [primitive, array] = obj
+            if (primitive !== 'array') {
+                throw new Error('property needs an array')
+            }
+            return array[prop]
+        },
 
         // arithmetic
         negate: (expr) => -expr,
@@ -15,12 +22,10 @@ export function createCoreHandlers() {
         mul: (l, r) => l * r,
         div: (l, r) => l / r,
 
+        // logical
+        not: (expr) => !expr,
         ifelse: (cond, ifTrue, ifFalse) => {
             return cond ? ifTrue : ifFalse
         },
     };
-}
-
-function isResolved(expr) {
-
 }
