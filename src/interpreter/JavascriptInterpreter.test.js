@@ -83,6 +83,19 @@ describe('JavascriptInterpreter', () => {
         expect(result).toEqual(6);
     })
 
+    it('can define a function takes a function as an argument', async () => {
+        const i = new JavascriptInterpreter();
+        const result = i.run(`
+            const double = (x) => x * 2;
+            
+            const modify = (val, fn) => fn(val);
+
+            modify(10, double);`
+        );
+
+        expect(result).toEqual(20);
+    })
+
     it('can call a function that takes an argument', async () => {
         const i = new JavascriptInterpreter();
         const result = i.run(`
